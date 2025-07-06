@@ -53,14 +53,14 @@ public static partial class DevCode
         return value.ToString("N", null);
     }
 
+    #endregion
+
+    #region Date Format MM Version
+
     public static string ToDateTimeFormat(this DateTime date)
     {
         return date.ToString("dd-MM-yyyy");
     }
-
-    #endregion
-
-    #region Date Format MM Version
 
     public static string ToDateTimeFormat(this DateTime? date)
     {

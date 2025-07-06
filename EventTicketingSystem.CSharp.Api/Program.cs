@@ -1,7 +1,7 @@
 #region Logging
 
 string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-string logFileName = Path.Combine(logFolderPath, "logs");
+string logFileName = Path.Combine(logFolderPath, "logs_");
 
 if (!Directory.Exists(logFolderPath))
 {
