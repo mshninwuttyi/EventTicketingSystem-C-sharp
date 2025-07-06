@@ -1,4 +1,8 @@
-﻿namespace EventTicketingSystem.CSharp.Domain;
+﻿using EventTicketingSystem.CSharp.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
 {
@@ -9,11 +13,17 @@ public static class FeaturesManager
         services.AddDataAccessLogic();
         services.AddServices();
         builder.AddBuilders();
+
         return services;
     }
 
     public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, WebApplicationBuilder builder)
     {
+        builder.Services.AddDbContext<AppDbContext>(
+                options => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")),
+                ServiceLifetime.Transient,
+                ServiceLifetime.Transient
+        );
 
         return services;
     }
