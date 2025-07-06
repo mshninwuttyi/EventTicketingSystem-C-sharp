@@ -12,6 +12,12 @@ public static class FeaturesManager
         return services;
     }
 
+    public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+
+        return services;
+    }
+
     public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
     {
         services.AddScoped<BL_BusinessOwner>();
@@ -22,12 +28,6 @@ public static class FeaturesManager
     public static IServiceCollection AddDataAccessLogic(this IServiceCollection services)
     {
         services.AddScoped<DA_BusinessOwner>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, WebApplicationBuilder builder)
-    {
 
         return services;
     }
