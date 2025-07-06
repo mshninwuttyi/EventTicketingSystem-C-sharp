@@ -1,4 +1,6 @@
-﻿namespace EventTicketingSystem.CSharp.Shared;
+﻿using Microsoft.Extensions.Logging;
+
+namespace EventTicketingSystem.CSharp.Shared;
 
 public static partial class DevCode
 {
