@@ -1,20 +1,36 @@
-var builder = WebApplication.CreateBuilder(args);
+#region Logging
 
-// Add services to the container.
+string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+string logFileName = Path.Combine(logFolderPath, "logs");
+
+if (!Directory.Exists(logFolderPath))
+{
+    Directory.CreateDirectory(logFolderPath);
+}
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(
+        path: Path.Combine(logFileName),
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+        rollingInterval: RollingInterval.Hour)
+    .CreateLogger();
+
+#endregion
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddModularServices(builder);
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
