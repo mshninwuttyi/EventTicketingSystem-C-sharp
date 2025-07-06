@@ -1,0 +1,6 @@
+@EventTicketingSystem.CSharp_HostAddress = http://localhost:5181
+
+GET {{EventTicketingSystem.CSharp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
