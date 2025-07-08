@@ -2,7 +2,7 @@
 CREATE DATABASE EventTicketingSystem;
 
 -- Connect to the database
-\c EventTicketingSystem
+-- \c EventTicketingSystem
 
 -- Create Tbl_Admin table
 CREATE TABLE Tbl_Admin (

@@ -11,13 +11,15 @@ public partial class TblAdmin
 
     public string Username { get; set; } = null!;
 
+    public string Phoneno { get; set; } = null!;
+
     public string Email { get; set; } = null!;
 
     public string Password { get; set; } = null!;
 
-    public string? Createby { get; set; }
+    public string Createby { get; set; } = null!;
 
-    public DateTime? Createat { get; set; }
+    public DateTime Createat { get; set; }
 
     public string? Modifiedby { get; set; }
 
