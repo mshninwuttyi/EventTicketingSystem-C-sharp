@@ -3,10 +3,12 @@
 public class DA_BusinessOwner
 {
     private readonly ILogger<DA_BusinessOwner> _logger;
+    private readonly AppDbContext _db;
 
-    public DA_BusinessOwner(ILogger<DA_BusinessOwner> logger)
+    public DA_BusinessOwner(ILogger<DA_BusinessOwner> logger, AppDbContext db)
     {
         _logger = logger;
+        _db = db;
     }
 
     public async Task<Result<BusinessOwnerResponseModel>> GetList(BusinessOwnerRequestModel requestModel)
@@ -15,12 +17,18 @@ public class DA_BusinessOwner
         var model = new BusinessOwnerResponseModel();
         try
         {
-            // Logic to fetch data from the database or any other source
+            var data = await _db.TblBusinessowners
+                        .AsNoTracking()
+                        .ToListAsync();
 
-            model = new BusinessOwnerResponseModel
+            model.BusinessOwners = data.Select(x => new BusinessOwnerModel
             {
-                // Populate the model with data
-            };
+                BusinessOwnerId = x.Businessownerid,
+                BusinessOwnerCode = x.Businessownercode,
+                Name = x.Name,
+                Email = x.Email,
+                PhoneNumber = x.Phonenumber,
+            }).ToList();
 
             return Result<BusinessOwnerResponseModel>.Success(model);
         }

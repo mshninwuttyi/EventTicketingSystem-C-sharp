@@ -1,3 +1,5 @@
+using EventTicketingSystem.CSharp.Domain.Features.BusinessOwner;
+using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventTicketingSystem.CSharp.Controllers
@@ -12,10 +14,12 @@ namespace EventTicketingSystem.CSharp.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly BL_BusinessOwner _businessOwnerService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, BL_BusinessOwner businessOwnerService)
         {
             _logger = logger;
+            _businessOwnerService = businessOwnerService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -28,6 +32,20 @@ namespace EventTicketingSystem.CSharp.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost]
+        public IActionResult GetBusinessOwnerList([FromBody] BusinessOwnerRequestModel requestModel)
+        {
+            var result = _businessOwnerService.GetList(requestModel).Result;
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(500, result.Message);
+            }
         }
     }
 }
