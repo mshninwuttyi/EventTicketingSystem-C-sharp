@@ -3,19 +3,17 @@ using System.Collections.Generic;
 
 namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
-public partial class TblTicketprice
+public partial class TblBusinessemail
 {
-    public string? Ticketpriceid { get; set; }
+    public string? Businessemailid { get; set; }
 
-    public string? Ticketpricecode { get; set; }
+    public string? Businessemailcode { get; set; }
 
-    public string? Eventcode { get; set; }
+    public string? Fullname { get; set; }
 
-    public string? Tickettypecode { get; set; }
+    public string? Phone { get; set; }
 
-    public decimal? Ticketprice { get; set; }
-
-    public int? Ticketquantity { get; set; }
+    public string? Email { get; set; }
 
     public string? Createdby { get; set; }
 

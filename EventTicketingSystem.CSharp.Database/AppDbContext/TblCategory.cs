@@ -5,15 +5,15 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblCategory
 {
-    public string Categoryid { get; set; } = null!;
+    public string? Categoryid { get; set; }
 
-    public string Categorycode { get; set; } = null!;
+    public string? Categorycode { get; set; }
 
-    public string Categoryname { get; set; } = null!;
+    public string? Categoryname { get; set; }
 
-    public string? Createby { get; set; }
+    public string? Createdby { get; set; }
 
-    public DateTime? Createat { get; set; }
+    public DateTime? Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 

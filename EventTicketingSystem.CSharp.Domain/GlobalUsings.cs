@@ -3,3 +3,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using EventTicketingSystem.CSharp.Shared;
 global using Microsoft.Extensions.Logging;
 global using EventTicketingSystem.CSharp.Domain.Features.BusinessOwner;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
+global using EventTicketingSystem.CSharp.Database.AppDbContext;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;

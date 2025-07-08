@@ -1,163 +1,178 @@
 -- Create the database
 CREATE DATABASE EventTicketingSystem;
 
--- Connect to the database
--- \c EventTicketingSystem
-
--- Create Tbl_Admin table
 CREATE TABLE Tbl_Admin (
-    UserId VARCHAR PRIMARY KEY,
-    UserCode VARCHAR NOT NULL,
-    Username VARCHAR NOT NULL,
-    Email VARCHAR NOT NULL,
-    Password VARCHAR NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create Tbl_Event table
-CREATE TABLE Tbl_Event (
-    EventId VARCHAR PRIMARY KEY,
-    EventCode VARCHAR NOT NULL,
-    EventName VARCHAR NOT NULL,
-    CategoryCode VARCHAR,
-    Description TEXT,
-    Address TEXT,
-    StartDate TIMESTAMP(2),
-    EndDate TIMESTAMP(2),
-    EventImage VARCHAR,
-    IsActive BOOLEAN DEFAULT TRUE,
-    EventStatus VARCHAR,
-    BusinessOwnerCode VARCHAR,
-    TotalTicketQuantity INTEGER,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE,
-    VenueID VARCHAR,
-    VenueCode VARCHAR,
-    VenueName VARCHAR,
-    VenueDescription TEXT,
-    VenueAddress TEXT,
-    VenueCapacity INTEGER,
-    VenueImage VARCHAR
-);
-
--- Create Tbl_TicketType table
-CREATE TABLE Tbl_TicketType (
-    TicketTypeId VARCHAR PRIMARY KEY,
-    TicketTypeCode VARCHAR NOT NULL,
-    TicketTypeName VARCHAR NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create Tbl_TicketPrice table
-CREATE TABLE Tbl_TicketPrice (
-    TicketPriceId VARCHAR PRIMARY KEY,
-    TicketPriceCode VARCHAR NOT NULL,
-    EventCode VARCHAR NOT NULL,
-    TicketTypeCode VARCHAR NOT NULL,
-    TicketPrice DECIMAL(20, 2) NOT NULL,
-    TicketQuantity INTEGER NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create Tbl_Ticket table
-CREATE TABLE Tbl_Ticket (
-    TicketId VARCHAR PRIMARY KEY,
-    TicketCode VARCHAR NOT NULL,
-    TicketPriceCode VARCHAR NOT NULL,
-    isUsed BOOLEAN DEFAULT FALSE,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create Tbl_Transaction table
-CREATE TABLE Tbl_Transaction (
-    TransactionId VARCHAR PRIMARY KEY,
-    TransactionCode VARCHAR NOT NULL,
-    Email VARCHAR NOT NULL,
-    EventCode VARCHAR NOT NULL,
-    Status VARCHAR NOT NULL,
-    PaymentType VARCHAR,
-    TransactionDate TIMESTAMP(2) NOT NULL,
-    TotalAmount DECIMAL(20, 2) NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create TransactionTicket table
-CREATE TABLE TransactionTicket (
-    TransactionTicketId VARCHAR PRIMARY KEY,
-    TransactionCode VARCHAR NOT NULL,
-    TicketCode VARCHAR NOT NULL,
-    QiString VARCHAR,
-    Price DECIMAL(20, 2) NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
-);
-
--- Create Tbl_Verification table
-CREATE TABLE Tbl_Verification (
-    VerificationId VARCHAR PRIMARY KEY,
-    VerificationCode VARCHAR NOT NULL,
-    Email VARCHAR NOT NULL,
+    UserId VARCHAR,
+    UserCode VARCHAR,
+    Username VARCHAR,
+    Email VARCHAR,
+    PhoneNo VARCHAR,
+    Password VARCHAR,
     CreatedBy VARCHAR,
-    CreatedAt TIMESTAMP(2),
+    CreatedAt TIMESTAMP,
     ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_Category (
+    CategoryId VARCHAR,
+    CategoryCode VARCHAR,
+    CategoryName VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_BusinessOwner (
+    BusinessOwnerId VARCHAR,
+    BusinessOwnerCode VARCHAR,
+    Name VARCHAR,
+    Email VARCHAR,
+    PhoneNumber VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_BusinessEmail (
     BusinessEmailId VARCHAR,
     BusinessEmailCode VARCHAR,
     FullName VARCHAR,
     Phone VARCHAR,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2)
+    Email VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
 );
 
--- Create Tbl_Category table
-CREATE TABLE Tbl_Category (
-    CategoryId VARCHAR PRIMARY KEY,
-    CategoryCode VARCHAR NOT NULL,
-    CategoryName VARCHAR NOT NULL,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
+CREATE TABLE Tbl_Ticket (
+    TicketId VARCHAR,
+    TicketCode VARCHAR,
+    TicketPriceCode VARCHAR,
+    IsUsed BOOLEAN,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
     ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
 );
 
--- Create Tbl_BusinessOwner table
-CREATE TABLE Tbl_BusinessOwner (
-    BusinessOwnerId VARCHAR PRIMARY KEY,
-    BusinessOwnerCode VARCHAR NOT NULL,
-    Name VARCHAR NOT NULL,
-    Email VARCHAR NOT NULL,
-    PhoneNumber VARCHAR,
-    CreateBy VARCHAR,
-    CreateAt TIMESTAMP(2),
+CREATE TABLE Tbl_TicketPrice (
+    TicketPriceId VARCHAR,
+    TicketPriceCode VARCHAR,
+    EventCode VARCHAR,
+    TicketTypeCode VARCHAR,
+    TicketPrice DECIMAL(20,2),
+    TicketQuantity INT,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
     ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP(2),
-    DeleteFlag BOOLEAN DEFAULT FALSE
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_TicketType (
+    TicketTypeId VARCHAR,
+    TicketTypeCode VARCHAR,
+    TicketTypeName VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_Event (
+    EventId VARCHAR,
+    EventCode VARCHAR,
+    EventName VARCHAR,
+    CategoryCode VARCHAR,
+    Description VARCHAR,
+    Address VARCHAR,
+    StartDate TIMESTAMP,
+    EndDate TIMESTAMP,
+    EventImage VARCHAR,
+    IsActive BOOLEAN,
+    EventStatus VARCHAR,
+    BusinessOwnerCode VARCHAR,
+    TotalTicketQuantity INT,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_Venue (
+    VenueId VARCHAR,
+    VenueCode VARCHAR,
+    VenueName VARCHAR,
+    VenueDescription VARCHAR,
+    VenueAddress VARCHAR,
+    VenueCapacity INT,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_Transaction (
+    TransactionId VARCHAR,
+    TransactionCode VARCHAR,
+    Email VARCHAR,
+    EventCode VARCHAR,
+    Status VARCHAR,
+    PaymentType VARCHAR,
+    TransactionDate TIMESTAMP,
+    TotalAmount DECIMAL(20,2),
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_TransactionTicket (
+    TransactionTicketId VARCHAR,
+    TransactionCode VARCHAR,
+    TicketCode VARCHAR,
+    QrString VARCHAR,
+    Price DECIMAL(20,2),
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_Verification (
+    VerificationId VARCHAR,
+    VerificationCode VARCHAR,
+    Email VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
+);
+
+CREATE TABLE Tbl_BusinessEmail (
+    BusinessEmailId VARCHAR,
+    BusinessEmailCode VARCHAR,
+    FullName VARCHAR,
+    Phone VARCHAR,
+    Email VARCHAR,
+    CreatedBy VARCHAR,
+    CreatedAt TIMESTAMP,
+    ModifiedBy VARCHAR,
+    ModifiedAt TIMESTAMP,
+    DeleteFlag BOOLEAN
 );

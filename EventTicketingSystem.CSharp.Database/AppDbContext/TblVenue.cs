@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
-public partial class TblTicketprice
+public partial class TblVenue
 {
-    public string? Ticketpriceid { get; set; }
+    public string? Venueid { get; set; }
 
-    public string? Ticketpricecode { get; set; }
+    public string? Venuecode { get; set; }
 
-    public string? Eventcode { get; set; }
+    public string? Venuename { get; set; }
 
-    public string? Tickettypecode { get; set; }
+    public string? Venuedescription { get; set; }
 
-    public decimal? Ticketprice { get; set; }
+    public string? Venueaddress { get; set; }
 
-    public int? Ticketquantity { get; set; }
+    public int? Venuecapacity { get; set; }
 
     public string? Createdby { get; set; }
 

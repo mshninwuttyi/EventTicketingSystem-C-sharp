@@ -5,17 +5,17 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblTicket
 {
-    public string Ticketid { get; set; } = null!;
+    public string? Ticketid { get; set; }
 
-    public string Ticketcode { get; set; } = null!;
+    public string? Ticketcode { get; set; }
 
-    public string Ticketpricecode { get; set; } = null!;
+    public string? Ticketpricecode { get; set; }
 
     public bool? Isused { get; set; }
 
-    public string? Createby { get; set; }
+    public string? Createdby { get; set; }
 
-    public DateTime? Createat { get; set; }
+    public DateTime? Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 

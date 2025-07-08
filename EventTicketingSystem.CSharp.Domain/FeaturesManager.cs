@@ -1,5 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Database;
-using EventTicketingSystem.CSharp.Database.AppDbContext;
+﻿using EventTicketingSystem.CSharp.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
