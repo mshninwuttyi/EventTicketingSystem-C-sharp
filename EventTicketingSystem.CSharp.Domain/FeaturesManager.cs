@@ -1,8 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Database.AppDbContext;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
-namespace EventTicketingSystem.CSharp.Domain;
+﻿namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
 {

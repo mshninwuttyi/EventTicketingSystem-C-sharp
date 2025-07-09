@@ -11,7 +11,7 @@ public class DA_BusinessOwner
         _db = db;
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> GetList(BusinessOwnerRequestModel requestModel)
+    public async Task<Result<BusinessOwnerResponseModel>> GetList()
     {
         var responseModel = new Result<BusinessOwnerResponseModel>();
         var model = new BusinessOwnerResponseModel();
@@ -35,7 +35,7 @@ public class DA_BusinessOwner
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<BusinessOwnerResponseModel>.Error(ex.Message);
+            return Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
         }
     }
 }
