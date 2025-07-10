@@ -1,7 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.EventCategory;
-using EventTicketingSystem.CSharp.Domain.Models.Features.EventCategory;
-
-namespace EventTicketingSystem.CSharp.Api.Controllers;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Business Owner")]
 [Route("api/[controller]")]
@@ -9,12 +6,11 @@ namespace EventTicketingSystem.CSharp.Api.Controllers;
 public class BusinessOwnerController : ControllerBase
 {
     private readonly BL_BusinessOwner _blService;
-    private readonly BL_EventCategory _blCategory;
+    
 
-    public BusinessOwnerController(BL_BusinessOwner blService, BL_EventCategory blCategory)
+    public BusinessOwnerController(BL_BusinessOwner blService)
     {
         _blService = blService;
-        _blCategory = blCategory;
     }
 
     [HttpGet("GetList")]
@@ -22,12 +18,11 @@ public class BusinessOwnerController : ControllerBase
     {
         return Ok(await _blService.GetList());
     }
-    [HttpPost("CreateCategory")]
-    public async Task<IActionResult> CreateCategory([FromBody] EventCategoryRequestModel request)
-    {
-        var response = _blCategory.CreateCategory(request);
-        return Ok(response);
-    }
+
+    
+
+
+
 
 
 }

@@ -50,11 +50,11 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
         {
             var model = new EventCategoryResponseModel();
-            if (request.Categoryname.IsNullOrEmpty())
+            if (request.AdminName.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
             }
-            else if (request.AdminName.IsNullOrEmpty()) 
+            else if (request.CategoryName.IsNullOrEmpty()) 
             {
                 return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
             }
@@ -62,7 +62,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             {
                 try
                 {
-                    if (isCategoryNameExist(request.Categoryname)){
+                    if (isCategoryNameExist(request.CategoryName)){
                         return Result<EventCategoryResponseModel>.ValidationError("Category name already exist", model);
                     }
                     else
@@ -70,9 +70,10 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                         _db.TblCategories.Add(new TblCategory()
                         {
                             Categorycode = Guid.NewGuid().ToString(),
-                            Categoryname = request.Categoryname,
+                            Categoryname = request.CategoryName,
                             Createdat = DateTime.Now,
-                            Createdby = request.AdminName
+                            Createdby = request.AdminName,
+                            
                         });
                         _db.SaveChanges();
                         return Result<EventCategoryResponseModel>.Success(model);
@@ -91,6 +92,52 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         #endregion
 
+        //#region UpdateCategory
+        //public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
+        //{
+        //    var model = new EventCategoryResponseModel();
+        //    if (request.Categoryname.IsNullOrEmpty())
+        //    {
+        //        return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
+        //    }
+        //    else if (request.AdminName.IsNullOrEmpty())
+        //    {
+        //        return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+                    
+        //            if (isCategoryCodeExist(request.Categorycode))
+        //            {
+        //                _db.TblCategories.Update(new TblCategory()
+        //                {
+
+        //                });
+        //            }
+        //            else
+        //            {
+        //                _db.TblCategories.Add(new TblCategory()
+        //                {
+        //                    Categorycode = Guid.NewGuid().ToString(),
+        //                    Categoryname = request.Categoryname,
+        //                    Createdat = DateTime.Now,
+        //                    Createdby = request.AdminName
+        //                });
+        //                _db.SaveChanges();
+        //                return Result<EventCategoryResponseModel>.Success(model);
+        //            }
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogExceptionError(ex);
+        //            return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+        //        }
+        //    }
+        //}
+        //#endregion
         private bool isCategoryNameExist(string? categoryName)
         {
             if (_db.TblCategories.FirstOrDefault(x => x.Categoryname == categoryName) is not null)
@@ -103,5 +150,19 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 return false;
             }
         }
+
+        private bool isCategoryCodeExist(string? categoryCode)
+        {
+            if (_db.TblCategories.FirstOrDefault(x => x.Categorycode == categoryCode) is not null)
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

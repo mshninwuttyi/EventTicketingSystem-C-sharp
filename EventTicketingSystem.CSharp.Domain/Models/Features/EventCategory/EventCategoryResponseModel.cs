@@ -19,15 +19,15 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         public string Categoryname { get; set; }
 
-        //public string? Createdby { get; set; }
+        public string? Createdby { get; set; }
 
-        //public DateTime? Createdat { get; set; }
+        public DateTime? Createdat { get; set; }
 
-        //public string? Modifiedby { get; set; }
+        public string? Modifiedby { get; set; }
 
-        //public DateTime? Modifiedat { get; set; }
+        public DateTime? Modifiedat { get; set; }
 
-        //public bool? Deleteflag { get; set; }
+        public bool? Deleteflag { get; set; }
     }
 
 }
