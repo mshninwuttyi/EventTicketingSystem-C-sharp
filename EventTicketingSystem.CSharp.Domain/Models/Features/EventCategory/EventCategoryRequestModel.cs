@@ -8,7 +8,7 @@ namespace EventTicketingSystem.CSharp.Domain.Models.Features.EventCategory
 {
     public class EventCategoryRequestModel
     {
-        //public string Categoryid { get; set; }
+        public string? CategoryId { get; set; }
 
         public string? CategoryCode { get; set; }
 

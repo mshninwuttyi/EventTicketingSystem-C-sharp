@@ -19,6 +19,10 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             _logger = logger;
             _db = db;
         }
+        private int getCategoryCount()
+        {
+            return _db.TblCategories.Count();
+        }
 
         #region Get category list
         public async Task<Result<EventCategoryResponseModel>> GetList()
@@ -33,6 +37,11 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                     Categoryid = x.Categoryid,
                     Categorycode = x.Categorycode,
                     Categoryname = x.Categoryname,
+                    Createdby = x.Createdby,
+                    Createdat = x.Createdat,
+                    Modifiedby = x.Modifiedby,
+                    Modifiedat = x.Modifiedat,
+                    
                 }).ToList();
 
                 return Result<EventCategoryResponseModel>.Success(model);
@@ -56,7 +65,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             }
             else if (request.CategoryName.IsNullOrEmpty()) 
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
             }
             else
             {
@@ -67,13 +76,15 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                     }
                     else
                     {
+                        int count = getCategoryCount();
                         _db.TblCategories.Add(new TblCategory()
                         {
+                            Categoryid = "E00" + count.ToString(),
                             Categorycode = Guid.NewGuid().ToString(),
                             Categoryname = request.CategoryName,
                             Createdat = DateTime.Now,
                             Createdby = request.AdminName,
-                            
+                            Deleteflag = false
                         });
                         _db.SaveChanges();
                         return Result<EventCategoryResponseModel>.Success(model);
@@ -92,63 +103,64 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         #endregion
 
-        //#region UpdateCategory
-        //public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
-        //{
-        //    var model = new EventCategoryResponseModel();
-        //    if (request.Categoryname.IsNullOrEmpty())
-        //    {
-        //        return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
-        //    }
-        //    else if (request.AdminName.IsNullOrEmpty())
-        //    {
-        //        return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-                    
-        //            if (isCategoryCodeExist(request.Categorycode))
-        //            {
-        //                _db.TblCategories.Update(new TblCategory()
-        //                {
-
-        //                });
-        //            }
-        //            else
-        //            {
-        //                _db.TblCategories.Add(new TblCategory()
-        //                {
-        //                    Categorycode = Guid.NewGuid().ToString(),
-        //                    Categoryname = request.Categoryname,
-        //                    Createdat = DateTime.Now,
-        //                    Createdby = request.AdminName
-        //                });
-        //                _db.SaveChanges();
-        //                return Result<EventCategoryResponseModel>.Success(model);
-        //            }
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogExceptionError(ex);
-        //            return Result<EventCategoryResponseModel>.SystemError(ex.Message);
-        //        }
-        //    }
-        //}
-        //#endregion
-        private bool isCategoryNameExist(string? categoryName)
+        #region UpdateCategory
+        public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
         {
-            if (_db.TblCategories.FirstOrDefault(x => x.Categoryname == categoryName) is not null)
+            var model = new EventCategoryResponseModel();
+            if (request.AdminName.IsNullOrEmpty())
             {
-                return true;
+                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
             }
-
+            else if (request.CategoryName.IsNullOrEmpty())
+            {
+                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+            }
             else
             {
-                return false;
+                try
+                {
+
+                    if (isCategoryCodeExist(request.CategoryCode))
+                    {
+                       var existingCategory = _db.TblCategories.FirstOrDefault(x => x.Categorycode == request.CategoryCode);
+                    
+                        existingCategory.Categoryname = request.CategoryName;
+                        existingCategory.Modifiedby = request.AdminName;
+                        existingCategory.Modifiedat = DateTime.Now;
+
+                        _db.Update(existingCategory);
+                        _db.SaveChanges();
+                        return Result<EventCategoryResponseModel>.Success(model);
+                    }
+                    else
+                    {
+                        return Result<EventCategoryResponseModel>.ValidationError("Category Code Not Found", model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogExceptionError(ex);
+                    return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+                }
             }
+        }
+        #endregion
+
+        #region Delete Category
+        //public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string categoryCode)
+        //{
+
+
+        //}
+        #endregion
+
+        #region Private function 
+        private bool isCategoryNameExist(string? categoryName)
+        {
+
+            return _db.TblCategories
+        .AsEnumerable()
+        .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
         }
 
         private bool isCategoryCodeExist(string? categoryCode)
@@ -163,6 +175,8 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 return false;
             }
         }
+
+        #endregion
 
     }
 }

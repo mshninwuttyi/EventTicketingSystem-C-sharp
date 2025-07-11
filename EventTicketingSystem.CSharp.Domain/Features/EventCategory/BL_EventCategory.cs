@@ -18,8 +18,13 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
         {
-            // Your business logic here
+          
             return await _dataAccess.CreateCategory(request);
+        }
+
+        public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
+        {
+            return await _dataAccess.UpdateCategory(request);
         }
 
     }
