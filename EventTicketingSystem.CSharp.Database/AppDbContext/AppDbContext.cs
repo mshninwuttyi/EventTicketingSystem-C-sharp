@@ -157,7 +157,7 @@ public partial class AppDbContext : DbContext
             entity
                 .ToTable("tbl_category");
             entity
-                  .HasKey(e => e.Categorycode);
+                  .HasKey(e => e.Categoryid);
 
             entity.Property(e => e.Categorycode)
                 .HasColumnType("character varying")

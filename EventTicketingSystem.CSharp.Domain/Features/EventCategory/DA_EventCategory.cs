@@ -77,10 +77,11 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                     else
                     {
                         int count = getCategoryCount();
+                        count++;
                         _db.TblCategories.Add(new TblCategory()
                         {
-                            Categoryid = "E00" + count.ToString(),
-                            Categorycode = Guid.NewGuid().ToString(),
+                            Categoryid = Ulid.NewUlid().ToString(),
+                            Categorycode = "E00" + count.ToString(),
                             Categoryname = request.CategoryName,
                             Createdat = DateTime.Now,
                             Createdby = request.AdminName,
