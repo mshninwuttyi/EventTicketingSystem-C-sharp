@@ -11,11 +11,19 @@ public partial class TblVenue
 
     public string? Venuename { get; set; }
 
+    public string? Venuedetailcode { get; set; }
+
+    public string? Venuetypecode { get; set; }
+
     public string? Venuedescription { get; set; }
 
     public string? Venueaddress { get; set; }
 
     public int? Venuecapacity { get; set; }
+
+    public string? Venuefacilities { get; set; }
+
+    public string? Venueaddons { get; set; }
 
     public string? Createdby { get; set; }
 
