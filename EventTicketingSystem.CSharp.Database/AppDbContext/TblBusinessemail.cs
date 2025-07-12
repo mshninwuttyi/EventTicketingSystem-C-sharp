@@ -5,7 +5,7 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblBusinessemail
 {
-    public string? Businessemailid { get; set; }
+    public string Businessemailid { get; set; } = null!;
 
     public string? Businessemailcode { get; set; }
 

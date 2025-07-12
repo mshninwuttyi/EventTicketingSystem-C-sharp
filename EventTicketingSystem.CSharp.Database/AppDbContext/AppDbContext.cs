@@ -68,9 +68,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasColumnType("character varying")
                 .HasColumnName("password");
-            entity.Property(e => e.Phoneno)
-                .HasColumnType("character varying")
-                .HasColumnName("phoneno");
             entity.Property(e => e.Usercode)
                 .HasColumnType("character varying")
                 .HasColumnName("usercode");
@@ -84,16 +81,16 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<TblBusinessemail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("tbl_businessemail");
+            entity.HasKey(e => e.Businessemailid).HasName("tbl_businessemail_pkey");
 
-            entity.Property(e => e.Businessemailcode)
-                .HasColumnType("character varying")
-                .HasColumnName("businessemailcode");
+            entity.ToTable("tbl_businessemail");
+
             entity.Property(e => e.Businessemailid)
                 .HasColumnType("character varying")
                 .HasColumnName("businessemailid");
+            entity.Property(e => e.Businessemailcode)
+                .HasColumnType("character varying")
+                .HasColumnName("businessemailcode");
             entity.Property(e => e.Createdat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
