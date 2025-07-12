@@ -125,19 +125,6 @@ CREATE TABLE Tbl_Verification (
     DeleteFlag BOOLEAN
 );
 
-CREATE TABLE Tbl_BusinessEmail (
-    BusinessEmailId VARCHAR,
-    BusinessEmailCode VARCHAR,
-    FullName VARCHAR,
-    Phone VARCHAR,
-    Email VARCHAR,
-    CreatedBy VARCHAR,
-    CreatedAt TIMESTAMP,
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP,
-    DeleteFlag BOOLEAN
-);
-
 CREATE TABLE Tbl_Venue (
     VenueId VARCHAR,
     VenueCode VARCHAR,
