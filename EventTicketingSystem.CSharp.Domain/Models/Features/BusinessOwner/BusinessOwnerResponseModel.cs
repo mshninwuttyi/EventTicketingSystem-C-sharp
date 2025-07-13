@@ -3,6 +3,7 @@
 public class BusinessOwnerResponseModel
 {
     public List<BusinessOwnerModel> BusinessOwners { get; set; }
+    public BusinessOwnerModel BusinessOwner { get; set; }
 }
 
 public class BusinessOwnerModel
