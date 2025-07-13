@@ -1,4 +1,6 @@
-﻿namespace EventTicketingSystem.CSharp.Domain;
+﻿using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+
+namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
 {
@@ -29,6 +31,7 @@ public static class FeaturesManager
         services.AddScoped<BL_BusinessOwner>();
         services.AddScoped<BL_EventCategory>();
         services.AddScoped<BL_BusinessEmail>();
+        services.AddScoped<BL_SearchEventsAndVenues>();
 
         return services;
     }
@@ -38,6 +41,7 @@ public static class FeaturesManager
         services.AddScoped<DA_BusinessOwner>();
         services.AddScoped<DA_EventCategory>();
         services.AddScoped<DA_BusinessEmail>();
+        services.AddScoped<DA_SearchEventsAndVenues>();
 
         return services;
     }
