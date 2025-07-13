@@ -23,12 +23,15 @@ public class BL_BusinessOwner
     {
         return await _daService.CreateBusinessOwner(request);
     }
+
     public async Task<Result<BusinessOwnerResponseModel>> UpdateBusinessOwner(BusinessOwnerRequestModel request)
     {
         return await _daService.UpdateBusinessOwner(request);
     }
+
     public async Task<Result<BusinessOwnerResponseModel>> DeleteBusinessOwner(BusinessOwnerRequestModel request)
     {
         return await _daService.DeleteOwnerByCode(request.Businessownercode);
     }
+
 }
