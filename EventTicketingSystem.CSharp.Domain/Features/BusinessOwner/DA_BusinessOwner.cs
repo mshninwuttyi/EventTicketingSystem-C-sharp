@@ -82,10 +82,15 @@ public class DA_BusinessOwner
     #endregion
 
     #region Get Business Owner By Code
-    public async Task<Result<BusinessOwnerResponseModel>> GetByCode(string ownerCode)
+    public async Task<Result<BusinessOwnerResponseModel>> GetByCode(string? ownerCode)
     {
         var responseModel = new Result<BusinessOwnerResponseModel>();
         var model = new BusinessOwnerResponseModel();
+        if (ownerCode.IsNullOrEmpty())
+        {
+            responseModel = Result<BusinessOwnerResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+            goto ResultReturn;
+        }
         try
         {
             var data = await _db.TblBusinessowners
@@ -119,6 +124,7 @@ public class DA_BusinessOwner
             _logger.LogExceptionError(ex);
             responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
         }
+    ResultReturn:
         return responseModel;
     }
     #endregion
@@ -275,10 +281,15 @@ public class DA_BusinessOwner
     #endregion
 
     #region Delete Business Owner By Code
-    public async Task<Result<BusinessOwnerResponseModel>> DeleteOwnerByCode(string ownerCode)
+    public async Task<Result<BusinessOwnerResponseModel>> DeleteOwnerByCode(string? ownerCode)
     {
         var responseModel = new Result<BusinessOwnerResponseModel>();
         var model = new BusinessOwnerResponseModel();
+        if (ownerCode.IsNullOrEmpty())
+        {
+            responseModel = Result<BusinessOwnerResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+            goto ResultReturn;
+        }
         try
         {
             var data = await _db.TblBusinessowners
@@ -302,6 +313,7 @@ public class DA_BusinessOwner
             _logger.LogExceptionError(ex);
             responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
         }
+    ResultReturn:
         return responseModel;
     }
     #endregion
