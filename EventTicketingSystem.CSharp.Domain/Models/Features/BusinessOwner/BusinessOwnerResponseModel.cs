@@ -27,4 +27,21 @@ public class BusinessOwnerModel
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
+
+    public static BusinessOwnerModel FromTblOwner(TblBusinessowner owner)
+    {
+        return new BusinessOwnerModel
+        {
+            Businessownerid = owner.Businessownerid,
+            Businessownercode = owner.Businessownercode,
+            Name = owner.Name,
+            Email = owner.Email,
+            Phonenumber = owner.Phonenumber,
+            Createdby = owner.Createdby,
+            Createdat = owner.Createdat,
+            Modifiedat = owner.Modifiedat,
+            Modifiedby = owner.Modifiedby,
+            Deleteflag = owner.Deleteflag,
+        };
+    }
 }
