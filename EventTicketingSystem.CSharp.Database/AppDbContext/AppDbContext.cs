@@ -68,9 +68,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasColumnType("character varying")
                 .HasColumnName("password");
-            entity.Property(e => e.Phoneno)
-                .HasColumnType("character varying")
-                .HasColumnName("phoneno");
             entity.Property(e => e.Usercode)
                 .HasColumnType("character varying")
                 .HasColumnName("usercode");
