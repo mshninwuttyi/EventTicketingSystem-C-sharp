@@ -1,4 +1,5 @@
-﻿namespace EventTicketingSystem.CSharp.Domain;
+﻿
+namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
 {
@@ -29,6 +30,7 @@ public static class FeaturesManager
         services.AddScoped<BL_BusinessOwner>();
         services.AddScoped<BL_EventCategory>();
         services.AddScoped<BL_BusinessEmail>();
+        services.AddScoped<BL_Ticket>();
 
         return services;
     }
@@ -38,6 +40,7 @@ public static class FeaturesManager
         services.AddScoped<DA_BusinessOwner>();
         services.AddScoped<DA_EventCategory>();
         services.AddScoped<DA_BusinessEmail>();
+        services.AddScoped<DA_Ticket>();
 
         return services;
     }
