@@ -7,3 +7,6 @@ global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 global using EventTicketingSystem.CSharp.Database.AppDbContext;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
+global using EventTicketingSystem.CSharp.Domain.Features.EventCategory;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
+global using EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;

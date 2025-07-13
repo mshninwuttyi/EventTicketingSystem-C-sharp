@@ -6,6 +6,7 @@
 public class BusinessOwnerController : ControllerBase
 {
     private readonly BL_BusinessOwner _blService;
+    
 
     public BusinessOwnerController(BL_BusinessOwner blService)
     {
@@ -17,4 +18,11 @@ public class BusinessOwnerController : ControllerBase
     {
         return Ok(await _blService.GetList());
     }
+
+    
+
+
+
+
+
 }

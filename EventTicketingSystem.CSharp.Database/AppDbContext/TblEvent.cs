@@ -31,6 +31,8 @@ public partial class TblEvent
 
     public int? Totalticketquantity { get; set; }
 
+    public int? Soldoutcount { get; set; }
+
     public string? Createdby { get; set; }
 
     public DateTime? Createdat { get; set; }

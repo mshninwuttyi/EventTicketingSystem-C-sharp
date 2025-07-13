@@ -37,6 +37,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<TblVenue> TblVenues { get; set; }
 
+    public virtual DbSet<TblVenuetype> TblVenuetypes { get; set; }
+
     public virtual DbSet<TblVerification> TblVerifications { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -72,9 +74,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasColumnType("character varying")
                 .HasColumnName("password");
-            entity.Property(e => e.Phoneno)
-                .HasColumnType("character varying")
-                .HasColumnName("phoneno");
             entity.Property(e => e.Usercode)
                 .HasColumnType("character varying")
                 .HasColumnName("usercode");
@@ -88,16 +87,16 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<TblBusinessemail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("tbl_businessemail");
+            entity.HasKey(e => e.Businessemailid).HasName("tbl_businessemail_pkey");
 
-            entity.Property(e => e.Businessemailcode)
-                .HasColumnType("character varying")
-                .HasColumnName("businessemailcode");
+            entity.ToTable("tbl_businessemail");
+
             entity.Property(e => e.Businessemailid)
                 .HasColumnType("character varying")
                 .HasColumnName("businessemailid");
+            entity.Property(e => e.Businessemailcode)
+                .HasColumnType("character varying")
+                .HasColumnName("businessemailcode");
             entity.Property(e => e.Createdat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
@@ -238,6 +237,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Modifiedby)
                 .HasColumnType("character varying")
                 .HasColumnName("modifiedby");
+            entity.Property(e => e.Soldoutcount).HasColumnName("soldoutcount");
             entity.Property(e => e.Startdate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("startdate");
@@ -442,6 +442,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Modifiedby)
                 .HasColumnType("character varying")
                 .HasColumnName("modifiedby");
+            entity.Property(e => e.Venueaddons).HasColumnName("venueaddons");
             entity.Property(e => e.Venueaddress)
                 .HasColumnType("character varying")
                 .HasColumnName("venueaddress");
@@ -449,15 +450,50 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Venuecode)
                 .HasColumnType("character varying")
                 .HasColumnName("venuecode");
-            entity.Property(e => e.Venuedescription)
+            entity.Property(e => e.Venuedescription).HasColumnName("venuedescription");
+            entity.Property(e => e.Venuedetailcode)
                 .HasColumnType("character varying")
-                .HasColumnName("venuedescription");
+                .HasColumnName("venuedetailcode");
+            entity.Property(e => e.Venuefacilities).HasColumnName("venuefacilities");
             entity.Property(e => e.Venueid)
                 .HasColumnType("character varying")
                 .HasColumnName("venueid");
             entity.Property(e => e.Venuename)
                 .HasColumnType("character varying")
                 .HasColumnName("venuename");
+            entity.Property(e => e.Venuetypecode)
+                .HasColumnType("character varying")
+                .HasColumnName("venuetypecode");
+        });
+
+        modelBuilder.Entity<TblVenuetype>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tbl_venuetype");
+
+            entity.Property(e => e.Createdat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Createdby)
+                .HasColumnType("character varying")
+                .HasColumnName("createdby");
+            entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Modifiedat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("modifiedat");
+            entity.Property(e => e.Modifiedby)
+                .HasColumnType("character varying")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.Venuetypecode)
+                .HasColumnType("character varying")
+                .HasColumnName("venuetypecode");
+            entity.Property(e => e.Venuetypeid)
+                .HasColumnType("character varying")
+                .HasColumnName("venuetypeid");
+            entity.Property(e => e.Venuetypename)
+                .HasColumnType("character varying")
+                .HasColumnName("venuetypename");
         });
 
         modelBuilder.Entity<TblVerification>(entity =>
