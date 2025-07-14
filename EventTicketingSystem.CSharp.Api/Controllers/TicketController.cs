@@ -1,7 +1,5 @@
 using EventTicketingSystem.CSharp.Domain.Features.Ticket;
 using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace EventTicketingSystem.CSharp.Api.Controllers
 {
@@ -46,14 +44,14 @@ namespace EventTicketingSystem.CSharp.Api.Controllers
             }
 
             return Ok(result.Data);
-
+        }
 
         [HttpGet]
         [Route("/admin/Tickets")]
         public async Task<IActionResult> GetTicketList()
         {
            
-            var result = await _blService.GetTicketList();
+            var result = await _blTicket.GetTicketList();
             if (result.IsError)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
