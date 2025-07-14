@@ -29,6 +29,6 @@ public class SearchEventsAndVenuesController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 }
