@@ -15,9 +15,14 @@ public class BL_Venue
     {
         return await _daService.GetList();
     }
-    
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId)
+
+    public async Task<Result<VenueResponseModel>> CreateVenue(VenueRequestModel venue, string currentUserId)
     {
-        return await _daService.DeleteVenue(venueId);
+        return await _daService.CreateVenue(venue, currentUserId);
+    }
+    
+    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId, string currentUserId)
+    {
+        return await _daService.DeleteVenue(venueId, currentUserId);
     }
 }

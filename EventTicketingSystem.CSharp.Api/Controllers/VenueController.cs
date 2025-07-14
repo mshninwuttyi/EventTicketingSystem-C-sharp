@@ -1,4 +1,5 @@
 using EventTicketingSystem.CSharp.Domain.Features.Venue;
+using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
 
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
@@ -22,10 +23,29 @@ public class VenueController : ControllerBase
         return Ok(result);
     }
     
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] VenueRequestModel request)
+    {
+        // Get login user ID from claims
+        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        
+        var result = await _blService.CreateVenue(request, currentUserId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+
+        return StatusCode(500, new { message = result.Message });
+    }
+    
     [HttpDelete("{venueId}")]
     public async Task<IActionResult> Delete(string venueId)
     {
-        var result = await _blService.DeleteVenue(venueId);
+        // Get login user ID from claims
+        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        
+        var result = await _blService.DeleteVenue(venueId, currentUserId);
         
         if (result.IsSuccess)
         {
