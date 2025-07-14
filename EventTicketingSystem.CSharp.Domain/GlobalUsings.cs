@@ -10,3 +10,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
+global using EventTicketingSystem.CSharp.Domain.Features.EventCategory;
+global using EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
+global using EventTicketingSystem.CSharp.Domain.Features.Ticket;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;

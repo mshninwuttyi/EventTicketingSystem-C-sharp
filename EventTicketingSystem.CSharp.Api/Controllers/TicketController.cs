@@ -1,35 +1,64 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.Ticket;
+using EventTicketingSystem.CSharp.Domain.Features.Ticket;
+using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventTicketingSystem.CSharp.Api.Controllers
 {
-    [ApiController]
+    [Tags("Ticket")]
     [Route("api/[controller]")]
+    [ApiController]
+
     public class TicketController : ControllerBase
     {
-        private readonly BL_Ticket _blService;
-        public TicketController(BL_Ticket blService)
+        private readonly BL_Ticket _blTicket;
+
+        public TicketController(BL_Ticket blTicket)
         {
-            _blService = blService;
+            _blTicket = blTicket;
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] TicketRequestModel requestModel)
+        {
+            if (requestModel == null)
+            {
+                return BadRequest("Request model cannot be null.");
+            }
+            var result = await _blTicket.CreateTicket(requestModel);
+
+            if (result.IsError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("GetList")]
+        public async Task<IActionResult> GetList()
+        {
+            var result = await _blTicket.GetAllTicket();
+
+            if (result.IsError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+            }
+
+            return Ok(result.Data);
+
+
         [HttpGet]
         [Route("/admin/Tickets")]
         public async Task<IActionResult> GetTicketList()
         {
-            try
+           
+            var result = await _blService.GetTicketList();
+            if (result.IsError)
             {
-                var result = await _blService.GetTicketList();
-                if (result.IsError)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-                }
-                return Ok(result.Data);
+                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return Ok(result.Data);
         }
     }
 }

@@ -46,6 +46,27 @@ public static partial class DevCode
         return result;
     }
 
+    public static bool IsValidEmail(this string email)
+    {
+        bool result = true;
+
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            if (addr.Address != email)
+            {
+                result = false;
+            }
+        }
+        catch
+        {
+            result = false;
+        }
+
+        return result;
+    }
+
+
     #endregion
 
     #region Thousand Separators

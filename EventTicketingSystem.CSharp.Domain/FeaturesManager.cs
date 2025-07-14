@@ -1,4 +1,5 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.QR;
+using EventTicketingSystem.CSharp.Domain.Features.QR;
+using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
 
 namespace EventTicketingSystem.CSharp.Domain;
 
@@ -32,7 +33,9 @@ public static class FeaturesManager
         services.AddScoped<BL_EventCategory>();
         services.AddScoped<BL_BusinessEmail>();
         services.AddScoped<BL_QrCode>();
-
+        services.AddScoped<BL_Ticket>();
+        services.AddScoped<BL_SearchEventsAndVenues>();
+      
         return services;
     }
 
@@ -42,6 +45,9 @@ public static class FeaturesManager
         services.AddScoped<DA_EventCategory>();
         services.AddScoped<DA_BusinessEmail>();
         services.AddScoped<DA_QrCode>();
+
+        services.AddScoped<DA_Ticket>();
+        services.AddScoped<DA_SearchEventsAndVenues>();
 
         return services;
     }
