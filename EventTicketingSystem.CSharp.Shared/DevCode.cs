@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
 
 namespace EventTicketingSystem.CSharp.Shared;
 
@@ -52,7 +52,7 @@ public static partial class DevCode
 
     public static string ToThousandSeparator<T>(this T value) where T : struct, IFormattable
     {
-        return value.ToString("N", null);
+        return value.ToString("N", null); // 1,000,000
     }
 
     #endregion
@@ -61,7 +61,7 @@ public static partial class DevCode
 
     public static string ToDateTimeFormat(this DateTime date)
     {
-        return date.ToString("dd-MM-yyyy");
+        return date.ToString("dd-MM-yyyy"); // 08-07-2025
     }
 
     public static string ToDateTimeFormat(this DateTime? date)
@@ -71,7 +71,7 @@ public static partial class DevCode
 
     public static string ToDateTimeFormatLong(this DateTime date)
     {
-        return date.ToString("dd-MMMM-yyyy");
+        return date.ToString("dd-MMMM-yyyy"); // 08-July-2025
     }
 
     #endregion

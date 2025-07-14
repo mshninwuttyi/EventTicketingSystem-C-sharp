@@ -1,7 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Database;
-using EventTicketingSystem.CSharp.Database.AppDbContext;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using EventTicketingSystem.CSharp.Domain.Features.Venue;
 
 namespace EventTicketingSystem.CSharp.Domain;
 
@@ -32,13 +29,18 @@ public static class FeaturesManager
     public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
     {
         services.AddScoped<BL_BusinessOwner>();
-
+        services.AddScoped<BL_EventCategory>();
+        services.AddScoped<BL_BusinessEmail>();
+        services.AddScoped<BL_Venue>();
         return services;
     }
 
     public static IServiceCollection AddDataAccessLogic(this IServiceCollection services)
     {
         services.AddScoped<DA_BusinessOwner>();
+        services.AddScoped<DA_EventCategory>();
+        services.AddScoped<DA_BusinessEmail>();
+        services.AddScoped<DA_Venue>();
 
         return services;
     }

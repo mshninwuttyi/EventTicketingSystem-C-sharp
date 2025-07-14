@@ -5,11 +5,11 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblVerification
 {
-    public string Verificationid { get; set; } = null!;
+    public string? Verificationid { get; set; }
 
-    public string Verificationcode { get; set; } = null!;
+    public string? Verificationcode { get; set; }
 
-    public string Email { get; set; } = null!;
+    public string? Email { get; set; }
 
     public string? Createdby { get; set; }
 
@@ -20,16 +20,4 @@ public partial class TblVerification
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
-
-    public string? Businessemailid { get; set; }
-
-    public string? Businessemailcode { get; set; }
-
-    public string? Fullname { get; set; }
-
-    public string? Phone { get; set; }
-
-    public string? Createby { get; set; }
-
-    public DateTime? Createat { get; set; }
 }
