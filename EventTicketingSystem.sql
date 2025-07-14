@@ -45,7 +45,8 @@ CREATE TABLE Tbl_BusinessEmail (
     CreatedAt TIMESTAMP,
     ModifiedBy VARCHAR,
     ModifiedAt TIMESTAMP,
-    DeleteFlag BOOLEAN
+    DeleteFlag BOOLEAN,
+    CONSTRAINT tbl_BusinessEmail_PKey PRIMARY KEY (BusinessEmailId)
 );
 
 CREATE TABLE Tbl_Ticket (
@@ -117,19 +118,6 @@ CREATE TABLE Tbl_TransactionTicket (
 CREATE TABLE Tbl_Verification (
     VerificationId VARCHAR,
     VerificationCode VARCHAR,
-    Email VARCHAR,
-    CreatedBy VARCHAR,
-    CreatedAt TIMESTAMP,
-    ModifiedBy VARCHAR,
-    ModifiedAt TIMESTAMP,
-    DeleteFlag BOOLEAN
-);
-
-CREATE TABLE Tbl_BusinessEmail (
-    BusinessEmailId VARCHAR,
-    BusinessEmailCode VARCHAR,
-    FullName VARCHAR,
-    Phone VARCHAR,
     Email VARCHAR,
     CreatedBy VARCHAR,
     CreatedAt TIMESTAMP,

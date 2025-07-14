@@ -13,4 +13,25 @@ public class BL_BusinessOwner
     {
         return await _daService.GetList();
     }
+
+    public async Task<Result<BusinessOwnerResponseModel>> GetBusinessOwner(BusinessOwnerRequestModel request)
+    {
+        return await _daService.GetByCode(request.Businessownercode);
+    }
+
+    public async Task<Result<BusinessOwnerResponseModel>> CreateNewBusinessOwner(BusinessOwnerRequestModel request)
+    {
+        return await _daService.CreateBusinessOwner(request);
+    }
+
+    public async Task<Result<BusinessOwnerResponseModel>> UpdateBusinessOwner(BusinessOwnerRequestModel request)
+    {
+        return await _daService.UpdateBusinessOwner(request);
+    }
+
+    public async Task<Result<BusinessOwnerResponseModel>> DeleteBusinessOwner(BusinessOwnerRequestModel request)
+    {
+        return await _daService.DeleteOwnerByCode(request.Businessownercode);
+    }
+
 }

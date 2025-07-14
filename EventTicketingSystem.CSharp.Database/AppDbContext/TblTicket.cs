@@ -22,4 +22,6 @@ public partial class TblTicket
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
+    public virtual TblTicketprice? TicketPrice { get; set; }
+    public virtual TblTickettype? TicketType { get; set; }
 }
