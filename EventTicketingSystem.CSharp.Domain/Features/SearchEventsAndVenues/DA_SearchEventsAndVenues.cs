@@ -1,4 +1,5 @@
 ﻿using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
 
@@ -18,19 +19,53 @@ public class DA_SearchEventsAndVenues
         try
         {
             var EventResult = await _db.TblEvents
-                .Where(e => EF.Functions.ILike(e.Eventname!, "%" + searchTerm + "%"))
+                .Where(e => EF.Functions.ILike(e.Eventname!, "%" + searchTerm + "%")
+                && e.Deleteflag == false)
             .Select(e => new SearchEventResponseModel
             {
-                Eventname = e.Eventname
+                Eventid = e.Eventid,
+                Eventcode = e.Eventcode,
+                Eventname = e.Eventname,
+                Categorycode = e.Categorycode,
+                Description = e.Description,
+                Address = e.Address,
+                Startdate = e.Startdate,
+                Enddate = e.Enddate,
+                Eventimage = e.Eventimage,
+                Isactive = e.Isactive,
+                Eventstatus = e.Eventcode,
+                Businessownercode = e.Businessownercode,
+                Totalticketquantity = e.Totalticketquantity,
+                Soldoutcount = e.Soldoutcount,
+                Createdby = e.Createdby,
+                Createdat = e.Createdat,
+                Modifiedby = e.Modifiedby,
+                Modifiedat = e.Modifiedat
             })
+            .AsNoTracking()
             .ToListAsync();
 
             var VenueResult = await _db.TblVenues
-                .Where(v => EF.Functions.ILike(v.Venuename!, "%" + searchTerm + "%"))
+                .Where(v => EF.Functions.ILike(v.Venuename!, "%" + searchTerm + "%")
+                && v.Deleteflag == false)
                 .Select(v => new SearchVenuesResponseModel
                 {
-                    Venuename = v.Venuename
+                    Venueid = v.Venueid,
+                    Venuecode = v.Venuecode,
+                    Venuename = v.Venuename,
+                    Venuedetailcode = v.Venuedetailcode,
+                    Venuetypecode = v.Venuetypecode,
+                    Venuedescription = v.Venuedescription,
+                    Venueaddress = v.Venueaddress,
+                    Venuecapacity = v.Venuecapacity,
+                    Venuefacilities = v.Venuefacilities,
+                    Venueaddons = v.Venueaddons,
+                    Createdby = v.Createdby,
+                    Createdat = v.Createdat,
+                    Modifiedby = v.Modifiedby,
+                    Modifiedat = v.Modifiedat
                 })
+                .AsNoTracking()
                 .ToListAsync();
 
             var SearchResult = new SearchListEventsAndVenuesResponseModel
