@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +15,12 @@ namespace EventTicketingSystem.CSharp.Domain.Models.Features.Ticket
         public string? Ticketpricecode { get; set; }
 
         public bool? Isused { get; set; }
+
+    }
+  
+    public class TicketListResponseModel
+    {
+        public List<TicketResponseModel> Tickets { get; set; } = new List<TicketResponseModel>();
 
         public string? Createdby { get; set; }
 
