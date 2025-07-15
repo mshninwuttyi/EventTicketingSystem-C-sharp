@@ -4,7 +4,6 @@ public class VenueResponseModel
 {
     public string VenueId { get; set; }           // Primary key
     public string VenueCode { get; set; }         // Code identifier
-    
     public string VenueTypeCode { get; set; } 
     public string VenueName { get; set; }         // Name of the venue
     public string? VenueDescription { get; set; } // Description

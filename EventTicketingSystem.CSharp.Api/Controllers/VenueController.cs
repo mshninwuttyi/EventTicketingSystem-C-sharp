@@ -38,6 +38,33 @@ public class VenueController : ControllerBase
 
         return StatusCode(500, new { message = result.Message });
     }
+
+    [HttpPut("{venueId}")]
+    public async Task<IActionResult> Update(string venueId, [FromBody] VenueRequestModel request)
+    {
+        // validate the Venue ID in URL matches the Venue ID in request body
+        if (venueId != request.VenueId)
+        {
+            return BadRequest(new { message = "Venue ID mismatch." });
+        }
+        
+        // Get login user ID from claims
+        var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
+
+        var result = await _blService.UpdateVenue(request, currentUserId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+
+        if (result.Message == "Venue not found.")
+        {
+            return NotFound(new { message = result.Message});
+        }
+        
+        return StatusCode(500, new { message = result.Message });
+    }
     
     [HttpDelete("{venueId}")]
     public async Task<IActionResult> Delete(string venueId)

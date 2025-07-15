@@ -27,7 +27,7 @@ public class DA_Venue
                 .Select(MapToResponseModel)
                 .ToList();
 
-            return Result<List<VenueResponseModel>>.Success(venues, "Success!");
+            return Result<List<VenueResponseModel>>.Success(venues, "Venue list retrieved successfully.");
         }
         catch (Exception ex)
         {
@@ -65,7 +65,37 @@ public class DA_Venue
         // Map created entity to response model
         var venueResponse = MapToResponseModel(venueEntity);
         
-        return Result<VenueResponseModel>.Success(venueResponse, "Success!");
+        return Result<VenueResponseModel>.Success(venueResponse, "Venue created successfully.");
+    }
+
+    public async Task<Result<VenueResponseModel>> UpdateVenue(VenueRequestModel venue, string currentUserId)
+    {
+        // Find existing venue by ID
+        var existingVenue = await _db.TblVenues.FindAsync(venue.VenueId);
+        
+        if(existingVenue == null)
+            return Result<VenueResponseModel>.NotFoundError("Venue not found.");
+        
+        // Update
+        existingVenue.Venuetypecode = venue.VenueTypeCode;
+        existingVenue.Venuename = venue.VenueName;
+        existingVenue.Venuedescription = venue.VenueDescription;
+        existingVenue.Venueaddress = venue.VenueAddress;
+        existingVenue.Venuecapacity = venue.VenueCapacity;
+        existingVenue.Venuefacilities = venue.VenueFacilities;
+        existingVenue.Venueaddons = venue.VenueAddons;
+        existingVenue.Venueimage = venue.VenueImage;    // To Edit: save the actual location of the image later
+        existingVenue.Deleteflag = venue.DeleteFlag;
+        existingVenue.Modifiedby = currentUserId;
+        existingVenue.Modifiedat = DateTime.Now;
+        
+        // Save changes
+        await _db.SaveChangesAsync();
+        
+        // Map created entity to response model
+        var venueResponse = MapToResponseModel(existingVenue);
+
+        return Result<VenueResponseModel>.Success(venueResponse, "Venue updated successfully.");
     }
     
     public async Task<Result<VenueResponseModel>> DeleteVenue(string venueid, string currentUserId)
@@ -87,7 +117,7 @@ public class DA_Venue
             // Map updated entity to response model
             var venueResponse = MapToResponseModel(venue);
             
-            return Result<VenueResponseModel>.Success(venueResponse, "Success!");
+            return Result<VenueResponseModel>.Success(venueResponse, "Venue deleted successfully.");
         }
         catch (Exception ex)
         {

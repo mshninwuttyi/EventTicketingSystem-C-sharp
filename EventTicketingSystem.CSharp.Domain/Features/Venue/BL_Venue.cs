@@ -20,6 +20,11 @@ public class BL_Venue
     {
         return await _daService.CreateVenue(venue, currentUserId);
     }
+
+    public async Task<Result<VenueResponseModel>> UpdateVenue(VenueRequestModel venue, string currentUserId)
+    {
+        return await  _daService.UpdateVenue(venue, currentUserId);
+    }
     
     public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId, string currentUserId)
     {
