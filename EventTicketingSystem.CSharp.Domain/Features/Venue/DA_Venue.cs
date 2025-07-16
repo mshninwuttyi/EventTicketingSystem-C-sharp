@@ -41,12 +41,12 @@ public class DA_Venue
         var venueEntity = new TblVenue()
         {
             Venuename = venue.VenueName,
-            Venuedescription = venue.VenueDescription,
-            Venueaddress = venue.VenueAddress,
-            Venuecapacity = venue.VenueCapacity,
-            Venuefacilities = venue.VenueFacilities,
-            Venueaddons = venue.VenueAddons,
-            Venueimage = venue.VenueImage, // To Edit: Convert to the format to save into the db later
+            Description = venue.VenueDescription,
+            Address = venue.VenueAddress,
+            Capacity = venue.VenueCapacity,
+            Facilities = venue.VenueFacilities,
+            Addons = venue.VenueAddons,
+            Image = venue.VenueImage, // To Edit: Convert to the format to save into the db later
             Createdby = currentUserId,
             Createdat = DateTime.Now,
             
@@ -79,12 +79,12 @@ public class DA_Venue
         // Update
         existingVenue.Venuetypecode = venue.VenueTypeCode;
         existingVenue.Venuename = venue.VenueName;
-        existingVenue.Venuedescription = venue.VenueDescription;
-        existingVenue.Venueaddress = venue.VenueAddress;
-        existingVenue.Venuecapacity = venue.VenueCapacity;
-        existingVenue.Venuefacilities = venue.VenueFacilities;
-        existingVenue.Venueaddons = venue.VenueAddons;
-        existingVenue.Venueimage = venue.VenueImage;    // To Edit: save the actual location of the image later
+        existingVenue.Description = venue.VenueDescription;
+        existingVenue.Address = venue.VenueAddress;
+        existingVenue.Capacity = venue.VenueCapacity;
+        existingVenue.Facilities = venue.VenueFacilities;
+        existingVenue.Addons = venue.VenueAddons;
+        existingVenue.Image = venue.VenueImage;    // To Edit: save the actual location of the image later
         existingVenue.Deleteflag = venue.DeleteFlag;
         existingVenue.Modifiedby = currentUserId;
         existingVenue.Modifiedat = DateTime.Now;
@@ -133,12 +133,12 @@ public class DA_Venue
             VenueCode = venue.Venuecode,
             VenueTypeCode = venue.Venuetypecode,
             VenueName = venue.Venuename,
-            VenueDescription = venue.Venuedescription,
-            VenueAddress = venue.Venueaddress,
-            VenueCapacity = venue.Venuecapacity,
-            VenueFacilities = venue.Venuefacilities,
-            VenueAddons = venue.Venueaddons,
-            VenueImage = venue.Venueimage,
+            VenueDescription = venue.Description,
+            VenueAddress = venue.Address,
+            VenueCapacity = venue.Capacity,
+            VenueFacilities = venue.Facilities,
+            VenueAddons = venue.Addons,
+            VenueImage = venue.Image,
             DeleteFlag = venue.Deleteflag,
             CreatedBy = venue.Createdby,
             CreatedAt = venue.Createdat,
@@ -149,7 +149,7 @@ public class DA_Venue
     
     private string GenerateVenueCode()
     {
-        var count = _db.TblCategories.Count();
+        var count = _db.TblVenues.Count();
         return $"VE{(count + 1):D6}";
     }
 

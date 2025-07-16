@@ -5,23 +5,25 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblAdmin
 {
-    public string? Userid { get; set; }
+    public string Adminid { get; set; } = null!;
 
-    public string? Usercode { get; set; }
+    public string Admincode { get; set; } = null!;
 
-    public string? Username { get; set; }
+    public string Username { get; set; } = null!;
 
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
 
-    public string? Password { get; set; }
+    public string Phoneno { get; set; } = null!;
 
-    public string? Createdby { get; set; }
+    public string Password { get; set; } = null!;
 
-    public DateTime? Createdat { get; set; }
+    public string Createdby { get; set; } = null!;
+
+    public DateTime Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifiedat { get; set; }
 
-    public bool? Deleteflag { get; set; }
+    public bool Deleteflag { get; set; }
 }

@@ -16,20 +16,20 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             return await _dataAccess.GetList();
         }
 
-        public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
+        public async Task<Result<EventCategoryResponseModel>> CreateEventCategory(EventCategoryRequestModel request)
         {
           
             return await _dataAccess.CreateCategory(request);
         }
 
-        public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
+        public async Task<Result<EventCategoryResponseModel>> UpdateEventCategory(EventCategoryRequestModel request)
         {
             return await _dataAccess.UpdateCategory(request);
         }
 
-        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(EventCategoryRequestModel request)
+        public async Task<Result<EventCategoryResponseModel>> DeleteEventCategory(EventCategoryRequestModel request)
         {
-            return await _dataAccess.DeleteCategory(request.CategoryCode);
+            return await _dataAccess.DeleteCategory(request.EventCategoryCode);
         }
     }
 }

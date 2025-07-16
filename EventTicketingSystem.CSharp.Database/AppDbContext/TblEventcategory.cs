@@ -3,17 +3,13 @@ using System.Collections.Generic;
 
 namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
-public partial class TblBusinessemail
+public partial class TblEventcategory
 {
-    public string Businessemailid { get; set; } = null!;
+    public string Eventcategoryid { get; set; } = null!;
 
-    public string Businessemailcode { get; set; } = null!;
+    public string Eventcategorycode { get; set; } = null!;
 
-    public string Fullname { get; set; } = null!;
-
-    public string Phone { get; set; } = null!;
-
-    public string Email { get; set; } = null!;
+    public string Categoryname { get; set; } = null!;
 
     public string Createdby { get; set; } = null!;
 

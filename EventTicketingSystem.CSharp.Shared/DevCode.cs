@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EventTicketingSystem.CSharp.Shared;
+﻿namespace EventTicketingSystem.CSharp.Shared;
 
 public static partial class DevCode
 {
@@ -23,6 +21,19 @@ public static partial class DevCode
         {
             return (T)Convert.ChangeType(jsonStr, typeof(T));
         }
+    }
+
+    public static string GetEnumDescription(this Enum value)
+    {
+        var field = value.GetType().GetField(value.ToString());
+
+        var attribute = field?.GetCustomAttribute<DescriptionAttribute>();
+        return attribute?.Description ?? value.ToString();
+    }
+
+    public static string GenerateUlid()
+    {
+        return Ulid.NewUlid().ToString();
     }
 
     #endregion
@@ -128,6 +139,21 @@ public static partial class DevCode
         var fileName = Path.GetFileName(filePath);
         var message = $"File Name - {fileName} | Method Name - {methodName} | Result - {(str is string ? str : str.ToJson())}";
         logger.LogInformation(message);
+    }
+
+    #endregion
+
+    #region DbContext Extension
+
+    public static async Task<int> SaveAndDetachAsync(this DbContext db)
+    {
+        var res = await db.SaveChangesAsync();
+        foreach (var entry in db.ChangeTracker.Entries().ToArray())
+        {
+            entry.State = EntityState.Detached;
+        }
+
+        return res;
     }
 
     #endregion

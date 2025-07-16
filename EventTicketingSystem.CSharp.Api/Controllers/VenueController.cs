@@ -1,12 +1,8 @@
-using EventTicketingSystem.CSharp.Domain.Features.Venue;
-using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Venue")]
 [Route("api/[controller]")]
 [ApiController]
-
 public class VenueController : ControllerBase
 {   
     private readonly BL_Venue _blService;

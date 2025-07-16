@@ -28,15 +28,15 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             var model = new EventCategoryResponseModel();
             try
             {
-                var data = await _db.TblCategories
+                var data = await _db.TblEventcategories
                                     .AsNoTracking()
                                     .Where(x=>x.Deleteflag == false)
                                     .ToListAsync();
 
                 model.EventCategories = data.Select(x => new EventCategoryModel 
                 {
-                    Categoryid = x.Categoryid,
-                    Categorycode = x.Categorycode,
+                    Categoryid = x.Eventcategoryid,
+                    Categorycode = x.Eventcategorycode,
                     Categoryname = x.Categoryname,
                     Createdby = x.Createdby,
                     Createdat = x.Createdat,
@@ -76,16 +76,16 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             {
                 try
                 {
-                    var newCategory = new TblCategory
+                    var newCategory = new TblEventcategory
                     {
-                        Categoryid = Ulid.NewUlid().ToString(),
-                        Categorycode = GenerateCategoryCode(),
+                        Eventcategoryid = Ulid.NewUlid().ToString(),
+                        Eventcategorycode = GenerateCategoryCode(),
                         Categoryname = request.CategoryName,
                         Createdat = DateTime.Now,
                         Createdby = "",
                         Deleteflag = false
                     };
-                    await _db.TblCategories.AddAsync(newCategory);
+                    await _db.TblEventcategories.AddAsync(newCategory);
                     await _db.SaveChangesAsync();
 
                     model.eventCategory = EventCategoryModel.FromTblCategory(newCategory);
@@ -122,9 +122,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 try
                 {
 
-                    if (isCategoryCodeExist(request.CategoryCode))
+                    if (isCategoryCodeExist(request.EventCategoryCode))
                     {
-                       var existingCategory = _db.TblCategories.FirstOrDefault(x => x.Categorycode == request.CategoryCode);
+                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == request.EventCategoryCode);
                     
                         existingCategory.Categoryname = request.CategoryName;
                         existingCategory.Modifiedby = request.AdminName;
@@ -160,9 +160,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             }
             try
             {
-                var data = await _db.TblCategories
+                var data = await _db.TblEventcategories
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(x => x.Categorycode == categoryCode && x.Deleteflag == false);
+                            .FirstOrDefaultAsync(x => x.Eventcategorycode == categoryCode && x.Deleteflag == false);
 
                 if (data != null)
                 {
@@ -190,14 +190,14 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         private bool isCategoryNameExist(string? categoryName)
         {
 
-            return _db.TblCategories
+            return _db.TblEventcategories
         .AsEnumerable()
         .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
         }
 
         private bool isCategoryCodeExist(string? categoryCode)
         {
-            if (_db.TblCategories.FirstOrDefault(x => x.Categorycode == categoryCode) is not null)
+            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == categoryCode) is not null)
             {
                 return true;
             }
@@ -210,7 +210,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         private string GenerateCategoryCode()
         {
-            var categoryCount = _db.TblCategories.Count();
+            var categoryCount = _db.TblEventcategories.Count();
             return "EC" + categoryCount.ToString("D6");
         }
 

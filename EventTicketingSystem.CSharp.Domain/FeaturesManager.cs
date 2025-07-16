@@ -1,7 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Features.QR;
-using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
-using EventTicketingSystem.CSharp.Domain.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
@@ -20,7 +16,8 @@ public static class FeaturesManager
     public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<AppDbContext>(
-                options => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")),
+                options => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
                 ServiceLifetime.Transient,
                 ServiceLifetime.Transient
         );
@@ -37,6 +34,7 @@ public static class FeaturesManager
         services.AddScoped<BL_Ticket>();
         services.AddScoped<BL_SearchEventsAndVenues>();
         services.AddScoped<BL_Venue>();
+
         return services;
     }
 
@@ -46,7 +44,6 @@ public static class FeaturesManager
         services.AddScoped<DA_EventCategory>();
         services.AddScoped<DA_BusinessEmail>();
         services.AddScoped<DA_QrCode>();
-
         services.AddScoped<DA_Ticket>();
         services.AddScoped<DA_SearchEventsAndVenues>();
         services.AddScoped<DA_Venue>();
@@ -56,6 +53,8 @@ public static class FeaturesManager
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<DapperService>();
+        services.AddScoped<CommonService>();
 
         return services;
     }

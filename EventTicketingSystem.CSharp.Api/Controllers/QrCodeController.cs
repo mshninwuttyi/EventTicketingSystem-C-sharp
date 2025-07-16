@@ -1,8 +1,6 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.QR;
-using EventTicketingSystem.CSharp.Domain.Models.Features.QR;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-namespace EventTicketingSystem.CSharp.Api.Controllers;
-
+[Tags("QR Code")]
 [Route("api/[controller]")]
 [ApiController]
 public class QrCodeController : ControllerBase
