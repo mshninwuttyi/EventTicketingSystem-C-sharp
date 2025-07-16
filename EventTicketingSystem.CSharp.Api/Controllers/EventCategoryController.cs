@@ -1,4 +1,6 @@
-﻿namespace EventTicketingSystem.CSharp.Api.Controllers
+﻿using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
+
+namespace EventTicketingSystem.CSharp.Api.Controllers
 {
     [Tags("Event Category")]
     [Route("api/[controller]")]
@@ -20,11 +22,19 @@
 
 
         [HttpPost("CreateCategory")]
-        public async Task<IActionResult> CreateCategory([FromBody] EventCategoryRequestModel request)
+        public async Task<IActionResult> CreateCategory([FromBody] EventCategoryRequestModel requestModel)
         {
-            var response = _blCategory.CreateCategory(request);
+            if (requestModel == null)
+            {
+                return BadRequest("Request model cannot be null.");
+            }
+            var response = await _blCategory.CreateCategory(requestModel);
 
-            return Ok(await response);
+            if (response.IsError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
+            }
+            return Ok(response.Data);
         }
 
         [HttpPost("UpdateCategory")]
@@ -33,32 +43,11 @@
             return Ok(await _blCategory.UpdateCategory(request));
         }
 
-        [HttpPost("CreateCategory1")]
-        public async Task<IActionResult> CreateCategory(string categoryName, string adminName)
+        [HttpDelete("DeleteCategory/{categoryCode}")]
+        public async Task<IActionResult> DeleteCategory(string categoryCode)
         {
-            var request = new EventCategoryRequestModel
-            {
-                CategoryName = categoryName,
-                AdminName = adminName
-            };
-
-            var response = _blCategory.CreateCategory(request);
-            return Ok(await response);
-        }
-
-        [HttpPost("UpdateCategory1")]
-        public async Task<IActionResult> UpdateCategory(string categoryName, string adminName, string categoryCode)
-        {
-            var request = new EventCategoryRequestModel
-            {
-                CategoryCode = categoryCode,
-                CategoryName = categoryName,
-                AdminName = adminName
-            };
-
-            var response = _blCategory.UpdateCategory(request);
-            
-            return Ok(await response);
+            var request = new EventCategoryRequestModel { CategoryCode= categoryCode};
+            return Ok(await _blCategory.DeleteCategory(request));
         }
 
         #endregion

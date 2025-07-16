@@ -12,17 +12,14 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
     public class DA_EventCategory
     {
         private readonly ILogger<DA_EventCategory> _logger;
-        private readonly AppDbContext _db ;
+        private readonly AppDbContext _db;
 
         public DA_EventCategory(ILogger<DA_EventCategory> logger, AppDbContext db)
         {
             _logger = logger;
             _db = db;
         }
-        private int getCategoryCount()
-        {
-            return _db.TblCategories.Count();
-        }
+
 
         #region Get category list
         public async Task<Result<EventCategoryResponseModel>> GetList()
@@ -31,8 +28,12 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             var model = new EventCategoryResponseModel();
             try
             {
-                var data = await _db.TblCategories.ToListAsync();
-                model.EventCategories = data.Select(x => new EventCategoryModel
+                var data = await _db.TblCategories
+                                    .AsNoTracking()
+                                    .Where(x=>x.Deleteflag == false)
+                                    .ToListAsync();
+
+                model.EventCategories = data.Select(x => new EventCategoryModel 
                 {
                     Categoryid = x.Categoryid,
                     Categorycode = x.Categorycode,
@@ -41,7 +42,8 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                     Createdat = x.Createdat,
                     Modifiedby = x.Modifiedby,
                     Modifiedat = x.Modifiedat,
-                    
+                    Deleteflag = false
+
                 }).ToList();
 
                 return Result<EventCategoryResponseModel>.Success(model);
@@ -58,39 +60,38 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
 
         public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
         {
+            var responseModel = new Result<EventCategoryResponseModel>();
             var model = new EventCategoryResponseModel();
-            if (request.AdminName.IsNullOrEmpty())
+
+            if (request.CategoryName.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
-            }
-            else if (request.CategoryName.IsNullOrEmpty()) 
+                responseModel = Result<EventCategoryResponseModel>.ValidationError("Fill up Category Name!");
+                goto ResultReturn;
+            } else if (isCategoryNameExist(request.CategoryName))
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
+                responseModel = Result<EventCategoryResponseModel>.ValidationError("CategoryName already exist!");
+                goto ResultReturn;
             }
             else
             {
                 try
                 {
-                    if (isCategoryNameExist(request.CategoryName)){
-                        return Result<EventCategoryResponseModel>.ValidationError("Category name already exist", model);
-                    }
-                    else
+                    var newCategory = new TblCategory
                     {
-                        int count = getCategoryCount();
-                        count++;
-                        _db.TblCategories.Add(new TblCategory()
-                        {
-                            Categoryid = Ulid.NewUlid().ToString(),
-                            Categorycode = "E00" + count.ToString(),
-                            Categoryname = request.CategoryName,
-                            Createdat = DateTime.Now,
-                            Createdby = request.AdminName,
-                            Deleteflag = false
-                        });
-                        _db.SaveChanges();
-                        return Result<EventCategoryResponseModel>.Success(model);
-                    }
+                        Categoryid = Ulid.NewUlid().ToString(),
+                        Categorycode = GenerateCategoryCode(),
+                        Categoryname = request.CategoryName,
+                        Createdat = DateTime.Now,
+                        Createdby = "",
+                        Deleteflag = false
+                    };
+                    await _db.TblCategories.AddAsync(newCategory);
+                    await _db.SaveChangesAsync();
+
+                    model.eventCategory = EventCategoryModel.FromTblCategory(newCategory);
                    
+                    responseModel = Result<EventCategoryResponseModel>.Success(model, "New Category Created");
+
                 }
                 catch (Exception ex)
                 {
@@ -98,8 +99,8 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                     return Result<EventCategoryResponseModel>.SystemError(ex.Message);
                 }
             }
-
-                
+            ResultReturn:
+            return responseModel;
         }
 
         #endregion
@@ -110,11 +111,11 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             var model = new EventCategoryResponseModel();
             if (request.AdminName.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
             }
             else if (request.CategoryName.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Category name not found", model);
             }
             else
             {
@@ -148,11 +149,41 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         #endregion
 
         #region Delete Category
-        //public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string categoryCode)
-        //{
+        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode)
+        {
+            var responseModel = new Result<EventCategoryResponseModel>();
+            var model = new EventCategoryResponseModel();
+            if (categoryCode.IsNullOrEmpty())
+            {
+                responseModel = Result<EventCategoryResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+                goto ResultReturn;
+            }
+            try
+            {
+                var data = await _db.TblCategories
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(x => x.Categorycode == categoryCode && x.Deleteflag == false);
 
-
-        //}
+                if (data != null)
+                {
+                    data.Deleteflag = true;
+                    _db.Entry(data).State = EntityState.Modified;
+                    await _db.SaveChangesAsync();
+                    responseModel = Result<EventCategoryResponseModel>.Success(model, "Category Deleted Successfully!");
+                }
+                else
+                {
+                    responseModel = Result<EventCategoryResponseModel>.NotFoundError($"No Owner Found with Code: {categoryCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogExceptionError(ex);
+                responseModel = Result<EventCategoryResponseModel>.SystemError(ex.Message);
+            }
+        ResultReturn:
+            return responseModel;
+        }
         #endregion
 
         #region Private function 
@@ -175,6 +206,12 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             {
                 return false;
             }
+        }
+
+        private string GenerateCategoryCode()
+        {
+            var categoryCount = _db.TblCategories.Count();
+            return "EC" + categoryCount.ToString("D6");
         }
 
         #endregion

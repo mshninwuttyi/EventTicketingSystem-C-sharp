@@ -9,15 +9,16 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
     public class EventCategoryResponseModel
     {
         public List<EventCategoryModel> EventCategories { get; set; }
+        public EventCategoryModel eventCategory { get; set; }
     }
     
     public class EventCategoryModel
     {
-        public string Categoryid { get; set; }
+        public string? Categoryid { get; set; }
 
-        public string Categorycode { get; set; }
+        public string? Categorycode { get; set; }
 
-        public string Categoryname { get; set; }
+        public string? Categoryname { get; set; }
 
         public string? Createdby { get; set; }
 
@@ -28,6 +29,22 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         public DateTime? Modifiedat { get; set; }
 
         public bool? Deleteflag { get; set; }
+
+        public static EventCategoryModel FromTblCategory(TblCategory category)
+        {
+            return new EventCategoryModel
+            {
+               Categoryid = category.Categoryid,
+               Categorycode = category.Categorycode,
+               Categoryname = category.Categoryname,
+               Createdby = category.Createdby,
+               Createdat = category.Createdat,
+               Modifiedby = category.Modifiedby,
+               Modifiedat = category.Modifiedat,
+               Deleteflag = category.Deleteflag,
+            };
+        }
+
     }
 
 }

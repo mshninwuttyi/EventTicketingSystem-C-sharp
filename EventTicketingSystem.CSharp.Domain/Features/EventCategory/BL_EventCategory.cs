@@ -27,5 +27,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             return await _dataAccess.UpdateCategory(request);
         }
 
+        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(EventCategoryRequestModel request)
+        {
+            return await _dataAccess.DeleteCategory(request.CategoryCode);
+        }
     }
 }
