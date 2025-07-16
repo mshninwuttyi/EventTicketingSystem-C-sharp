@@ -1,4 +1,5 @@
 ﻿using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
+using EventTicketingSystem.CSharp.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
@@ -73,6 +74,13 @@ public class DA_SearchEventsAndVenues
                 Events = EventResult,
                 Venues = VenueResult
             };
+
+            var eventsData = SearchResult.Events.Count();
+            var venuesData = SearchResult.Venues.Count();
+            if (eventsData == 0 && venuesData == 0)
+            {
+                return Result<SearchListEventsAndVenuesResponseModel>.NotFoundError("No events or venues found matching the search term.");
+            }
 
             return Result<SearchListEventsAndVenuesResponseModel>.Success(SearchResult);
         }
