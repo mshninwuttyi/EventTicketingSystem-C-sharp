@@ -1,10 +1,12 @@
 ﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
+[Tags("Business Email")]
 [Route("api/[controller]")]
 [ApiController]
 public class BusinessEmailController : ControllerBase
 {
     private readonly BL_BusinessEmail _bl_BusinessEmail;
+
     public BusinessEmailController(BL_BusinessEmail bl_BusinessEmail)
     {
         _bl_BusinessEmail = bl_BusinessEmail;
@@ -44,7 +46,6 @@ public class BusinessEmailController : ControllerBase
         return Ok(result.Data);
     }
 
-
     [HttpGet("GetList")]
     public async Task<IActionResult> GetList()
     {
@@ -57,5 +58,4 @@ public class BusinessEmailController : ControllerBase
 
         return Ok(result.Data);
     }
-
 }

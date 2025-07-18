@@ -5,27 +5,25 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblTicketprice
 {
-    public string? Ticketpriceid { get; set; }
+    public string Ticketpriceid { get; set; } = null!;
 
-    public string? Ticketpricecode { get; set; }
+    public string Ticketpricecode { get; set; } = null!;
 
-    public string? Eventcode { get; set; }
+    public string Eventcode { get; set; } = null!;
 
-    public string? Tickettypecode { get; set; }
+    public string Tickettypecode { get; set; } = null!;
 
-    public decimal? Ticketprice { get; set; }
+    public decimal Ticketprice { get; set; }
 
-    public int? Ticketquantity { get; set; }
+    public int Ticketquantity { get; set; }
 
-    public string? Createdby { get; set; }
+    public string Createdby { get; set; } = null!;
 
-    public DateTime? Createdat { get; set; }
+    public DateTime Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifiedat { get; set; }
 
-    public bool? Deleteflag { get; set; }
-    public virtual TblTickettype? TicketType { get; set; }
-    public virtual ICollection<TblTicket> Tickets { get; set; } = new List<TblTicket>();
+    public bool Deleteflag { get; set; }
 }

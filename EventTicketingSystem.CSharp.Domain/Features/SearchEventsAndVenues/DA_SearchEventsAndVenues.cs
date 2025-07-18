@@ -1,4 +1,5 @@
 ﻿using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
+using EventTicketingSystem.CSharp.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
@@ -26,7 +27,7 @@ public class DA_SearchEventsAndVenues
                 Eventid = e.Eventid,
                 Eventcode = e.Eventcode,
                 Eventname = e.Eventname,
-                Categorycode = e.Categorycode,
+                Categorycode = e.Eventcategorycode,
                 Description = e.Description,
                 Address = e.Address,
                 Startdate = e.Startdate,
@@ -53,13 +54,13 @@ public class DA_SearchEventsAndVenues
                     Venueid = v.Venueid,
                     Venuecode = v.Venuecode,
                     Venuename = v.Venuename,
-                    Venuedetailcode = v.Venuedetailcode,
+                    //Venuedetailcode = v.Venuedetailcode,
                     Venuetypecode = v.Venuetypecode,
-                    Venuedescription = v.Venuedescription,
-                    Venueaddress = v.Venueaddress,
-                    Venuecapacity = v.Venuecapacity,
-                    Venuefacilities = v.Venuefacilities,
-                    Venueaddons = v.Venueaddons,
+                    Venuedescription = v.Description,
+                    Venueaddress = v.Address,
+                    Venuecapacity = v.Capacity,
+                    Venuefacilities = v.Facilities,
+                    Venueaddons = v.Addons,
                     Createdby = v.Createdby,
                     Createdat = v.Createdat,
                     Modifiedby = v.Modifiedby,
@@ -73,6 +74,13 @@ public class DA_SearchEventsAndVenues
                 Events = EventResult,
                 Venues = VenueResult
             };
+
+            var eventsData = SearchResult.Events.Count();
+            var venuesData = SearchResult.Venues.Count();
+            if (eventsData == 0 && venuesData == 0)
+            {
+                return Result<SearchListEventsAndVenuesResponseModel>.NotFoundError("No events or venues found matching the search term.");
+            }
 
             return Result<SearchListEventsAndVenuesResponseModel>.Success(SearchResult);
         }

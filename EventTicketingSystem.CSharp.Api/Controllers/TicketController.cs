@@ -1,62 +1,57 @@
-using EventTicketingSystem.CSharp.Domain.Features.Ticket;
-using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
+namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-namespace EventTicketingSystem.CSharp.Api.Controllers
+[Tags("Ticket")]
+[Route("api/[controller]")]
+[ApiController]
+public class TicketController : ControllerBase
 {
-    [Tags("Ticket")]
-    [Route("api/[controller]")]
-    [ApiController]
+    private readonly BL_Ticket _blTicket;
 
-    public class TicketController : ControllerBase
+    public TicketController(BL_Ticket blTicket)
     {
-        private readonly BL_Ticket _blTicket;
+        _blTicket = blTicket;
+    }
 
-        public TicketController(BL_Ticket blTicket)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] TicketRequestModel requestModel)
+    {
+        if (requestModel == null)
         {
-            _blTicket = blTicket;
+            return BadRequest("Request model cannot be null.");
+        }
+        var result = await _blTicket.CreateTicket(requestModel);
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TicketRequestModel requestModel)
+        return Ok(result.Data);
+    }
+
+    [HttpGet("GetList")]
+    public async Task<IActionResult> GetList()
+    {
+        var result = await _blTicket.GetAllTicket();
+
+        if (result.IsError)
         {
-            if (requestModel == null)
-            {
-                return BadRequest("Request model cannot be null.");
-            }
-            var result = await _blTicket.CreateTicket(requestModel);
-
-            if (result.IsError)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-            }
-
-            return Ok(result.Data);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        [HttpGet("GetList")]
-        public async Task<IActionResult> GetList()
+        return Ok(result.Data);
+    }
+
+    [HttpGet]
+    [Route("/admin/Tickets")]
+    public async Task<IActionResult> GetTicketList()
+    {
+       
+        var result = await _blTicket.GetTicketList();
+        if (result.IsError)
         {
-            var result = await _blTicket.GetAllTicket();
-
-            if (result.IsError)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-            }
-
-            return Ok(result.Data);
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
-
-        [HttpGet]
-        [Route("/admin/Tickets")]
-        public async Task<IActionResult> GetTicketList()
-        {
-           
-            var result = await _blTicket.GetTicketList();
-            if (result.IsError)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-            }
-            return Ok(result.Data);
-        }
+        return Ok(result.Data);
     }
 }

@@ -1,11 +1,9 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-namespace EventTicketingSystem.CSharp.Api.Controllers;
-
+[Tags("Search Menu")]
 [ApiController]
 [Route("api/[controller]")]
-
-public class SearchEventsAndVenuesController : Controller
+public class SearchEventsAndVenuesController : ControllerBase
 {
     private readonly BL_SearchEventsAndVenues _bl_SearchEventsAndVenues;
 
@@ -15,7 +13,7 @@ public class SearchEventsAndVenuesController : Controller
     }
 
     [HttpGet]
-    public IActionResult SearchEventsAndVenues([FromQuery] string searchTerm)
+    public IActionResult SearchEventsAndVenues([FromBody] string searchTerm)
     {
         if (string.IsNullOrEmpty(searchTerm))
         {
@@ -29,6 +27,6 @@ public class SearchEventsAndVenuesController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 }
