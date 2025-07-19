@@ -1,4 +1,6 @@
-﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
+﻿using EventTicketingSystem.CSharp.Shared;
+
+namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Search Menu")]
 [ApiController]
@@ -27,6 +29,23 @@ public class SearchEventsAndVenuesController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
+        return Ok(result);
+    }
+
+    [HttpGet]
+    public IActionResult SearchEventsByDate([FromBody] DateTime StartDate, DateTime EndDate)
+    {
+        if (StartDate.IsNullOrEmpty())
+        {
+            return BadRequest("Search date cannot be null or empty.");
+        }
+
+        var result = _bl_SearchEventsAndVenues.SearchEventsByDate(StartDate, EndDate).Result;
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
         return Ok(result);
     }
 }

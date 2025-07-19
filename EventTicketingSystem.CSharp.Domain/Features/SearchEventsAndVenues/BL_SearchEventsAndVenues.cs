@@ -15,4 +15,9 @@ public class BL_SearchEventsAndVenues
     {
         return await _da_SearchEventsAndVenues.SearchEventsAndVenues(searchTerm);
     }
+
+    public async Task<Result<SearchListEventsResponseModel>> SearchEventsByDate(DateTime StartDate, DateTime EndDate)
+    {
+        return await _da_SearchEventsAndVenues.SearchEventsByDate(StartDate, EndDate);
+    }
 }

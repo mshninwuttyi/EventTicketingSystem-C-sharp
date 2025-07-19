@@ -90,4 +90,53 @@ public class DA_SearchEventsAndVenues
             return Result<SearchListEventsAndVenuesResponseModel>.SystemError(ex.Message);
         }
     }
+
+    public async Task<Result<SearchListEventsResponseModel>> SearchEventsByDate(DateTime Startdate, DateTime Enddate)
+    {
+        try
+        {
+            var EventResult = await _db.TblEvents
+            .Where(e => e.Startdate >= Startdate && e.Enddate <= Enddate && e.Deleteflag == false)
+            .Select(e => new SearchEventResponseModel
+            {
+                Eventid = e.Eventid,
+                Eventcode = e.Eventcode,
+                Eventname = e.Eventname,
+                Categorycode = e.Eventcategorycode,
+                Description = e.Description,
+                Address = e.Address,
+                Startdate = e.Startdate,
+                Enddate = e.Enddate,
+                Eventimage = e.Eventimage,
+                Isactive = e.Isactive,
+                Eventstatus = e.Eventstatus,
+                Businessownercode = e.Businessownercode,
+                Totalticketquantity = e.Totalticketquantity,
+                Soldoutcount = e.Soldoutcount,
+                Createdby = e.Createdby,
+                Createdat = e.Createdat,
+                Modifiedby = e.Modifiedby,
+                Modifiedat = e.Modifiedat
+            })
+            .AsNoTracking()
+            .ToListAsync();
+
+            var SearchResult = new SearchListEventsResponseModel
+            {
+                Events = EventResult
+            };
+
+            if (EventResult.Count == 0)
+            {
+                return Result<SearchListEventsResponseModel>.NotFoundError("No events found matching the search date.");
+            }
+
+            return Result<SearchListEventsResponseModel>.Success(SearchResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<SearchListEventsResponseModel>.SystemError(ex.Message);
+        }
+    }
 }
