@@ -15,7 +15,7 @@ public class SearchEventsAndVenuesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult SearchEventsAndVenues([FromBody] string searchTerm)
+    public IActionResult SearchEventsAndVenues(string searchTerm)
     {
         if (string.IsNullOrEmpty(searchTerm))
         {
@@ -32,8 +32,9 @@ public class SearchEventsAndVenuesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet]
-    public IActionResult SearchEventsByDate([FromBody] DateTime StartDate, DateTime EndDate)
+    //[HttpGet("{StartDate, EndDate}")]
+    [HttpGet("BetweenDate")]
+    public IActionResult SearchEventsByDate(DateTime StartDate, DateTime EndDate)
     {
         if (StartDate.IsNullOrEmpty())
         {
@@ -41,6 +42,23 @@ public class SearchEventsAndVenuesController : ControllerBase
         }
 
         var result = _bl_SearchEventsAndVenues.SearchEventsByDate(StartDate, EndDate).Result;
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+        return Ok(result);
+    }
+
+    [HttpGet("BetweenAmount")]
+    public IActionResult SearchEventsByAmount(decimal FromAmount, decimal ToAmount)
+    {
+        if (FromAmount <= 0 || ToAmount <= 0)
+        {
+            return BadRequest("Search amount cannot be less than or equal to zero.");
+        }
+
+        var result = _bl_SearchEventsAndVenues.SearchEventsByAmountAsync(FromAmount, ToAmount).Result;
 
         if (result.IsError)
         {
