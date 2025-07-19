@@ -139,4 +139,31 @@ public class DA_Ticket
             return Result<List<TicketResponseModel>>.SystemError(ex.Message);
         }
     }
+
+    public async Task<Result<TicketResponseModel>> DeleteById(string id)
+    {
+        try
+        {
+            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id && x.Deleteflag == false);
+            if (data == null)
+            {
+                return Result<TicketResponseModel>.NotFoundError("No Data Found!");
+            }
+
+            var model = await _db.TblTickets
+                .Where(x => x.Ticketid == id && x.Deleteflag == false)
+                .FirstOrDefaultAsync();
+            model!.Deleteflag = true;
+
+            _db.Entry(model).State = EntityState.Modified;
+            var result = _db.SaveChanges();
+            return Result<TicketResponseModel>.Success("Ticket is deleted successfully!");
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<TicketResponseModel>.SystemError(ex.Message);
+        }
+    }
 }

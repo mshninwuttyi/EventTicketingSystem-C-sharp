@@ -54,4 +54,19 @@ public class TicketController : ControllerBase
         }
         return Ok(result.Data);
     }
+
+    [HttpDelete("DeleteTicket/{id}")]
+    public async Task<IActionResult> DeleteById(string id)
+    {
+        var result = await _blTicket.DeleteById(id);
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+
+        return Ok(result);
+    }
+
+
 }
