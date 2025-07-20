@@ -25,7 +25,11 @@ namespace EventTicketingSystem.CSharp.Domain.Models.Features.Event
 
         public string? Eventimage { get; set; }
 
+        public bool? Isactive { get; set; }
+
         public string? Eventstatus { get; set; }
+        public int? Totalticketquantity { get; set; }
+
 
     }
 }
