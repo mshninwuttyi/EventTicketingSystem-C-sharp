@@ -19,7 +19,7 @@ public class BL_VerificationCode
         return await _daService.GetVCodeById(request.Verificationid);
     }
 
-    public async Task<Result<VCResponseModel>> CreateNewBusinessOwner(VCRequestModel request)
+    public async Task<Result<VCResponseModel>> CreateNewVC(VCRequestModel request)
     {
         return await _daService.CreateVCode(request);
     }
