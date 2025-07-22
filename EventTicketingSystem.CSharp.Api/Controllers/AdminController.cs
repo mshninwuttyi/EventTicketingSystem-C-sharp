@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
+[Tags("Admin Users")]
 [Route("api/[controller]")]
 [ApiController]
 public class AdminController : ControllerBase
@@ -23,10 +24,10 @@ public class AdminController : ControllerBase
         return Ok(data);
     }
 
-    [HttpGet("GetAdminByCode/{admincode}")]
-    public async Task<IActionResult> GetAdminByCode(string admincode)
+    [HttpGet("GetAdminByCode/{adminCode}")]
+    public async Task<IActionResult> GetAdminByCode(string adminCode)
     {
-        var data = await _blAdmin.GetAdminByCode(admincode);
+        var data = await _blAdmin.GetAdminByCode(adminCode);
         return Ok(data);
     }
 
@@ -37,17 +38,17 @@ public class AdminController : ControllerBase
         return Ok(data);
     }
 
-    [HttpPatch("UpdateAdmin/{admincode}")]
-    public async Task<IActionResult> UpdateAdmin (string admincode, AdminRequestModel requestModel)
+    [HttpPatch("UpdateAdmin/{adminCode}")]
+    public async Task<IActionResult> UpdateAdmin (string adminCode, AdminRequestModel requestModel)
     {
-        var data = await _blAdmin.UpdateAdmin(admincode, requestModel);
+        var data = await _blAdmin.UpdateAdmin(adminCode, requestModel);
         return Ok(data);
     }
 
-    [HttpDelete("DeleteAdmin/{admincode}")]
-    public async Task<IActionResult> DeleteAdmin(string admincode)
+    [HttpDelete("DeleteAdmin/{adminCode}")]
+    public async Task<IActionResult> DeleteAdmin(string adminCode)
     {
-        var data = await _blAdmin.DeleteAdminByCode(admincode);
+        var data = await _blAdmin.DeleteAdminByCode(adminCode);
         return Ok(data);
     }
 }

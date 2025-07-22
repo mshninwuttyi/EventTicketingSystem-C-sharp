@@ -44,12 +44,12 @@ public class DA_Admin
     #endregion
 
     #region GetAdminByCode
-    public async Task<Result<AdminResponseModel>> GetAdminByCodeAsync(string code)
+    public async Task<Result<AdminResponseModel>> GetAdminByCodeAsync(string adminCode)
     {
         var responseModel = new Result<AdminResponseModel>();
         var model = new AdminResponseModel();
 
-        if (string.IsNullOrEmpty(code))
+        if (string.IsNullOrEmpty(adminCode))
         {
             responseModel = Result<AdminResponseModel>.UserInputError("Admin Code cannot be null or empty.");
             goto ReturnResult;
@@ -58,7 +58,7 @@ public class DA_Admin
         var admin = await _db.TblAdmins
                             .AsNoTracking()
                             .Where(x => x.Deleteflag == false)
-                            .FirstOrDefaultAsync(x => x.Admincode == code);
+                            .FirstOrDefaultAsync(x => x.Admincode == adminCode);
         if (admin is null)
         {
             responseModel = Result<AdminResponseModel>.NotFoundError("There is no admin with that admin code.");
@@ -274,12 +274,12 @@ public class DA_Admin
     #endregion
 
     #region DeleteAdmin
-    public async Task<Result<AdminResponseModel>> DeleteAdminByCode(string code)
+    public async Task<Result<AdminResponseModel>> DeleteAdminByCode(string adminCode)
     {
         var responseModel = new Result<AdminResponseModel>();
         var model = new AdminResponseModel();
 
-        if (string.IsNullOrEmpty(code))
+        if (string.IsNullOrEmpty(adminCode))
         {
             responseModel = Result<AdminResponseModel>.UserInputError("The admin code cannot be null or empty.");
             return responseModel;
@@ -288,7 +288,7 @@ public class DA_Admin
         var data = await _db.TblAdmins
                         .AsNoTracking()
                         .Where(x=>x.Deleteflag==false)
-                        .FirstOrDefaultAsync(x=>x.Admincode == code);
+                        .FirstOrDefaultAsync(x=>x.Admincode == adminCode);
 
         if (data is null)
         {

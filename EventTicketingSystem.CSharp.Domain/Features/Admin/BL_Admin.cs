@@ -22,9 +22,9 @@ public class BL_Admin
         return data;
     }
 
-    public async Task<Result<AdminResponseModel>> GetAdminByCode(string code)
+    public async Task<Result<AdminResponseModel>> GetAdminByCode(string adminCode)
     {
-        var data = await _dataAccess.GetAdminByCodeAsync(code);
+        var data = await _dataAccess.GetAdminByCodeAsync(adminCode);
         return data;
     }
 
@@ -34,15 +34,15 @@ public class BL_Admin
         return data;
     }
 
-    public async Task<Result<AdminResponseModel>> UpdateAdmin (string code, AdminRequestModel requestModel)
+    public async Task<Result<AdminResponseModel>> UpdateAdmin (string adminCode, AdminRequestModel requestModel)
     {
-        var data = await _dataAccess.UpdateAdminAsync(code, requestModel);
+        var data = await _dataAccess.UpdateAdminAsync(adminCode, requestModel);
         return data;
     }
 
-    public async Task<Result<AdminResponseModel>> DeleteAdminByCode(string code)
+    public async Task<Result<AdminResponseModel>> DeleteAdminByCode(string adminCode)
     {
-        var data = await _dataAccess.DeleteAdminByCode(code);
+        var data = await _dataAccess.DeleteAdminByCode(adminCode);
         return data;
     }
 }
