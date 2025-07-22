@@ -28,4 +28,19 @@ public class VCodeModel{
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
+
+    public static VCodeModel FromTblVerification(TblVerification verification)
+    {
+        return new VCodeModel
+        {
+            Verificationid = verification.Verificationid,
+            Verificationcode = verification.Verificationcode,
+            Email = verification.Email,
+            Createdby = verification.Createdby,
+            Createdat = verification.Createdat,
+            Modifiedat = verification.Modifiedat,
+            Modifiedby = verification.Modifiedby,
+            Deleteflag = verification.Deleteflag,
+        };
+    }
 }
