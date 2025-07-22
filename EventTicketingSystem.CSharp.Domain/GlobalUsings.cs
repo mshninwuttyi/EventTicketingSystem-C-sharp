@@ -14,3 +14,4 @@ global using EventTicketingSystem.CSharp.Domain.Features.EventCategory;
 global using EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
 global using EventTicketingSystem.CSharp.Domain.Features.Ticket;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
