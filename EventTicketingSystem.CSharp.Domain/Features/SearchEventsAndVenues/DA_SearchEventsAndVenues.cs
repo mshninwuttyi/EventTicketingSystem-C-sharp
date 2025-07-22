@@ -95,8 +95,10 @@ public class DA_SearchEventsAndVenues
     {
         try
         {
+            var nextDay = Enddate.AddDays(1);
+
             var EventResult = await _db.TblEvents
-            .Where(e => e.Startdate >= Startdate && e.Startdate <= Enddate && e.Deleteflag == false)
+            .Where(e => e.Startdate >= Startdate && e.Startdate < nextDay && e.Deleteflag == false)
             .Select(e => new SearchEventResponseModel
             {
                 Eventid = e.Eventid,
