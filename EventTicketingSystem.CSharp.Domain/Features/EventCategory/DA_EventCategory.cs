@@ -111,7 +111,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
             var model = new EventCategoryResponseModel();
             if (request.AdminCode.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Admin not found", model);
             }
             else if (request.CategoryName.IsNullOrEmpty())
             {
@@ -122,9 +122,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 try
                 {
 
-                    if (isCategoryCodeExist(request.EventCategoryCode))
+                    if (isCategoryIDExist(request.EventCategoryID))
                     {
-                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == request.EventCategoryCode);
+                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid == request.EventCategoryID);
                     
                         existingCategory.Categoryname = request.CategoryName;
                         existingCategory.Modifiedby = request.AdminCode;
@@ -197,9 +197,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool isCategoryCodeExist(string? categoryCode)
+        private bool isCategoryIDExist(string? categoryID)
         {
-            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == categoryCode) is not null)
+            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid== categoryID) is not null)
             {
                 return true;
             }

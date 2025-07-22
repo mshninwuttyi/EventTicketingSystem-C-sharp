@@ -43,6 +43,7 @@ public class EventCategoryController : ControllerBase
     public async Task<IActionResult> UpdateEventCategory(string eventCategoryID,[FromBody] EventCategoryRequestModel request)
     {
         request.AdminCode = userCode; 
+        request.EventCategoryID = eventCategoryID;
         return Ok(await _blEventCategory.UpdateEventCategory(request));
     }
 
