@@ -1,4 +1,4 @@
-﻿global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
@@ -22,5 +22,6 @@ global using EventTicketingSystem.CSharp.Domain.Features.Venue;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
 global using static EventTicketingSystem.CSharp.Shared.DevCode;
 global using EventTicketingSystem.CSharp.Domain.Common;
