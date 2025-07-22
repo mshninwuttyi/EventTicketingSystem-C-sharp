@@ -4,11 +4,13 @@ public class CommonService
 {
     private readonly AppDbContext _db;
     private readonly DapperService _dapper;
- 
-    public CommonService(AppDbContext db, DapperService dapper)
+    private readonly ILogger<CommonService> _logger;
+
+    public CommonService(AppDbContext db, DapperService dapper, ILogger<CommonService> logger)
     {
         _db = db;
         _dapper = dapper;
+        _logger = logger;
     }
 
     #region Create Sequence for Event
@@ -72,7 +74,7 @@ public class CommonService
     }
 
     #endregion
-    
+
     #region Generate Event Sequence Code
 
     public async Task<string> GenerateEventSequenceCode(string uniqueName, string eventCode)
@@ -82,7 +84,7 @@ public class CommonService
                         .Where(
                             x => x.Uniquename == uniqueName &&
                             x.Sequencetype == EnumSequenceType.Event.ToString() &&
-                            x.Eventcode == eventCode && 
+                            x.Eventcode == eventCode &&
                             x.Deleteflag == false)
                         .FirstOrDefaultAsync();
 
@@ -136,6 +138,126 @@ public class CommonService
         sequenceCode += sequenceNo;
 
         return sequenceCode;
+    }
+
+    #endregion
+
+    #region Delete Expired Ticket QR Images
+
+    public async Task<bool> DeleteExpiredQrImages(List<IFormFile> files)
+    {
+        var deletedFiles = new List<string>();
+
+        var qrImagePath = Path.Combine(Directory.GetCurrentDirectory(), EnumDirectory.QrImage.ToString());
+
+        foreach (var file in files)
+        {
+            var fileName = Path.GetFileName(file.FileName);
+
+            var transactionTicket = await _db.TblTransactiontickets
+                .FirstOrDefaultAsync(x => x.Qrstring == fileName);
+
+            if (transactionTicket is null)
+            {
+                return true;
+            }
+
+            var ticket = await _db.TblTickets
+                .FirstOrDefaultAsync(x => x.Ticketcode == transactionTicket.Ticketcode);
+
+            if (ticket != null && !ticket.Isused)
+            {
+                var fullPath = Path.Combine(qrImagePath, fileName);
+
+                if (File.Exists(fullPath))
+                {
+                    try
+                    {
+                        File.Delete(fullPath);
+                        deletedFiles.Add(fileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogExceptionError(ex);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    #endregion
+
+    #region Delete Images Not Exist
+
+    public async Task<bool> DeleteExtraFiles()
+    {
+        try
+        {
+            var eventImagesInDb = await _db.TblEvents
+                .Select(x => x.Eventimage)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToListAsync();
+
+            DeleteExtraFilesForDirectory(EnumDirectory.EventImage, eventImagesInDb);
+
+            //var venueImagesInDb = await _db.TblVenues
+            //    .Select(x => x.Venueimage)
+            //    .Where(x => !string.IsNullOrEmpty(x))
+            //    .ToListAsync();
+
+            //DeleteExtraFilesForDirectory(EnumDirectory.VenueImage, venueImagesInDb);
+
+            var qrImagesInDb = await _db.TblTransactiontickets
+                .Select(x => x.Qrstring)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToListAsync();
+
+            DeleteExtraFilesForDirectory(EnumDirectory.QrImage, qrImagesInDb);
+
+            //var adminProfilesInDb = await _db.TblAdmins
+            //    .Select(x => x.Profileimage)
+            //    .Where(x => !string.IsNullOrEmpty(x))
+            //    .ToListAsync();
+
+            //DeleteExtraFilesForDirectory(EnumDirectory.ProfileImage, adminProfilesInDb);
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error deleting image ==> {ex.ToString()}.");
+        }
+    }
+
+    private List<string> DeleteExtraFilesForDirectory(EnumDirectory directory, List<string> validFileNames)
+    {
+        var deletedFiles = new List<string>();
+        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), directory.ToString());
+
+        var allFiles = Directory.GetFiles(folderPath);
+
+        foreach (var filePath in allFiles)
+        {
+            var fileName = Path.GetFileName(filePath);
+
+            if (!validFileNames.Contains(fileName, StringComparer.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    File.Delete(filePath);
+                    deletedFiles.Add(fileName);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error deleting image ==> {ex.ToString()}.");
+                }
+            }
+        }
+
+        return deletedFiles;
     }
 
     #endregion

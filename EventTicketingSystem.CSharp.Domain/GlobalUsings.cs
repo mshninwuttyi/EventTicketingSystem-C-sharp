@@ -25,3 +25,4 @@ global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
 global using static EventTicketingSystem.CSharp.Shared.DevCode;
 global using EventTicketingSystem.CSharp.Domain.Common;
+global using Microsoft.AspNetCore.Http;

@@ -2,6 +2,8 @@
 
 public static partial class DevCode
 {
+    private const long MaxFileSize = 5 * 1024 * 1024;
+
     #region Extensions
 
     public static string ToJson(this object obj)
@@ -154,6 +156,65 @@ public static partial class DevCode
         }
 
         return res;
+    }
+
+    #endregion
+
+    #region File Upload
+
+    public static async Task<FileUploadData> UploadFileAsync(IFormFile file, EnumDirectory directory)
+    {
+        if (file is null || file.Length is 0)
+        {
+            throw new Exception("Error: No file was uploaded.");
+        }
+
+        if (file.Length > MaxFileSize)
+        {
+            throw new Exception($"Error: '{file.FileName}' exceeds 5MB limit.");
+        }
+
+        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), directory.ToString());
+        if (!Directory.Exists(uploadPath))
+        {
+            Directory.CreateDirectory(uploadPath);
+        }
+
+        var fileName = $"{Guid.NewGuid()}.jpeg";
+        var filePath = Path.Combine(uploadPath, fileName);
+
+        try
+        {
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            fileStream.Position = 0;
+
+            return new FileUploadData
+            {
+                FilePath = filePath,
+                FileName = fileName
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error uploading '{file.FileName}': {ex.Message}");
+        }
+    }
+
+    #endregion
+
+    #region Get Base64 File Extension
+
+    public static async Task<string> GetBase64FromFile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            throw new Exception($"File not found at path: {filePath}");
+        }
+
+        byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
+        return Convert.ToBase64String(fileBytes);
     }
 
     #endregion
