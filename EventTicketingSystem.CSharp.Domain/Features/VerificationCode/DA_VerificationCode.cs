@@ -62,15 +62,20 @@ public class DA_VerificationCode
     #endregion
 
     #region Get Verification Code
-    public async Task<Result<VCResponseModel>> GetVCodeByCode(string code)
+    public async Task<Result<VCResponseModel>> GetVCodeById(string? id)
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
         try
         {
+            if(id == null)
+            {
+                responseModel = Result<VCResponseModel>.ValidationError("Id can't be null here.");
+                goto ReturnResult;
+            }
             var data = await _db.TblVerifications
                         .AsNoTracking()
-                        .Where(x => x.Deleteflag == false && x.Verificationcode == code).FirstOrDefaultAsync();
+                        .Where(x => x.Deleteflag == false && x.Verificationid == id).FirstOrDefaultAsync();
 
             if (data != null)
             {
@@ -79,7 +84,7 @@ public class DA_VerificationCode
             }
             else
             {
-                responseModel = Result<VCResponseModel>.NotFoundError($"Verification Code with Code: {code} is not found!");
+                responseModel = Result<VCResponseModel>.NotFoundError($"Verification Code with Id: {id} is not found!");
             }
         }
         catch (Exception ex)
@@ -87,16 +92,22 @@ public class DA_VerificationCode
             _logger.LogExceptionError(ex);
             responseModel = Result<VCResponseModel>.SystemError(ex.Message);
         }
+    ReturnResult:
         return responseModel;
     }
     #endregion
 
     #region Verify Code
-    public async Task<Result<bool>> VerifyCodeByEmail(string email, string code)
+    public async Task<Result<bool>> VerifyCodeByEmail(string? email, string? code)
     {
         var responseModel = new Result<bool>();
         try
         {
+            if(email.IsNullOrEmpty() || code.IsNullOrEmpty())
+            {
+                responseModel = Result<bool>.ValidationError("Invalid Email or Code!");
+                goto ReturnResult;
+            }
             var data = await _db.TblVerifications
                         .AsNoTracking()
                         .Where(x => x.Deleteflag == false && x.Email == email).OrderByDescending(x => x.Createdat).FirstOrDefaultAsync();
@@ -122,6 +133,7 @@ public class DA_VerificationCode
             _logger.LogExceptionError(ex);
             responseModel = Result<bool>.SystemError(ex.Message);
         }
+    ReturnResult:
         return responseModel;
     }
     #endregion
