@@ -81,30 +81,55 @@ public class DA_Ticket
     {
         try
         {
-            var tickets = await _db.TblTickets
-                            .AsNoTracking()
-                            .Include(t => t.TicketPrice)
-                            .ThenInclude(p => p.TicketType)
-                            .Select(t => new TicketResponseModel
-                            {
-                                    Ticketid = t.Ticketid,
-                                    Ticketcode = t.Ticketcode,
-                                    Ticketpricecode = t.Ticketpricecode,
-                                    Isused = t.Isused,
-                                    Createdby = t.Createdby,
-                                    Createdat = t.Createdat,
-                                    Modifiedby = t.Modifiedby,
-                                    Modifiedat = t.Modifiedat,
-                                    Deleteflag = t.Deleteflag,
-                                    Ticketpriceid = t.TicketPrice!.Ticketpriceid,
-                                    Eventcode = t.TicketPrice.Eventcode,
-                                    Tickettypecode = t.TicketPrice.Tickettypecode,
-                                    Ticketprice = t.TicketPrice.Ticketprice,
-                                    Ticketquantity = t.TicketPrice.Ticketquantity,
-                                    Tickettypeid = t.TicketPrice.TicketType!.Tickettypeid,
-                                    Tickettypename = t.TicketPrice.TicketType.Tickettypename
-                                })
-                            .ToListAsync();
+            //var tickets = await _db.TblTickets
+            //                .AsNoTracking()
+            //                .Include(t => t.Ticketpricecode)
+            //                .ThenInclude(p => p.TicketType)
+            //                .Select(t => new TicketResponseModel
+            //                {
+            //                        Ticketid = t.Ticketid,
+            //                        Ticketcode = t.Ticketcode,
+            //                        Ticketpricecode = t.Ticketpricecode,
+            //                        Isused = t.Isused,
+            //                        Createdby = t.Createdby,
+            //                        Createdat = t.Createdat,
+            //                        Modifiedby = t.Modifiedby,
+            //                        Modifiedat = t.Modifiedat,
+            //                        Deleteflag = t.Deleteflag,
+            //                        Ticketpriceid = t.TicketPrice!.Ticketpriceid,
+            //                        Eventcode = t.TicketPrice.Eventcode,
+            //                        Tickettypecode = t.TicketPrice.Tickettypecode,
+            //                        Ticketprice = t.TicketPrice.Ticketprice,
+            //                        Ticketquantity = t.TicketPrice.Ticketquantity,
+            //                        Tickettypeid = t.TicketPrice.TicketType!.Tickettypeid,
+            //                        Tickettypename = t.TicketPrice.TicketType.Tickettypename
+            //                    })
+            //                .ToListAsync();
+
+            var tickets = await (from t in _db.TblTickets.AsNoTracking()
+                                join tp in _db.TblTicketprices on t.Ticketpricecode equals tp.Ticketpricecode
+                                join tt in _db.TblTickettypes on tp.Tickettypecode equals tt.Tickettypecode
+                                select new TicketResponseModel
+                                    {
+                                        Ticketid = t.Ticketid,
+                                        Ticketcode = t.Ticketcode,
+                                        Ticketpricecode = t.Ticketpricecode,
+                                        Isused = t.Isused,
+                                        Createdby = t.Createdby,
+                                        Createdat = t.Createdat,
+                                        Modifiedby = t.Modifiedby,
+                                        Modifiedat = t.Modifiedat,
+                                        Deleteflag = t.Deleteflag,
+                                        Ticketpriceid = tp.Ticketpriceid,
+                                        Eventcode = tp.Eventcode,
+                                        Tickettypecode = tp.Tickettypecode,
+                                        Ticketprice = tp.Ticketprice,
+                                        Ticketquantity = tp.Ticketquantity,
+                                        Tickettypeid = tt.Tickettypeid,
+                                        Tickettypename = tt.Tickettypename
+                                    }
+                                ).ToListAsync();
+
 
             return Result<List<TicketResponseModel>>.Success(tickets);
         }

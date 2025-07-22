@@ -3,8 +3,8 @@
 public class BusinessEmailListResponseModel
 {
     public List<BusinessEmailModel> BusinessEmails { get; set; } = new List<BusinessEmailModel>();
-
 }
+
 public class BusinessEmailModel
 {
     public string BusinessEmailId { get; set; }
@@ -16,5 +16,4 @@ public class BusinessEmailModel
     public string Phone { get; set; }
 
     public string Email { get; set; }
-
 }

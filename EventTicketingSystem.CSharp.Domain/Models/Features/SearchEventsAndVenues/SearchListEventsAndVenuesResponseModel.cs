@@ -3,6 +3,7 @@
 public class SearchListEventsAndVenuesResponseModel
 {
     public List<SearchEventResponseModel> Events { get; set; } = new List<SearchEventResponseModel>();
+
     public List<SearchVenuesResponseModel> Venues { get; set; } = new List<SearchVenuesResponseModel>();
 }
 

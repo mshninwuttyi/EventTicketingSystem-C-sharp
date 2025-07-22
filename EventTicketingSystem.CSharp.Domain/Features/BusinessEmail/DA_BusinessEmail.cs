@@ -1,37 +1,39 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
-
-namespace EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
 
 public class DA_BusinessEmail
 {
     private readonly ILogger<DA_BusinessEmail> _logger;
     private readonly AppDbContext _db;
-
-    private const string BusinessEmailCodePrefix = "BE";
+    private readonly CommonService _commonService;
     private const string CreatedByUserId = "User";
 
+#warning We will only use EnumTableUniqueName for generating sequence codes.
+    private const string BusinessEmailCodePrefix = "BE";
+
+#warning We will no longer use this method to generate business email codes, as we will use a sequence code generator instead.
     private string NextBusinessEmailCode()
     {
         var count = _db.TblBusinessemails.Count() + 1; // Count existing emails and add 1
         return $"{BusinessEmailCodePrefix}{count:D6}"; // Format with leading zeros
     }
 
-    public DA_BusinessEmail(ILogger<DA_BusinessEmail> logger, AppDbContext db)
+    public DA_BusinessEmail(ILogger<DA_BusinessEmail> logger, AppDbContext db, CommonService commonService)
     {
         _logger = logger;
         _db = db;
+        _commonService = commonService;
     }
 
     public async Task<Result<BusinessEmailResponseModel>> Create(BusinessEmailRequestModel requestModel)
     {
         try
         {
-
+#warning We will use GenerateUlid() to generate unique IDs from DevCode
             // Create a new business email and save to database
             var newBusinessEmail = new TblBusinessemail
             {
-                Businessemailid = Ulid.NewUlid().ToString(),
-                Businessemailcode = NextBusinessEmailCode(),
+                Businessemailid = GenerateUlid(),
+                Businessemailcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_BusinessEmail),
                 Fullname = requestModel.FullName,
                 Phone = requestModel.Phone,
                 Email = requestModel.Email,
@@ -40,7 +42,9 @@ public class DA_BusinessEmail
                 Deleteflag = false
             };
             var entry = await _db.TblBusinessemails.AddAsync(newBusinessEmail);
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
+
+#warning We can use newBusinessEmail instead of entry.Entity after successful saving to the database
 
             // return the created business email response model
             var createdBusinessEmail = entry.Entity;
@@ -67,7 +71,8 @@ public class DA_BusinessEmail
         {
             var data = await _db.TblBusinessemails.FirstOrDefaultAsync(b => b.Businessemailid == id);
 
-            if (data == null)
+#warning We can use 'is null' keyword instead of '== null' for null checks in C# 7.0 and later
+            if (data is null)
             {
                 return Result<BusinessEmailResponseModel>.NotFoundError("No Data Found!");
             }
@@ -95,7 +100,8 @@ public class DA_BusinessEmail
         var model = new BusinessEmailListResponseModel();
         try
         {
-            var data = await _db.TblBusinessemails.ToListAsync();
+#warning We need to add some conditions to check if the id is valid e.g. deleteflag is false, etc.
+            var data = await _db.TblBusinessemails.Where(x => x.Deleteflag == false).ToListAsync();
 
             model.BusinessEmails = data.Select(x => new BusinessEmailModel
             {
@@ -114,5 +120,4 @@ public class DA_BusinessEmail
             return Result<BusinessEmailListResponseModel>.SystemError(ex.Message);
         }
     }
-
 }

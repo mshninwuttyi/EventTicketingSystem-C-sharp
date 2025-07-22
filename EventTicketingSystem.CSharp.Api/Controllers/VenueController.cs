@@ -1,0 +1,91 @@
+using EventTicketingSystem.CSharp.Shared;
+
+namespace EventTicketingSystem.CSharp.Api.Controllers;
+
+[Tags("Venue")]
+[Route("api/[controller]")]
+[ApiController]
+public class VenueController : ControllerBase
+{   
+    private readonly BL_Venue _blService;
+    private readonly ILogger<VenueController> _logger;
+
+    public VenueController(BL_Venue blService, ILogger<VenueController> logger)
+    {
+        _blService = blService;
+        _logger = logger;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var result = await _blService.GetList();
+        return Ok(result);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
+    {
+        // Get login user ID from claims
+        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        
+        var result = await _blService.CreateVenue(request, currentUserId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        
+        return StatusCode(500, new { message = result.Message });
+    }
+
+    [HttpPut("{venueId}")]
+    public async Task<IActionResult> Update(string venueId, [FromBody] UpdateVenueRequestModel request)
+    {
+        _logger.LogInformation("Incoming UpdateVenue Request: {Request}", request.ToJson());
+        
+        // validate the Venue ID in URL matches the Venue ID in request body
+        if (venueId != request.VenueId)
+        {
+            return BadRequest(new { message = "Venue ID mismatch." });
+        }
+        
+        // Get login user ID from claims
+        var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
+
+        var result = await _blService.UpdateVenue(request, currentUserId);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+
+        if (result.Message == "Venue not found.")
+        {
+            return NotFound(new { message = result.Message});
+        }
+        
+        return StatusCode(500, new { message = result.Message });
+    }
+    
+    [HttpDelete("{venueId}")]
+    public async Task<IActionResult> Delete(string venueId)
+    {
+        // Get login user ID from claims
+        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        
+        var result = await _blService.DeleteVenue(venueId, currentUserId);
+        
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        
+        if (result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+        {
+            return NotFound(new { message = result.Message });
+        }
+        
+        return StatusCode(500, new { message = result.Message });
+    }
+}
