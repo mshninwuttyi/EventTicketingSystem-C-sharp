@@ -1,6 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Shared;
-
-namespace EventTicketingSystem.CSharp.Api.Controllers;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Search Menu")]
 [ApiController]
@@ -15,7 +13,7 @@ public class SearchEventsAndVenuesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult SearchEventsAndVenues(string searchTerm)
+    public IActionResult SearchEventsAndVenues([FromBody] string searchTerm)
     {
         if (string.IsNullOrEmpty(searchTerm))
         {
@@ -29,41 +27,6 @@ public class SearchEventsAndVenuesController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        return Ok(result);
-    }
-
-    //[HttpGet("{StartDate, EndDate}")]
-    [HttpGet("BetweenDate")]
-    public IActionResult SearchEventsByDate(DateTime StartDate, DateTime EndDate)
-    {
-        if (StartDate.IsNullOrEmpty())
-        {
-            return BadRequest("Search date cannot be null or empty.");
-        }
-
-        var result = _bl_SearchEventsAndVenues.SearchEventsByDate(StartDate, EndDate).Result;
-
-        if (result.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-        }
-        return Ok(result);
-    }
-
-    [HttpGet("BetweenAmount")]
-    public IActionResult SearchEventsByAmount(decimal FromAmount, decimal ToAmount)
-    {
-        if (FromAmount <= 0 || ToAmount <= 0)
-        {
-            return BadRequest("Search amount cannot be less than or equal to zero.");
-        }
-
-        var result = _bl_SearchEventsAndVenues.SearchEventsByAmountAsync(FromAmount, ToAmount).Result;
-
-        if (result.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-        }
         return Ok(result);
     }
 }

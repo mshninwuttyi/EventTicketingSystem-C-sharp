@@ -17,8 +17,8 @@ INSERT INTO Tbl_Admin (
 );
 
 -- Sample data for Tbl_Category
-INSERT INTO tbl_eventcategory (
-    eventcategoryid, eventcategorycode, CategoryName,
+INSERT INTO Tbl_Category (
+    CategoryId, CategoryCode, CategoryName, 
     CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeleteFlag
 ) VALUES
 (

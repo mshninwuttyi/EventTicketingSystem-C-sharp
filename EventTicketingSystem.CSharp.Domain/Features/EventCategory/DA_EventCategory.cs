@@ -82,7 +82,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                         Eventcategorycode = GenerateCategoryCode(),
                         Categoryname = request.CategoryName,
                         Createdat = DateTime.Now,
-                        Createdby = request.AdminCode,
+                        Createdby = "",
                         Deleteflag = false
                     };
                     await _db.TblEventcategories.AddAsync(newCategory);
@@ -109,7 +109,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
         {
             var model = new EventCategoryResponseModel();
-            if (request.AdminCode.IsNullOrEmpty())
+            if (request.AdminName.IsNullOrEmpty())
             {
                 return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
             }
@@ -127,7 +127,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                        var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == request.EventCategoryCode);
                     
                         existingCategory.Categoryname = request.CategoryName;
-                        existingCategory.Modifiedby = request.AdminCode;
+                        existingCategory.Modifiedby = request.AdminName;
                         existingCategory.Modifiedat = DateTime.Now;
 
                         _db.Update(existingCategory);
@@ -149,13 +149,13 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         #endregion
 
         #region Delete Category
-        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode, string userCode)
+        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode)
         {
             var responseModel = new Result<EventCategoryResponseModel>();
             var model = new EventCategoryResponseModel();
             if (categoryCode.IsNullOrEmpty())
             {
-                responseModel = Result<EventCategoryResponseModel>.UserInputError("Category Code can't be Null or Empty!");
+                responseModel = Result<EventCategoryResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
                 goto ResultReturn;
             }
             try
@@ -167,8 +167,6 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 if (data != null)
                 {
                     data.Deleteflag = true;
-                    data.Modifiedby = userCode;
-                    data.Modifiedat = DateTime.Now;
                     _db.Entry(data).State = EntityState.Modified;
                     await _db.SaveChangesAsync();
                     responseModel = Result<EventCategoryResponseModel>.Success(model, "Category Deleted Successfully!");
@@ -213,8 +211,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         private string GenerateCategoryCode()
         {
             var categoryCount = _db.TblEventcategories.Count();
-            categoryCount++;
-            return "CAT" + categoryCount.ToString("D3");
+            return "EC" + categoryCount.ToString("D6");
         }
 
         #endregion

@@ -1,5 +1,3 @@
-using EventTicketingSystem.CSharp.Shared;
-
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Venue")]
@@ -8,12 +6,10 @@ namespace EventTicketingSystem.CSharp.Api.Controllers;
 public class VenueController : ControllerBase
 {   
     private readonly BL_Venue _blService;
-    private readonly ILogger<VenueController> _logger;
 
-    public VenueController(BL_Venue blService, ILogger<VenueController> logger)
+    public VenueController(BL_Venue blService)
     {
         _blService = blService;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -24,7 +20,7 @@ public class VenueController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
+    public async Task<IActionResult> Create([FromBody] VenueRequestModel request)
     {
         // Get login user ID from claims
         var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
@@ -35,15 +31,13 @@ public class VenueController : ControllerBase
         {
             return Ok(result);
         }
-        
+
         return StatusCode(500, new { message = result.Message });
     }
 
     [HttpPut("{venueId}")]
-    public async Task<IActionResult> Update(string venueId, [FromBody] UpdateVenueRequestModel request)
+    public async Task<IActionResult> Update(string venueId, [FromBody] VenueRequestModel request)
     {
-        _logger.LogInformation("Incoming UpdateVenue Request: {Request}", request.ToJson());
-        
         // validate the Venue ID in URL matches the Venue ID in request body
         if (venueId != request.VenueId)
         {

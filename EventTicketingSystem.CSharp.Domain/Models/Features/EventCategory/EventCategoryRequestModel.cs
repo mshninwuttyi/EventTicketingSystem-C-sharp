@@ -6,5 +6,5 @@ public class EventCategoryRequestModel
 
     public string CategoryName { get; set; }
 
-    public string AdminCode { get; set; }
+    public string AdminName { get; set; }
 }

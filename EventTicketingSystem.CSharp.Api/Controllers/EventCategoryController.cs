@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace EventTicketingSystem.CSharp.Api.Controllers;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Event Category")]
 [Route("api/[controller]")]
@@ -13,7 +11,7 @@ public class EventCategoryController : ControllerBase
     {
         _blEventCategory = blEventCategory;
     }
-    public string userCode = "ADM001"; //get JWT userCode token
+
     #region Event Category
 
     [HttpGet("GetEventCategory")]
@@ -29,7 +27,6 @@ public class EventCategoryController : ControllerBase
         {
             return BadRequest("Request model cannot be null.");
         }
-        requestModel.AdminCode = userCode;
         var response = await _blEventCategory.CreateEventCategory(requestModel);
 
         if (response.IsError)
@@ -39,19 +36,16 @@ public class EventCategoryController : ControllerBase
         return Ok(response.Data);
     }
 
-    [HttpPost("UpdateEventCategory/{eventCategoryID}")]
-    public async Task<IActionResult> UpdateEventCategory(string eventCategoryID,[FromBody] EventCategoryRequestModel request)
+    [HttpPost("UpdateEventCategory")]
+    public async Task<IActionResult> UpdateEventCategory([FromBody] EventCategoryRequestModel request)
     {
-        request.AdminCode = userCode; 
         return Ok(await _blEventCategory.UpdateEventCategory(request));
     }
 
     [HttpDelete("DeleteEventCategory/{eventCategoryCode}")]
     public async Task<IActionResult> DeleteEventCategory(string eventCategoryCode)
     {
-        var request = new EventCategoryRequestModel();
-        request.AdminCode = userCode;
-        request.EventCategoryCode = eventCategoryCode;
+        var request = new EventCategoryRequestModel { EventCategoryCode = eventCategoryCode };
         return Ok(await _blEventCategory.DeleteEventCategory(request));
     }
 
