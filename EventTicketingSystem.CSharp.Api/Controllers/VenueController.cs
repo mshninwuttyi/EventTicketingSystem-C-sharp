@@ -27,9 +27,9 @@ public class VenueController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
     {
         // Get login user ID from claims
-        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        //var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
         
-        var result = await _blService.CreateVenue(request, currentUserId);
+        var result = await _blService.CreateVenue(request);
 
         if (result.IsSuccess)
         {
@@ -51,9 +51,9 @@ public class VenueController : ControllerBase
         }
         
         // Get login user ID from claims
-        var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
+        //var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
 
-        var result = await _blService.UpdateVenue(request, currentUserId);
+        var result = await _blService.UpdateVenue(request);
 
         if (result.IsSuccess)
         {
@@ -72,9 +72,9 @@ public class VenueController : ControllerBase
     public async Task<IActionResult> Delete(string venueId)
     {
         // Get login user ID from claims
-        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
+        //var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
         
-        var result = await _blService.DeleteVenue(venueId, currentUserId);
+        var result = await _blService.DeleteVenue(venueId);
         
         if (result.IsSuccess)
         {
