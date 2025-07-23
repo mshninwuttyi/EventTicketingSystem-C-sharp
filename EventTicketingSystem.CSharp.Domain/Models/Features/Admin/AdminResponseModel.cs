@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
+﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
 
 public class AdminResponseModel
 {
-    public List<AdminModel> Admins { get; set; }
+    public List<AdminModel> AdminList { get; set; }
     public AdminModel Admin { get; set; }
 }
 

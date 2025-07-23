@@ -5,17 +5,7 @@ public class DA_BusinessEmail
     private readonly ILogger<DA_BusinessEmail> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "User";
-
-#warning We will only use EnumTableUniqueName for generating sequence codes.
-    private const string BusinessEmailCodePrefix = "BE";
-
-#warning We will no longer use this method to generate business email codes, as we will use a sequence code generator instead.
-    private string NextBusinessEmailCode()
-    {
-        var count = _db.TblBusinessemails.Count() + 1; // Count existing emails and add 1
-        return $"{BusinessEmailCodePrefix}{count:D6}"; // Format with leading zeros
-    }
+    private const string CreatedByUserId = "Admin";
 
     public DA_BusinessEmail(ILogger<DA_BusinessEmail> logger, AppDbContext db, CommonService commonService)
     {
@@ -28,8 +18,6 @@ public class DA_BusinessEmail
     {
         try
         {
-#warning We will use GenerateUlid() to generate unique IDs from DevCode
-            // Create a new business email and save to database
             var newBusinessEmail = new TblBusinessemail
             {
                 Businessemailid = GenerateUlid(),
@@ -44,9 +32,6 @@ public class DA_BusinessEmail
             var entry = await _db.TblBusinessemails.AddAsync(newBusinessEmail);
             await _db.SaveAndDetachAsync();
 
-#warning We can use newBusinessEmail instead of entry.Entity after successful saving to the database
-
-            // return the created business email response model
             var createdBusinessEmail = entry.Entity;
             var responseModel = new BusinessEmailResponseModel
             {
@@ -71,7 +56,6 @@ public class DA_BusinessEmail
         {
             var data = await _db.TblBusinessemails.FirstOrDefaultAsync(b => b.Businessemailid == id);
 
-#warning We can use 'is null' keyword instead of '== null' for null checks in C# 7.0 and later
             if (data is null)
             {
                 return Result<BusinessEmailResponseModel>.NotFoundError("No Data Found!");
@@ -100,7 +84,6 @@ public class DA_BusinessEmail
         var model = new BusinessEmailListResponseModel();
         try
         {
-#warning We need to add some conditions to check if the id is valid e.g. deleteflag is false, etc.
             var data = await _db.TblBusinessemails.Where(x => x.Deleteflag == false).ToListAsync();
 
             model.BusinessEmails = data.Select(x => new BusinessEmailModel

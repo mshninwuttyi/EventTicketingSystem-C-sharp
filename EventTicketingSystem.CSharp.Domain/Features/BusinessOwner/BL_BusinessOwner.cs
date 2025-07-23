@@ -33,5 +33,4 @@ public class BL_BusinessOwner
     {
         return await _daService.DeleteOwnerByCode(request.Businessownercode);
     }
-
 }

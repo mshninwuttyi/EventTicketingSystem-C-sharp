@@ -6,6 +6,7 @@ public class SearchListEventsByAmountResponseModel
 
     public List<SearchTicketPriceResponseModel> TicketPrice { get; set; } = new List<SearchTicketPriceResponseModel>();
 }
+
 public class SearchTicketPriceResponseModel
 {
     public string Ticketpriceid { get; set; } = null!;

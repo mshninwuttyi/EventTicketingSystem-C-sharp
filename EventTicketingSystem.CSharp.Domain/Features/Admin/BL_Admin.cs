@@ -1,11 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventTicketingSystem.CSharp.Domain.Features.Admin;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.Admin;
 
 public class BL_Admin
 {
@@ -28,13 +21,13 @@ public class BL_Admin
         return data;
     }
 
-    public async Task<Result<AdminResponseModel>> CreateAdmin (AdminRequestModel requestModel)
+    public async Task<Result<AdminResponseModel>> CreateAdmin(AdminRequestModel requestModel)
     {
         var data = await _dataAccess.CreateAdminAsync(requestModel);
         return data;
     }
 
-    public async Task<Result<AdminResponseModel>> UpdateAdmin (string adminCode, AdminRequestModel requestModel)
+    public async Task<Result<AdminResponseModel>> UpdateAdmin(string adminCode, AdminRequestModel requestModel)
     {
         var data = await _dataAccess.UpdateAdminAsync(adminCode, requestModel);
         return data;

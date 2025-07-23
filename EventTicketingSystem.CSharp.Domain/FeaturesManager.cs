@@ -1,7 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Features.QR;
-using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
-using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
-
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager

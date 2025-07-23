@@ -1,5 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.Venue;
 
 public class BL_Venue
@@ -16,18 +14,18 @@ public class BL_Venue
         return await _daService.GetList();
     }
 
-    public async Task<Result<VenueResponseModel>> CreateVenue(CreateVenueRequestModel createVenue, string currentUserId)
+    public async Task<Result<VenueResponseModel>> CreateVenue(CreateVenueRequestModel createVenue)
     {
-        return await _daService.CreateVenue(createVenue, currentUserId);
+        return await _daService.CreateVenue(createVenue);
     }
 
-    public async Task<Result<VenueResponseModel>> UpdateVenue(UpdateVenueRequestModel updateVenue, string currentUserId)
+    public async Task<Result<VenueResponseModel>> UpdateVenue(UpdateVenueRequestModel updateVenue)
     {
-        return await  _daService.UpdateVenue(updateVenue, currentUserId);
+        return await  _daService.UpdateVenue(updateVenue);
     }
     
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId, string currentUserId)
+    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId)
     {
-        return await _daService.DeleteVenue(venueId, currentUserId);
+        return await _daService.DeleteVenue(venueId);
     }
 }

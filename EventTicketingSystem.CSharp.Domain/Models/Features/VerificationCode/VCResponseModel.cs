@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
+﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
 
 public class VCResponseModel
 {
     public List<VCodeModel> VerificationCodes {  get; set; }
+
     public VCodeModel VerificationCode { get; set; }
 }
 

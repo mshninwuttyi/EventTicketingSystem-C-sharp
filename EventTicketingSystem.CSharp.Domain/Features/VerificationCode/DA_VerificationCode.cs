@@ -5,28 +5,34 @@ public class DA_VerificationCode
 {
     private readonly ILogger<DA_VerificationCode> _logger;
     private readonly AppDbContext _db;
+    private readonly CommonService _commonService;
+    private const string CreatedByUserId = "Admin";
 
-    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db)
+    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, CommonService commonService)
     {
         _logger = logger;
         _db = db;
+        _commonService = commonService;
     }
 
     #region Private Functions
-    private string GenerateRandomVerificationCode()
-    {
-        byte[] bytes = new byte[4];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(bytes);
-        }
 
-        int value = Math.Abs(BitConverter.ToInt32(bytes, 0)) % 1000000;
-        return value.ToString("D6");
-    }
+    //private string GenerateRandomVerificationCode()
+    //{
+    //    byte[] bytes = new byte[4];
+    //    using (var rng = RandomNumberGenerator.Create())
+    //    {
+    //        rng.GetBytes(bytes);
+    //    }
+
+    //    int value = Math.Abs(BitConverter.ToInt32(bytes, 0)) % 1000000;
+    //    return value.ToString("D6");
+    //}
+
     #endregion
 
     #region Get Verification Code List
+
     public async Task<Result<VCResponseModel>> GetList()
     {
         var responseModel = new Result<VCResponseModel>();
@@ -34,9 +40,12 @@ public class DA_VerificationCode
         try
         {
             var data = await _db.TblVerifications
-                        .AsNoTracking()
                         .Where(x => x.Deleteflag == false)
                         .ToListAsync();
+            if (data is null)
+            {
+                return Result<VCResponseModel>.NotFoundError("No Verification Found.");
+            }
 
             model.VerificationCodes = data.Select(x => new VCodeModel
             {
@@ -50,51 +59,52 @@ public class DA_VerificationCode
                 Deleteflag = false
             }).ToList();
 
-            responseModel = Result<VCResponseModel>.Success(model, "Here are the list of verification code!");
+            return Result<VCResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<VCResponseModel>.SystemError(ex.Message);
+            return Result<VCResponseModel>.SystemError(ex.Message);
         }
-        return responseModel;
     }
+
     #endregion
 
     #region Get Verification Code
+
     public async Task<Result<VCResponseModel>> GetVCodeById(string? id)
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
+
+        if (id is null)
+        {
+            return Result<VCResponseModel>.ValidationError("Id can't be null here.");
+        }
+
         try
         {
-            if(id == null)
-            {
-                responseModel = Result<VCResponseModel>.ValidationError("Id can't be null here.");
-                goto ReturnResult;
-            }
             var data = await _db.TblVerifications
-                        .AsNoTracking()
-                        .Where(x => x.Deleteflag == false && x.Verificationid == id).FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync(
+                            x => x.Verificationid == id &&
+                            x.Deleteflag == false
+                        );
 
-            if (data != null)
+            if (data is null)
             {
-                model.VerificationCode = VCodeModel.FromTblVerification(data);
-                responseModel = Result<VCResponseModel>.Success(model, "Here is the verification code!");
+                return Result<VCResponseModel>.NotFoundError($"Verification Code with Id: {id} is not found!");
             }
-            else
-            {
-                responseModel = Result<VCResponseModel>.NotFoundError($"Verification Code with Id: {id} is not found!");
-            }
+
+            model.VerificationCode = VCodeModel.FromTblVerification(data);
+            return Result<VCResponseModel>.Success(model, "Here is the verification code!");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<VCResponseModel>.SystemError(ex.Message);
+            return Result<VCResponseModel>.SystemError(ex.Message);
         }
-    ReturnResult:
-        return responseModel;
     }
+
     #endregion
 
     #region Verify Code
@@ -103,7 +113,7 @@ public class DA_VerificationCode
         var responseModel = new Result<bool>();
         try
         {
-            if(email.IsNullOrEmpty() || code.IsNullOrEmpty())
+            if (email.IsNullOrEmpty() || code.IsNullOrEmpty())
             {
                 responseModel = Result<bool>.ValidationError("Invalid Email or Code!");
                 goto ReturnResult;
@@ -139,40 +149,41 @@ public class DA_VerificationCode
     #endregion
 
     #region Create Verification Code
+
     public async Task<Result<VCResponseModel>> CreateVCode(VCRequestModel reqData)
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
+
+        if (reqData.Email.IsNullOrEmpty() || reqData.Email.IsValidEmail())
+        {
+            return Result<VCResponseModel>.ValidationError("Email is invalid!");
+        }
+
         try
         {
-            if (reqData.Email.IsNullOrEmpty() || reqData.Email.IsValidEmail())
-            {
-                responseModel = Result<VCResponseModel>.ValidationError("Email is invalid!");
-                goto ReturnResult;
-            }
             var newVC = new TblVerification()
             {
-                Verificationid = Ulid.NewUlid().ToString(),
-                Verificationcode = GenerateRandomVerificationCode(),
+                Verificationid = GenerateUlid(),
+                Verificationcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Verification),
                 Email = reqData.Email,
-                Createdby = "system",
+                Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
 
-            _db.TblVerifications.Add(newVC);
-            await _db.SaveChangesAsync();
+            await _db.TblVerifications.AddAsync(newVC);
+            await _db.SaveAndDetachAsync();
 
             model.VerificationCode = VCodeModel.FromTblVerification(newVC);
-            responseModel = Result<VCResponseModel>.Success(model, $"Here is the verification code for {reqData.Email}");
+            return Result<VCResponseModel>.Success(model, $"Here is the verification code for {reqData.Email}");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<VCResponseModel>.SystemError(ex.Message);
+            return Result<VCResponseModel>.SystemError(ex.Message);
         }
-    ReturnResult:
-        return responseModel;
     }
+
     #endregion
 }

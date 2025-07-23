@@ -1,6 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
-
-namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
 
 public class BL_SearchEventsAndVenues
 {
@@ -21,7 +19,7 @@ public class BL_SearchEventsAndVenues
         return await _da_SearchEventsAndVenues.SearchEventsByDate(StartDate, EndDate);
     }
 
-    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(Decimal FromAmount, Decimal ToAmount)
+    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(decimal FromAmount, decimal ToAmount)
     {
         return await _da_SearchEventsAndVenues.SearchEventsByAmountAsync(FromAmount, ToAmount);
     }
