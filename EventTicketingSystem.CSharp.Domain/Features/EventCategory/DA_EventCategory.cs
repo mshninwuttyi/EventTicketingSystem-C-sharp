@@ -119,7 +119,7 @@ public class DA_EventCategory
             {
                 var existingCategory = await _db.TblEventcategories
                                         .FirstOrDefaultAsync(
-                                            x => x.Eventcategoryid == request.EventCategoryID &&
+                                            x => x.Eventcategorycode == request.EventCategoryCode &&
                                             x.Deleteflag == false
                                         );
                 if (existingCategory is null)
