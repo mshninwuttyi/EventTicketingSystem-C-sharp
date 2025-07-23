@@ -82,7 +82,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                         Eventcategorycode = GenerateCategoryCode(),
                         Categoryname = request.CategoryName,
                         Createdat = DateTime.Now,
-                        Createdby = "",
+                        Createdby = request.AdminCode,
                         Deleteflag = false
                     };
                     await _db.TblEventcategories.AddAsync(newCategory);
@@ -109,9 +109,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
         {
             var model = new EventCategoryResponseModel();
-            if (request.AdminName.IsNullOrEmpty())
+            if (request.AdminCode.IsNullOrEmpty())
             {
-                return Result<EventCategoryResponseModel>.ValidationError("Admin name not found", model);
+                return Result<EventCategoryResponseModel>.ValidationError("Admin not found", model);
             }
             else if (request.CategoryName.IsNullOrEmpty())
             {
@@ -122,12 +122,12 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 try
                 {
 
-                    if (isCategoryCodeExist(request.EventCategoryCode))
+                    if (isCategoryIDExist(request.EventCategoryID))
                     {
-                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == request.EventCategoryCode);
+                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid == request.EventCategoryID);
                     
                         existingCategory.Categoryname = request.CategoryName;
-                        existingCategory.Modifiedby = request.AdminName;
+                        existingCategory.Modifiedby = request.AdminCode;
                         existingCategory.Modifiedat = DateTime.Now;
 
                         _db.Update(existingCategory);
@@ -149,13 +149,13 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         #endregion
 
         #region Delete Category
-        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode)
+        public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode, string userCode)
         {
             var responseModel = new Result<EventCategoryResponseModel>();
             var model = new EventCategoryResponseModel();
             if (categoryCode.IsNullOrEmpty())
             {
-                responseModel = Result<EventCategoryResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+                responseModel = Result<EventCategoryResponseModel>.UserInputError("Category Code can't be Null or Empty!");
                 goto ResultReturn;
             }
             try
@@ -167,6 +167,8 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 if (data != null)
                 {
                     data.Deleteflag = true;
+                    data.Modifiedby = userCode;
+                    data.Modifiedat = DateTime.Now;
                     _db.Entry(data).State = EntityState.Modified;
                     await _db.SaveChangesAsync();
                     responseModel = Result<EventCategoryResponseModel>.Success(model, "Category Deleted Successfully!");
@@ -195,9 +197,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool isCategoryCodeExist(string? categoryCode)
+        private bool isCategoryIDExist(string? categoryID)
         {
-            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == categoryCode) is not null)
+            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid== categoryID) is not null)
             {
                 return true;
             }
@@ -211,7 +213,8 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         private string GenerateCategoryCode()
         {
             var categoryCount = _db.TblEventcategories.Count();
-            return "EC" + categoryCount.ToString("D6");
+            categoryCount++;
+            return "CAT" + categoryCount.ToString("D3");
         }
 
         #endregion

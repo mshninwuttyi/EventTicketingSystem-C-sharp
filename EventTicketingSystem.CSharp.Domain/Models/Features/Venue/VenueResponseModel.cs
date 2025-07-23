@@ -10,17 +10,17 @@ public class VenueResponseModel
 
     public string VenueName { get; set; }         // Name of the venue
 
-    public string? VenueDescription { get; set; } // Description
+    public string? Description { get; set; } // Description
 
-    public string? VenueAddress { get; set; }     // Address of the venue
+    public string? Address { get; set; }     // Address of the venue
 
-    public int? VenueCapacity { get; set; }        // Capacity 
+    public int? Capacity { get; set; }        // Capacity 
 
-    public string? VenueFacilities { get; set; }
+    public string? Facilities { get; set; }
 
-    public string? VenueAddons { get; set; }
+    public string? Addons { get; set; }
 
-    public string? VenueImage { get; set; }        // Image filename or URL
+    public string? Image { get; set; }        // Image filename or URL
 
     public bool DeleteFlag { get; set; }
     
