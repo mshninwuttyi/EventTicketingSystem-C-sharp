@@ -143,18 +143,18 @@ public class DA_Ticket
         }
     }
 
-    public async Task<Result<TicketResponseModel>> DeleteById(string id)
+    public async Task<Result<TicketResponseModel>> DeleteById(string tickedCode)
     {
         try
         {
-            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id);
+            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketcode == tickedCode);
             if (data == null)
             {
                 return Result<TicketResponseModel>.NotFoundError("No Data Found!");
             }
 
             var model = await _db.TblTickets
-                .Where(x => x.Ticketid == id && x.Deleteflag == false)
+                .Where(x => x.Ticketcode == tickedCode && x.Deleteflag == false)
                 .FirstOrDefaultAsync();
             model!.Deleteflag = true;
 
@@ -170,11 +170,11 @@ public class DA_Ticket
         }
     }
 
-    public async Task<Result<TicketResponseModel>> UpdateTicket(string id, bool isUsed)
+    public async Task<Result<TicketResponseModel>> UpdateTicket(string tickedCode, bool isUsed)
     {
         try
         {
-            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id);
+            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketcode == tickedCode);
             if (data == null)
             {
                 return Result<TicketResponseModel>.NotFoundError("No Data Found!");
@@ -190,7 +190,7 @@ public class DA_Ticket
                 Isused = data.Isused,
                 Modifiedat = data.Modifiedat,
             };
-            return Result<TicketResponseModel>.Success(model);
+            return Result<TicketResponseModel>.Success("Ticket is updated successfully!");
         }
         catch (Exception ex)
         {
