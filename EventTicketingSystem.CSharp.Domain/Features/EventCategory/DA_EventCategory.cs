@@ -122,9 +122,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
                 try
                 {
 
-                    if (isCategoryIDExist(request.EventCategoryID))
+                    if (isCategoryCodeExist(request.EventCategoryCode))
                     {
-                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid == request.EventCategoryID);
+                       var existingCategory = _db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode == request.EventCategoryCode);
                     
                         existingCategory.Categoryname = request.CategoryName;
                         existingCategory.Modifiedby = request.AdminCode;
@@ -148,7 +148,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         }
         #endregion
 
-        #region Delete Category
+        #region Delete Category with event
         public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode, string userCode)
         {
             var responseModel = new Result<EventCategoryResponseModel>();
@@ -197,9 +197,9 @@ namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory
         .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool isCategoryIDExist(string? categoryID)
+        private bool isCategoryCodeExist(string? categoryCode)
         {
-            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid== categoryID) is not null)
+            if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategorycode== categoryCode ) is not null)
             {
                 return true;
             }

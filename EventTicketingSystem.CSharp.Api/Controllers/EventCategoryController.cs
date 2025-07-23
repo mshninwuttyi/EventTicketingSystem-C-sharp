@@ -39,11 +39,11 @@ public class EventCategoryController : ControllerBase
         return Ok(response.Data);
     }
 
-    [HttpPost("UpdateEventCategory/{eventCategoryID}")]
-    public async Task<IActionResult> UpdateEventCategory(string eventCategoryID,[FromBody] EventCategoryRequestModel request)
+    [HttpPost("UpdateEventCategory/{eventCategoryCode}")]
+    public async Task<IActionResult> UpdateEventCategory(string eventCategoryCode,[FromBody] EventCategoryRequestModel request)
     {
         request.AdminCode = userCode; 
-        request.EventCategoryID = eventCategoryID;
+        request.EventCategoryCode = eventCategoryCode;
         return Ok(await _blEventCategory.UpdateEventCategory(request));
     }
 
