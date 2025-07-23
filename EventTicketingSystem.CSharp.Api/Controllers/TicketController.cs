@@ -68,5 +68,18 @@ public class TicketController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPatch("UpdateTicket/{id},{isUsed}")]
+    public async Task<IActionResult> UpdateTicket(string id, bool isUsed)
+    {
+        var result = await _blTicket.UpdateTicket(id, isUsed);
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+
+        return Ok(result);
+    }
+
 
 }

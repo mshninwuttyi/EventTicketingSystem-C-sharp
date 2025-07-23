@@ -28,4 +28,9 @@ public class BL_Ticket
     {
         return await _da_Ticket.DeleteById(id);
     }
+
+    public async Task<Result<TicketResponseModel>> UpdateTicket(string id,bool isUsed)
+    {
+        return await _da_Ticket.UpdateTicket(id,isUsed);
+    }
 }

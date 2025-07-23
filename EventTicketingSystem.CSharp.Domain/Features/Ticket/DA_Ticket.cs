@@ -1,3 +1,6 @@
+using EventTicketingSystem.CSharp.Shared;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace EventTicketingSystem.CSharp.Domain.Features.Ticket;
 
 public class DA_Ticket
@@ -144,7 +147,7 @@ public class DA_Ticket
     {
         try
         {
-            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id && x.Deleteflag == false);
+            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id);
             if (data == null)
             {
                 return Result<TicketResponseModel>.NotFoundError("No Data Found!");
@@ -159,6 +162,35 @@ public class DA_Ticket
             var result = _db.SaveChanges();
             return Result<TicketResponseModel>.Success("Ticket is deleted successfully!");
 
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<TicketResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    public async Task<Result<TicketResponseModel>> UpdateTicket(string id, bool isUsed)
+    {
+        try
+        {
+            var data = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketid == id);
+            if (data == null)
+            {
+                return Result<TicketResponseModel>.NotFoundError("No Data Found!");
+            }
+
+            if (isUsed) data!.Isused = isUsed;
+
+            data!.Modifiedat = DateTime.Now;
+            _db.Entry(data).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+            var model = new TicketResponseModel()
+            {
+                Isused = data.Isused,
+                Modifiedat = data.Modifiedat,
+            };
+            return Result<TicketResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
