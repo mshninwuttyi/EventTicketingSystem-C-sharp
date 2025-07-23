@@ -155,7 +155,7 @@ public class CommonService
             var fileName = Path.GetFileName(file.FileName);
 
             var transactionTicket = await _db.TblTransactiontickets
-                .FirstOrDefaultAsync(x => x.Qrstring == fileName);
+                .FirstOrDefaultAsync(x => x.Qrimage == fileName);
 
             if (transactionTicket is null)
             {
@@ -203,26 +203,26 @@ public class CommonService
 
             DeleteExtraFilesForDirectory(EnumDirectory.EventImage, eventImagesInDb);
 
-            //var venueImagesInDb = await _db.TblVenues
-            //    .Select(x => x.Venueimage)
-            //    .Where(x => !string.IsNullOrEmpty(x))
-            //    .ToListAsync();
+            var venueImagesInDb = await _db.TblVenues
+                .Select(x => x.Venueimage)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToListAsync();
 
-            //DeleteExtraFilesForDirectory(EnumDirectory.VenueImage, venueImagesInDb);
+            DeleteExtraFilesForDirectory(EnumDirectory.VenueImage, venueImagesInDb);
 
             var qrImagesInDb = await _db.TblTransactiontickets
-                .Select(x => x.Qrstring)
+                .Select(x => x.Qrimage)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToListAsync();
 
             DeleteExtraFilesForDirectory(EnumDirectory.QrImage, qrImagesInDb);
 
-            //var adminProfilesInDb = await _db.TblAdmins
-            //    .Select(x => x.Profileimage)
-            //    .Where(x => !string.IsNullOrEmpty(x))
-            //    .ToListAsync();
+            var adminProfilesInDb = await _db.TblAdmins
+                .Select(x => x.Profileimage)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToListAsync();
 
-            //DeleteExtraFilesForDirectory(EnumDirectory.ProfileImage, adminProfilesInDb);
+            DeleteExtraFilesForDirectory(EnumDirectory.ProfileImage, adminProfilesInDb);
 
             return false;
         }

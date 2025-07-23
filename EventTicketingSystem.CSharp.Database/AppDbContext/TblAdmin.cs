@@ -17,6 +17,8 @@ public partial class TblAdmin
 
     public string Password { get; set; } = null!;
 
+    public string Profileimage { get; set; } = null!;
+
     public string Createdby { get; set; } = null!;
 
     public DateTime Createdat { get; set; }

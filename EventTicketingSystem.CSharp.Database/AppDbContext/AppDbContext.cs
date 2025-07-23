@@ -79,6 +79,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Phoneno)
                 .HasColumnType("character varying")
                 .HasColumnName("phoneno");
+            entity.Property(e => e.Profileimage)
+                .HasColumnType("character varying")
+                .HasColumnName("profileimage");
             entity.Property(e => e.Username)
                 .HasColumnType("character varying")
                 .HasColumnName("username");
@@ -440,9 +443,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Price)
                 .HasPrecision(20, 2)
                 .HasColumnName("price");
-            entity.Property(e => e.Qrstring)
+            entity.Property(e => e.Qrimage)
                 .HasColumnType("character varying")
-                .HasColumnName("qrstring");
+                .HasColumnName("qrimage");
             entity.Property(e => e.Ticketcode)
                 .HasColumnType("character varying")
                 .HasColumnName("ticketcode");
@@ -477,9 +480,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Facilities).HasColumnName("facilities");
-            entity.Property(e => e.Image)
-                .HasColumnType("character varying")
-                .HasColumnName("image");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
@@ -489,6 +489,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Venuecode)
                 .HasColumnType("character varying")
                 .HasColumnName("venuecode");
+            entity.Property(e => e.Venueimage)
+                .HasColumnType("character varying")
+                .HasColumnName("venueimage");
             entity.Property(e => e.Venuename)
                 .HasColumnType("character varying")
                 .HasColumnName("venuename");

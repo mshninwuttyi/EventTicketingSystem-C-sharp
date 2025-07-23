@@ -16,49 +16,46 @@ public class DA_Admin
 
     #region Get Admin List
 
-    public async Task<Result<AdminResponseModel>> GetAdminListAsync()
+    public async Task<Result<AdminListResponseModel>> List()
     {
-        var responesModel = new Result<AdminResponseModel>();
-        var model = new AdminResponseModel();
+        var responesModel = new Result<AdminListResponseModel>();
+        var model = new AdminListResponseModel();
 
         try
         {
             var data = await _db.TblAdmins
-                        .AsNoTracking()
                         .Where(x => x.Deleteflag == false)
                         .ToListAsync();
             if (data is null)
             {
-                responesModel = Result<AdminResponseModel>.Success("No admin user found.");
+                responesModel = Result<AdminListResponseModel>.Success("No admin user found.");
             }
 
-            model.AdminList = data.Select(AdminModel.FromTblAdmin).ToList();
-            responesModel = Result<AdminResponseModel>.Success(model);
+            model.AdminList = data!.Select(AdminListModel.FromTblAdmin).ToList();
+            return Result<AdminListResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responesModel = Result<AdminResponseModel>.SystemError(ex.Message);
+            return Result<AdminListResponseModel>.SystemError(ex.Message);
         }
-        return responesModel;
     }
 
     #endregion
 
     #region Get AdminByCode
 
-    public async Task<Result<AdminResponseModel>> GetAdminByCodeAsync(string adminCode)
+    public async Task<Result<AdminEditResponseModel>> Edit(string adminCode)
     {
-        var responseModel = new Result<AdminResponseModel>();
-        var model = new AdminResponseModel();
+        var model = new AdminEditResponseModel();
+
+        if (adminCode.IsNullOrEmpty())
+        {
+            return Result<AdminEditResponseModel>.ValidationError("Admin Code cannot be null or empty.");
+        }
 
         try
         {
-            if (adminCode.IsNullOrEmpty())
-            {
-                return Result<AdminResponseModel>.ValidationError("Admin Code cannot be null or empty.");
-            }
-
             var admin = await _db.TblAdmins
                         .FirstOrDefaultAsync(
                             x => x.Admincode == adminCode &&
@@ -66,235 +63,132 @@ public class DA_Admin
                         );
             if (admin is null)
             {
-                return Result<AdminResponseModel>.NotFoundError("Admin Not Found.");
+                return Result<AdminEditResponseModel>.NotFoundError("Admin Not Found.");
             }
 
-            model.Admin = AdminModel.FromTblAdmin(admin);
-            responseModel = Result<AdminResponseModel>.Success(model);
+            model.Admin = AdminEditModel.FromTblAdmin(admin);
+            return Result<AdminEditResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<AdminResponseModel>.SystemError(ex.Message);
+            return Result<AdminEditResponseModel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Create Admin
 
-    public async Task<Result<AdminResponseModel>> CreateAdminAsync(AdminRequestModel requestModel)
+    public async Task<Result<AdminCreateResponseModel>> Create(AdminCreateRequestModel requestModel)
     {
-        var responseModel = new Result<AdminResponseModel>();
-        var model = new AdminResponseModel();
-
-        if (requestModel.Username.IsNullOrEmpty())
+        var responseModel = ValidateRequest(requestModel, ValidateEmail(requestModel.Email));
+        if (responseModel != null)
         {
-            responseModel = Result<AdminResponseModel>.ValidationError("Username cannot be empty!");
+            return responseModel;
         }
 
-        else if (requestModel.Email.IsNullOrEmpty())
+        try
         {
-            responseModel = Result<AdminResponseModel>.ValidationError("Email Cannot be blank!");
-        }
-
-        else if (!requestModel.Email.IsValidEmail() || isEmailUsed(requestModel.Email))
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Email is either already used or invalid!");
-        }
-
-        else if (requestModel.PhoneNo.IsNullOrEmpty() || requestModel.PhoneNo!.Length < 9)
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Phone number cannot be empty or less than 9 numbers!");
-        }
-
-        else if (requestModel.Password.IsNullOrEmpty() || requestModel.Password!.Length < 8)
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Password cannot be empty or must contain at least 8 characters");
-        }
-
-        else if (!requestModel.Password.Any(char.IsUpper))
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Password must contain at least one upper letter!");
-        }
-
-        else if (!requestModel.Password.Any(char.IsLower))
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Password must contain at least one lower letter!");
-        }
-
-        else if (!requestModel.Password.Any(char.IsDigit))
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Password must contain at least one digit!");
-        }
-
-        else if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
-        {
-            responseModel = Result<AdminResponseModel>.ValidationError("Password must contain at least one special character!");
-        }
-
-        else
-        {
-            try
+            var newAdmin = new TblAdmin()
             {
-                var newAdmin = new TblAdmin()
-                {
-                    Adminid = Ulid.NewUlid().ToString(),
-                    Admincode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Admin),
-                    Username = requestModel.Username,
-                    Email = requestModel.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(requestModel.Password),
-                    Phoneno = requestModel.PhoneNo,
-                    Createdby = CreatedByUserId,
-                    Createdat = DateTime.Now,
-                    Deleteflag = false,
-                };
+                Adminid = GenerateUlid(),
+                Admincode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Admin),
+                Username = requestModel.Username,
+                Email = requestModel.Email,
+                Password = requestModel.Password.HashPassword(requestModel.Username),
+                Phoneno = requestModel.PhoneNo,
+                Profileimage = requestModel.ProfileImage,
+                Createdby = CreatedByUserId,
+                Createdat = DateTime.Now,
+                Deleteflag = false,
+            };
 
-                await _db.TblAdmins.AddAsync(newAdmin);
-                await _db.SaveChangesAsync();
+            await _db.TblAdmins.AddAsync(newAdmin);
+            await _db.SaveChangesAsync();
 
-                model.Admin = AdminModel.FromTblAdmin(newAdmin);
-                responseModel = Result<AdminResponseModel>.Success(model, "Admin was created Successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogExceptionError(ex);
-                responseModel = Result<AdminResponseModel>.SystemError(ex.ToString());
-            }
+            return Result<AdminCreateResponseModel>.Success("Admin Created Successfully.");
         }
-
-        return responseModel;
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<AdminCreateResponseModel>.SystemError(ex.ToString());
+        }
     }
 
     #endregion
 
     #region Update Admin
 
-    public async Task<Result<AdminResponseModel>> UpdateAdminAsync(string adminCode, AdminRequestModel requestModel)
+    public async Task<Result<AdminUpdateResponseModel>> Update(AdminUpdateRequestModel requestModel)
     {
-        var responseModel = new Result<AdminResponseModel>();
-        var model = new AdminResponseModel();
+        var responseModel = new Result<AdminUpdateResponseModel>();
+        var model = new AdminUpdateResponseModel();
         string errorMsg = string.Empty;
+
+        if (requestModel.AdminCode.IsNullOrEmpty())
+        {
+            return Result<AdminUpdateResponseModel>.UserInputError("Admin Not Found");
+        }
+
+        if (requestModel.PhoneNo.IsNullOrEmpty() || requestModel.Password.IsNullOrEmpty() || requestModel.ProfileImage.IsNullOrEmpty())
+        {
+            return Result<AdminUpdateResponseModel>.UserInputError("All fields are empty. Please provide at least one field to update.");
+        }
 
         var admin = await _db.TblAdmins
                             .FirstOrDefaultAsync(
-                                x => x.Admincode == adminCode &&
+                                x => x.Admincode == requestModel.AdminCode &&
                                 x.Deleteflag == false
                             );
         if (admin is null)
         {
-            return Result<AdminResponseModel>.NotFoundError("There is no admin with that admin code.");
+            return Result<AdminUpdateResponseModel>.NotFoundError("Admin Not Found.");
         }
 
-        else if (new[]
+        var validationError = ValidateFields(requestModel);
+        if (validationError != null)
         {
-            requestModel.Username,
-            requestModel.Email,
-            requestModel.PhoneNo,
-            requestModel.Password
-        }.Any(string.IsNullOrEmpty))
-        {
-            return Result<AdminResponseModel>.UserInputError("All fields are empty. Please provide at least one field to update.");
+            return Result<AdminUpdateResponseModel>.ValidationError(validationError);
         }
 
-        else
+        if (!requestModel.PhoneNo.IsNullOrEmpty())
         {
-            if (!requestModel.Username.IsNullOrEmpty())
-            {
-                admin.Username = requestModel.Username;
-            }
+            admin.Phoneno = requestModel.PhoneNo;
+        }
 
-            if (!requestModel.Email.IsNullOrEmpty())
-            {
-                if (!requestModel.Email.IsValidEmail() || isEmailUsed(requestModel.Email))
-                {
-                    errorMsg = "Email is either invalid or already used!";
-                    goto ReturnErrorResult;
-                }
-                admin.Email = requestModel.Email;
-            }
-            if (!requestModel.PhoneNo.IsNullOrEmpty())
-            {
-                if (requestModel.PhoneNo.Length < 9)
-                {
-                    errorMsg = "Phone number must contain at least 9 numbers!";
-                    goto ReturnErrorResult;
-                }
-                admin.Phoneno = requestModel.PhoneNo;
+        if (!requestModel.Password.IsNullOrEmpty())
+        {
+            admin.Password = requestModel.Password.HashPassword(admin.Username);
+        }
 
-            }
+        try
+        {
+            admin.Modifiedby = CreatedByUserId;
+            admin.Modifiedat = DateTime.Now;
+            _db.Entry(admin).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
 
-            if (!requestModel.Password.IsNullOrEmpty())
-            {
-                if (requestModel.Password.Length < 8)
-                {
-                    errorMsg = "Password must contain at least 8 characters!";
-                    goto ReturnErrorResult;
-                }
-
-                else if (!requestModel.Password.Any(char.IsUpper))
-                {
-                    errorMsg = "Password must contain at least one upper letter!";
-                    goto ReturnErrorResult;
-                }
-
-                else if (!requestModel.Password.Any(char.IsLower))
-                {
-                    errorMsg = "Password must contain at least one lower letter!";
-                    goto ReturnErrorResult;
-                }
-
-                else if (!requestModel.Password.Any(char.IsDigit))
-                {
-                    errorMsg = "Password must contain at least one digit!";
-                    goto ReturnErrorResult;
-                }
-                else if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
-                {
-                    errorMsg = "Password must contain at least one special character!";
-                    goto ReturnErrorResult;
-                }
-                admin.Password = BCrypt.Net.BCrypt.HashPassword(requestModel.Password);
-            }
-            try
-            {
-                admin.Modifiedby = CreatedByUserId;
-                admin.Modifiedat = DateTime.Now;
-
-                _db.Entry(admin).State = EntityState.Modified;
-                await _db.SaveChangesAsync();
-
-                model.Admin = AdminModel.FromTblAdmin(admin);
-                responseModel = Result<AdminResponseModel>.Success(model, "Admin data was updated successufully!");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogExceptionError(ex);
-                responseModel = Result<AdminResponseModel>.SystemError(ex.ToString());
-            }
+            responseModel = Result<AdminUpdateResponseModel>.Success("Admin data was updated successufully!");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<AdminUpdateResponseModel>.SystemError(ex.ToString());
         }
 
         return responseModel;
-
-    ReturnErrorResult:
-
-        return Result<AdminResponseModel>.ValidationError(errorMsg);
     }
 
     #endregion
 
     #region Delete Admin
 
-    public async Task<Result<AdminResponseModel>> DeleteAdminByCode(string adminCode)
+    public async Task<Result<AdminDeleteResponseModel>> Delete(string adminCode)
     {
-        var responseModel = new Result<AdminResponseModel>();
-        var model = new AdminResponseModel();
-
         if (adminCode.IsNullOrEmpty())
         {
-            return Result<AdminResponseModel>.UserInputError("The admin code cannot be null or empty.");
+            return Result<AdminDeleteResponseModel>.UserInputError("The admin code cannot be null or empty.");
         }
 
         var data = await _db.TblAdmins
@@ -304,7 +198,7 @@ public class DA_Admin
                         );
         if (data is null)
         {
-            return Result<AdminResponseModel>.NotFoundError("There is no admin with this admin code.");
+            return Result<AdminDeleteResponseModel>.NotFoundError("There is no admin with this admin code.");
         }
 
         try
@@ -315,47 +209,108 @@ public class DA_Admin
             _db.Entry(data).State = EntityState.Modified;
             await _db.SaveChangesAsync();
 
-            responseModel = Result<AdminResponseModel>.Success("Admin data is deleted successfully.");
+            return Result<AdminDeleteResponseModel>.Success("Admin data is deleted successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<AdminResponseModel>.SystemError(ex.Message);
+            return Result<AdminDeleteResponseModel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Helper Function
 
-    private bool isEmailUsed(string email)
+    private static Result<AdminCreateResponseModel> ValidateRequest(AdminCreateRequestModel requestModel, bool isEmailUsed)
     {
-        var admin = _db.TblAdmins.AsNoTracking().FirstOrDefault(x => x.Email == email);
+        if (requestModel.Username.IsNullOrEmpty())
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Username cannot be empty!");
+        }
+
+        if (requestModel.Email.IsNullOrEmpty())
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Email Cannot be blank!");
+        }
+
+        if (!requestModel.Email.IsValidEmail() || isEmailUsed)
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Email is either already used or invalid!");
+        }
+
+        if (requestModel.PhoneNo.IsNullOrEmpty() || requestModel.PhoneNo!.Length < 9)
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Phone number cannot be empty or less than 9 numbers!");
+        }
+
+        if (requestModel.Password.IsNullOrEmpty() || requestModel.Password!.Length < 8)
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Password cannot be empty or must contain at least 8 characters");
+        }
+
+        if (!requestModel.Password.Any(char.IsUpper))
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Password must contain at least one upper letter!");
+        }
+
+        if (!requestModel.Password.Any(char.IsLower))
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Password must contain at least one lower letter!");
+        }
+
+        if (!requestModel.Password.Any(char.IsDigit))
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Password must contain at least one digit!");
+        }
+
+        if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Password must contain at least one special character!");
+        }
+
+        if (requestModel.ProfileImage.IsNullOrEmpty())
+        {
+            return Result<AdminCreateResponseModel>.ValidationError("Choose profile image!");
+        }
+
+        return null!;
+    }
+
+    private static string ValidateFields(AdminUpdateRequestModel requestModel)
+    {
+        if (!requestModel.PhoneNo.IsNullOrEmpty() && requestModel.PhoneNo.Length < 9)
+        {
+            return "Phone number must contain at least 9 numbers!";
+        }
+
+        if (!requestModel.Password.IsNullOrEmpty())
+        {
+            if (requestModel.Password.Length < 8)
+                return "Password must contain at least 8 characters!";
+
+            if (!requestModel.Password.Any(char.IsUpper))
+                return "Password must contain at least one upper letter!";
+
+            if (!requestModel.Password.Any(char.IsLower))
+                return "Password must contain at least one lower letter!";
+
+            if (!requestModel.Password.Any(char.IsDigit))
+                return "Password must contain at least one digit!";
+
+            if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
+                return "Password must contain at least one special character!";
+        }
+
+        return null!;
+    }
+
+    private bool ValidateEmail(string email)
+    {
+        var admin = _db.TblAdmins.FirstOrDefault(x => x.Email == email);
         if (admin is null) return false;
         return true;
     }
-
-    //private int getLastIndex()
-    //{
-    //    var adminCode = _db.TblAdmins
-    //                        .AsNoTracking()
-    //                        .OrderByDescending(x => x.Createdat)
-    //                        .Select(x => x.Admincode)
-    //                        .FirstOrDefault();
-
-    //    if (adminCode is null) return 1;
-
-    //    var lastIndex = adminCode.Substring(2);
-    //    return int.Parse(lastIndex) + 1;
-    //}
-
-    //private string generateAdminCode()
-    //{
-    //    string adminCode = "A" + getLastIndex().ToString("D4");
-    //    return adminCode;
-    //}
 
     #endregion  
 }

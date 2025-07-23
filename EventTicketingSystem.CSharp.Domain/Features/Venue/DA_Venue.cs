@@ -57,7 +57,7 @@ public class DA_Venue
                 Capacity = createVenueRequest.Capacity,
                 Facilities = createVenueRequest.Facilities,
                 Addons = createVenueRequest.Addons,
-                Image = createVenueRequest.Image, // To Edit: Convert to the format to save into the db later
+                Venueimage = createVenueRequest.Image, // To Edit: Convert to the format to save into the db later
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
@@ -101,7 +101,7 @@ public class DA_Venue
             existingVenue.Capacity = updateVenueRequest.Capacity;
             existingVenue.Facilities = updateVenueRequest.Facilities;
             existingVenue.Addons = updateVenueRequest.Addons;
-            existingVenue.Image = updateVenueRequest.Image;    // To Edit: save the actual location of the image later
+            existingVenue.Venueimage = updateVenueRequest.Image;    // To Edit: save the actual location of the image later
             existingVenue.Modifiedby = CreatedByUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
@@ -173,7 +173,7 @@ public class DA_Venue
             Capacity = venue.Capacity,
             Facilities = venue.Facilities,
             Addons = venue.Addons,
-            Image = venue.Image,
+            Image = venue.Venueimage,
             DeleteFlag = venue.Deleteflag,
             CreatedBy = venue.Createdby,
             CreatedAt = venue.Createdat,

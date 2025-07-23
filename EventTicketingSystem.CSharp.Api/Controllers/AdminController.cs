@@ -1,11 +1,6 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.Admin;
-using EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-namespace EventTicketingSystem.CSharp.Api.Controllers;
-
-[Tags("Admin Users")]
+[Tags("Admin User")]
 [Route("api/[controller]")]
 [ApiController]
 public class AdminController : ControllerBase
@@ -17,38 +12,38 @@ public class AdminController : ControllerBase
         _blAdmin = blAdmin;
     }
 
-    [HttpGet("GetAdminList")]
-    public async Task<IActionResult> GetAdminList()
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        var data = await _blAdmin.GetAdminListAsync();
+        var data = await _blAdmin.List();
         return Ok(data);
     }
 
-    [HttpGet("GetAdminByCode/{adminCode}")]
-    public async Task<IActionResult> GetAdminByCode(string adminCode)
+    [HttpGet("Edit/{adminCode}")]
+    public async Task<IActionResult> Edit(string adminCode)
     {
-        var data = await _blAdmin.GetAdminByCode(adminCode);
+        var data = await _blAdmin.Edit(adminCode);
         return Ok(data);
     }
 
-    [HttpPost("CreateAdmin")]
-    public async Task<IActionResult> CreateAdmin(AdminRequestModel requestModel)
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create(AdminCreateRequestModel requestModel)
     {
-        var data = await _blAdmin.CreateAdmin(requestModel);
+        var data = await _blAdmin.Create(requestModel);
         return Ok(data);
     }
 
-    [HttpPatch("UpdateAdmin/{adminCode}")]
-    public async Task<IActionResult> UpdateAdmin (string adminCode, AdminRequestModel requestModel)
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update(AdminUpdateRequestModel requestModel)
     {
-        var data = await _blAdmin.UpdateAdmin(adminCode, requestModel);
+        var data = await _blAdmin.Update(requestModel);
         return Ok(data);
     }
 
-    [HttpDelete("DeleteAdmin/{adminCode}")]
-    public async Task<IActionResult> DeleteAdmin(string adminCode)
+    [HttpPost("Delete/{adminCode}")]
+    public async Task<IActionResult> Delete(string adminCode)
     {
-        var data = await _blAdmin.DeleteAdminByCode(adminCode);
+        var data = await _blAdmin.Delete(adminCode);
         return Ok(data);
     }
 }

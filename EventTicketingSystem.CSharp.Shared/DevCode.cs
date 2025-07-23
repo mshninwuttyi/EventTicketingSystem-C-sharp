@@ -1,4 +1,7 @@
-﻿namespace EventTicketingSystem.CSharp.Shared;
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace EventTicketingSystem.CSharp.Shared;
 
 public static partial class DevCode
 {
@@ -215,6 +218,46 @@ public static partial class DevCode
 
         byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
         return Convert.ToBase64String(fileBytes);
+    }
+
+    #endregion
+
+    #region Hash Password
+
+    public static string HashPassword(this string password, string username)
+    {
+        password = password.Trim();
+        username = username.Trim();
+        string saltedCode = EncodedSalt(username);
+        string hashString;
+        using (var sha256 = SHA256.Create())
+        {
+            var hash = sha256.ComputeHash(Encoding.Default.GetBytes(password + saltedCode));
+            hashString = ToHex(hash, false);
+        }
+
+        return hashString;
+    }
+
+    private static string EncodedSalt(string decodeString)
+    {
+        decodeString = decodeString.ToLower()
+            .Replace("a", "@")
+            .Replace("i", "!")
+            .Replace("l", "1")
+            .Replace("e", "3")
+            .Replace("o", "0")
+            .Replace("s", "$")
+            .Replace("n", "&");
+        return decodeString;
+    }
+
+    public static string ToHex(byte[] bytes, bool upperCase)
+    {
+        StringBuilder result = new StringBuilder(bytes.Length * 2);
+        for (int i = 0; i < bytes.Length; i++)
+            result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
+        return result.ToString();
     }
 
     #endregion

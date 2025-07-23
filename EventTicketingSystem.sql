@@ -1,26 +1,6 @@
 create database eventticketingsystem
     with owner postgres;
 
-create table public.tbl_admin
-(
-    adminid    varchar   not null
-        constraint tbl_admin_pk
-            primary key,
-    admincode  varchar   not null,
-    username   varchar   not null,
-    email      varchar   not null,
-    phoneno    varchar   not null,
-    password   varchar   not null,
-    createdby  varchar   not null,
-    createdat  timestamp not null,
-    modifiedby varchar,
-    modifiedat timestamp,
-    deleteflag boolean   not null
-);
-
-alter table public.tbl_admin
-    owner to postgres;
-
 create table public.tbl_eventcategory
 (
     eventcategoryid   varchar   not null
@@ -208,7 +188,7 @@ create table public.tbl_transactionticket
     transactionticketcode varchar        not null,
     transactioncode       varchar        not null,
     ticketcode            varchar        not null,
-    qrstring              varchar        not null,
+    qrimage               varchar        not null,
     price                 numeric(20, 2) not null,
     createdby             varchar        not null,
     createdat             timestamp      not null,
@@ -218,30 +198,6 @@ create table public.tbl_transactionticket
 );
 
 alter table public.tbl_transactionticket
-    owner to postgres;
-
-create table public.tbl_venue
-(
-    venueid       varchar   not null
-        constraint tbl_venue_pk
-            primary key,
-    venuecode     varchar   not null,
-    venuetypecode varchar   not null,
-    venuename     varchar   not null,
-    description   text,
-    address       varchar   not null,
-    capacity      integer   not null,
-    facilities    text,
-    addons        text,
-    image         varchar   not null,
-    createdby     varchar   not null,
-    createdat     timestamp not null,
-    modifiedby    varchar,
-    modifiedat    timestamp,
-    deleteflag    boolean   not null
-);
-
-alter table public.tbl_venue
     owner to postgres;
 
 create table public.tbl_verification
@@ -279,6 +235,51 @@ create table public.tbl_sequence
 alter table public.tbl_sequence
     owner to postgres;
 
+create table public.tbl_venue
+(
+    venueid       varchar   not null
+        constraint tbl_venue_pk
+            primary key,
+    venuecode     varchar   not null,
+    venuetypecode varchar   not null,
+    venuename     varchar   not null,
+    description   text,
+    address       varchar   not null,
+    capacity      integer   not null,
+    facilities    text,
+    addons        text,
+    venueimage    varchar   not null,
+    createdby     varchar   not null,
+    createdat     timestamp not null,
+    modifiedby    varchar,
+    modifiedat    timestamp,
+    deleteflag    boolean   not null
+);
+
+alter table public.tbl_venue
+    owner to postgres;
+
+create table public.tbl_admin
+(
+    adminid      varchar   not null
+        constraint tbl_admin_pk
+            primary key,
+    admincode    varchar   not null,
+    username     varchar   not null,
+    email        varchar   not null,
+    phoneno      varchar   not null,
+    password     varchar   not null,
+    profileimage varchar   not null,
+    createdby    varchar   not null,
+    createdat    timestamp not null,
+    modifiedby   varchar,
+    modifiedat   timestamp,
+    deleteflag   boolean   not null
+);
+
+alter table public.tbl_admin
+    owner to postgres;
+
 create function public.sp_sequencecode(id integer) returns character varying
     language plpgsql
 as
@@ -305,6 +306,7 @@ END;
 $$;
 
 alter function public.sp_sequencecode(integer) owner to postgres;
+
 
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BO', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);

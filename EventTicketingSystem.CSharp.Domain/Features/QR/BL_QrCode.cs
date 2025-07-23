@@ -44,7 +44,7 @@ public class BL_QrCode
 
     public async Task<Result<QrCheckResponseModel>> Check(string qrString)
     {
-        var response = await _da_QrCode.CheckQr(qrString);
+        var response = _da_QrCode.CheckQr(qrString);
         if (response.IsError)
         {
             return Result<QrCheckResponseModel>.SystemError(response.Message);
