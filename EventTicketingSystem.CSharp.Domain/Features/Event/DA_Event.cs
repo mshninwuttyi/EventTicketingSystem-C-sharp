@@ -29,11 +29,8 @@ public class DA_Event
             model.EventListResponse = data.Select(x => new EventResponseModel
             {
                 Eventname = x.Eventname,
-                Description = x.Description,
-                Address = x.Address,
                 Startdate = x.Startdate,
                 Enddate = x.Enddate,
-                Eventimage = x.Eventimage,
                 Eventstatus = x.Eventstatus,
 
             }).ToList();
@@ -74,11 +71,8 @@ public class DA_Event
             }
 
             model.Eventname = item.Eventname;
-            model.Description = item.Description;
-            model.Address = item.Address;
             model.Startdate = item.Startdate;
             model.Enddate = item.Enddate;
-            model.Eventimage = item.Eventimage;
             model.Isactive = item.Isactive;
             model.Eventstatus = item.Eventstatus;
             model.Totalticketquantity = item.Totalticketquantity;
@@ -141,16 +135,11 @@ public class DA_Event
                 Eventid = Ulid.NewUlid().ToString(),
                 Eventcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Event),
                 Eventname = requestModel.Eventname,
-                //Categorycode
-                Description = requestModel.Description,
-                Address = requestModel.Address,
                 Startdate = requestModel.Startdate,
                 Enddate = requestModel.Enddate,
-                Eventimage = requestModel.Eventimage,
                 Isactive = true,
                 Eventstatus = requestModel.Eventstatus,
                 Totalticketquantity = requestModel.Totalticketquantity,
-                //Businessownercode
                 Soldoutcount = 0,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
@@ -162,11 +151,8 @@ public class DA_Event
             model = new EventResponseModel
             {
                 Eventname = newEvent.Eventname,
-                Description = newEvent.Description,
-                Address = newEvent.Address,
                 Startdate = newEvent.Startdate,
                 Enddate = newEvent.Enddate,
-                Eventimage = newEvent.Eventimage,
                 Isactive = true,
                 Eventstatus = newEvent.Eventstatus,
                 Totalticketquantity = newEvent.Totalticketquantity,
@@ -208,11 +194,8 @@ public class DA_Event
             }
 
             item.Eventname = requestModel.Eventname;
-            item.Description = requestModel.Description;
-            item.Address = requestModel.Address;
             item.Startdate = requestModel.Startdate;
             item.Enddate = requestModel.Enddate;
-            item.Eventimage = requestModel.Eventimage;
             item.Isactive = requestModel.Isactive;
             item.Eventstatus = requestModel.Eventstatus;
             item.Totalticketquantity = requestModel.Totalticketquantity;
@@ -223,11 +206,8 @@ public class DA_Event
             await _db.SaveAndDetachAsync();
 
             model.Eventname = item.Eventname;
-            model.Description = item.Description;
-            model.Address = item.Address;
             model.Startdate = item.Startdate;
             model.Enddate = item.Enddate;
-            model.Eventimage = item.Eventimage;
             model.Isactive = item.Isactive;
             model.Eventstatus = item.Eventstatus;
             model.Totalticketquantity = item.Totalticketquantity;
@@ -277,11 +257,8 @@ public class DA_Event
             responseModel = new EventResponseModel
             {
                 Eventname = item.Eventname,
-                Description = item.Description,
                 Startdate = item.Startdate,
                 Enddate = item.Enddate,
-                Address = item.Address,
-                Eventimage = item.Eventimage,
                 Eventstatus = item.Eventstatus,
                 Totalticketquantity = item.Totalticketquantity,
             };
@@ -294,16 +271,6 @@ public class DA_Event
             return Result<EventResponseModel>.SystemError(ex.Message);
         }
     }
-
-    #endregion
-
-    #region Functions
-
-    //internal string GenerateEventCode()
-    //{
-    //    var eventCount = _db.TblEvents.Count();
-    //    return "EV" + eventCount.ToString("D6");
-    //}
 
     #endregion
 }

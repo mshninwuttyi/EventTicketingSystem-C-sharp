@@ -33,7 +33,7 @@ public class AdminListModel
             AdminCode = admin.Admincode,
             Username = admin.Username,
             Email = admin.Email,
-            PhoneNo = admin.Phoneno,
+            PhoneNo = admin.Phone,
             ProfileImage = admin.Profileimage,
             Password = admin.Password,
             Createdby = admin.Createdby,

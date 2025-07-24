@@ -196,13 +196,6 @@ public class CommonService
     {
         try
         {
-            var eventImagesInDb = await _db.TblEvents
-                .Select(x => x.Eventimage)
-                .Where(x => !string.IsNullOrEmpty(x))
-                .ToListAsync();
-
-            DeleteExtraFilesForDirectory(EnumDirectory.EventImage, eventImagesInDb);
-
             var venueImagesInDb = await _db.TblVenues
                 .Select(x => x.Venueimage)
                 .Where(x => !string.IsNullOrEmpty(x))

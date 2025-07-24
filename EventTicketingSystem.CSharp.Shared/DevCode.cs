@@ -1,7 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-
-namespace EventTicketingSystem.CSharp.Shared;
+﻿namespace EventTicketingSystem.CSharp.Shared;
 
 public static partial class DevCode
 {
@@ -183,7 +180,7 @@ public static partial class DevCode
             Directory.CreateDirectory(uploadPath);
         }
 
-        var fileName = $"{Guid.NewGuid()}.jpeg";
+        var fileName = $"{GenerateUlid()}.jpeg";
         var filePath = Path.Combine(uploadPath, fileName);
 
         try

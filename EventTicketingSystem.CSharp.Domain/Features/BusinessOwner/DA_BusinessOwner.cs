@@ -68,9 +68,9 @@ public class DA_BusinessOwner
             {
                 Businessownerid = x.Businessownerid,
                 Businessownercode = x.Businessownercode,
-                Name = x.Name,
+                FullName = x.Fullname,
                 Email = x.Email,
-                Phonenumber = x.Phonenumber,
+                Phone = x.Phone,
                 Createdby = x.Createdby,
                 Createdat = x.Createdat,
                 Modifiedby = x.Modifiedby,
@@ -119,9 +119,9 @@ public class DA_BusinessOwner
             {
                 Businessownerid = data.Businessownerid,
                 Businessownercode = data.Businessownercode,
-                Name = data.Name,
+                FullName = data.Fullname,
                 Email = data.Email,
-                Phonenumber = data.Phonenumber,
+                Phone = data.Phone,
                 Createdby = data.Createdby,
                 Createdat = data.Createdat,
                 Modifiedby = data.Modifiedby,
@@ -152,11 +152,11 @@ public class DA_BusinessOwner
         {
             return Result<BusinessOwnerResponseModel>.ValidationError("Email is already used or invalid!");
         }
-        else if (owner.Name.IsNullOrEmpty() || owner.Name.Length < 3)
+        else if (owner.FullName.IsNullOrEmpty() || owner.FullName.Length < 3)
         {
             return Result<BusinessOwnerResponseModel>.ValidationError("Name can't be blank or less than 3 characters.");
         }
-        else if (owner.Phonenumber.IsNullOrEmpty() || owner.Phonenumber.Length < 9)
+        else if (owner.Phone.IsNullOrEmpty() || owner.Phone.Length < 9)
         {
             return Result<BusinessOwnerResponseModel>.ValidationError("Phone No can't be empty or less than 9 digits!");
         }
@@ -168,9 +168,9 @@ public class DA_BusinessOwner
                 {
                     Businessownerid = Ulid.NewUlid().ToString(),
                     Businessownercode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_BusinessOwner),
-                    Name = owner.Name,
+                    Fullname = owner.FullName,
                     Email = owner.Email,
-                    Phonenumber = owner.Phonenumber,
+                    Phone = owner.Phone,
                     Createdby = CreatedByUserId,
                     Createdat = DateTime.Now,
                     Deleteflag = false
@@ -237,11 +237,11 @@ public class DA_BusinessOwner
                 }
             }
 
-            if (!owner.Name.IsNullOrEmpty() && data.Name != owner.Name)
+            if (!owner.FullName.IsNullOrEmpty() && data.Fullname != owner.FullName)
             {
-                if (owner.Name.Length >= 3)
+                if (owner.FullName.Length >= 3)
                 {
-                    data.Name = owner.Name;
+                    data.Fullname = owner.FullName;
                 }
                 else
                 {
@@ -249,11 +249,11 @@ public class DA_BusinessOwner
                 }
             }
 
-            if (!owner.Phonenumber.IsNullOrEmpty() && data.Phonenumber != owner.Phonenumber)
+            if (!owner.Phone.IsNullOrEmpty() && data.Phone != owner.Phone)
             {
-                if (owner.Phonenumber.Length >= 9 && owner.Phonenumber.Length < 11)
+                if (owner.Phone.Length >= 9 && owner.Phone.Length < 11)
                 {
-                    data.Phonenumber = owner.Phonenumber;
+                    data.Phone = owner.Phone;
                 }
                 else
                 {
@@ -265,7 +265,7 @@ public class DA_BusinessOwner
             data.Modifiedat = DateTime.Now;
 
             _db.Entry(data).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
             model.BusinessOwner = BusinessOwnerModel.FromTblOwner(data);
             if (errorMessage.IsNullOrEmpty())

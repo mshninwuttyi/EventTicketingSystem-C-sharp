@@ -26,7 +26,7 @@ public class AdminEditModel
             AdminId = admin.Adminid,
             Username = admin.Username,
             Email = admin.Email,
-            PhoneNo = admin.Phoneno,
+            PhoneNo = admin.Phone,
             Password = admin.Password,
             ProfileImage = admin.Profileimage,
         };

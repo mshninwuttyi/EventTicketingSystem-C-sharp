@@ -4,6 +4,5 @@ public enum EnumDirectory
 {
     QrImage,
     ProfileImage,
-    EventImage,
     VenueImage,
 }

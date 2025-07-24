@@ -47,8 +47,7 @@ public class DA_QrCode
             $"|{tblTicketType.Tickettypename}" +
             $"|{requestModel.FullName}" +
             $"|{requestModel.Email}" +
-            $"|VenueName" +
-            $"|{tblEvent.Address}";
+            $"|VenueName";
 
         response.QrString = qrString;
 

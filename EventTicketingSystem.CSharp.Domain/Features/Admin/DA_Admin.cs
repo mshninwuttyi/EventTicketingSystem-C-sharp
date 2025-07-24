@@ -97,7 +97,7 @@ public class DA_Admin
                 Username = requestModel.Username,
                 Email = requestModel.Email,
                 Password = requestModel.Password.HashPassword(requestModel.Username),
-                Phoneno = requestModel.PhoneNo,
+                Phone = requestModel.PhoneNo,
                 Profileimage = requestModel.ProfileImage,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
@@ -154,7 +154,7 @@ public class DA_Admin
 
         if (!requestModel.PhoneNo.IsNullOrEmpty())
         {
-            admin.Phoneno = requestModel.PhoneNo;
+            admin.Phone = requestModel.PhoneNo;
         }
 
         if (!requestModel.Password.IsNullOrEmpty())
