@@ -4,6 +4,7 @@ public class EventCategoryResponseModel
 {
     public List<EventCategoryModel> EventCategories { get; set; }
 
+    public EventCategoryModel eventCategory { get; set; }
 }
 
 public class EventCategoryModel
@@ -24,5 +25,15 @@ public class EventCategoryModel
 
     public bool? Deleteflag { get; set; }
 
-
+    public static EventCategoryModel FromTblCategory(TblEventcategory category)
+    {
+        return new EventCategoryModel
+        {
+           EventCategoryid = category.Eventcategoryid,
+           EventCategorycode = category.Eventcategorycode,
+           Categoryname = category.Categoryname,
+           Createdby = category.Createdby,
+           Createdat = category.Createdat
+        };
+    }
 }

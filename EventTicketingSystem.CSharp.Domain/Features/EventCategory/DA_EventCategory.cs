@@ -56,15 +56,18 @@ public class DA_EventCategory
 
     #region create category
 
-    public async Task<Result<CreateEventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
     {
+        var responseModel = new Result<EventCategoryResponseModel>();
+        var model = new EventCategoryResponseModel();
+
         if (request.CategoryName.IsNullOrEmpty())
         {
-            return Result<CreateEventCategoryResponseModel>.ValidationError("Fill up Category Name!");
+            return Result<EventCategoryResponseModel>.ValidationError("Fill up Category Name!");
         }
         else if (isCategoryNameExist(request.CategoryName))
         {
-            return Result<CreateEventCategoryResponseModel>.ValidationError("CategoryName already exist!");
+            return Result<EventCategoryResponseModel>.ValidationError("CategoryName already exist!");
         }
         else
         {
@@ -73,49 +76,42 @@ public class DA_EventCategory
                 var newCategory = new TblEventcategory
                 {
                     Eventcategoryid = Ulid.NewUlid().ToString(),
-                    Eventcategorycode =  await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_EventCategory),
+                    Eventcategorycode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_EventCategory),
                     Categoryname = request.CategoryName,
                     Createdat = DateTime.Now,
                     Createdby = CreatedByUserId,
                     Deleteflag = false
                 };
-                var entry = await _db.TblEventcategories.AddAsync(newCategory);
+                await _db.TblEventcategories.AddAsync(newCategory);
                 await _db.SaveAndDetachAsync();
 
-                var createdEventCategory = entry.Entity;
-                var model = new CreateEventCategoryResponseModel
-                {
-                    EventCategoryid = createdEventCategory.Eventcategoryid,
-                    EventCategorycode= createdEventCategory.Eventcategorycode,
-                    Categoryname = createdEventCategory.Categoryname,
-                    Createdat = createdEventCategory.Createdat,
-                    Createdby = createdEventCategory.Createdby
-                };
-
-                return Result<CreateEventCategoryResponseModel>.Success(model, "New Category Created");
+                model.eventCategory = EventCategoryModel.FromTblCategory(newCategory);
+                responseModel = Result<EventCategoryResponseModel>.Success(model, "New Category Created");
             }
             catch (Exception ex)
             {
                 _logger.LogExceptionError(ex);
-                return Result<CreateEventCategoryResponseModel>.SystemError(ex.Message);
+                return Result<EventCategoryResponseModel>.SystemError(ex.Message);
             }
         }
+
+        return responseModel;
     }
 
     #endregion
 
     #region Update Category
 
-    public async Task<Result<UpdateEventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
     {
-        
+        var model = new EventCategoryResponseModel();
         if (request.AdminCode.IsNullOrEmpty())
         {
-            return Result<UpdateEventCategoryResponseModel>.ValidationError("Admin not found");
+            return Result<EventCategoryResponseModel>.ValidationError("Admin not found");
         }
         else if (request.CategoryName.IsNullOrEmpty())
         {
-            return Result<UpdateEventCategoryResponseModel>.ValidationError("Category name not found");
+            return Result<EventCategoryResponseModel>.ValidationError("Category name not found");
         }
         else
         {
@@ -128,31 +124,21 @@ public class DA_EventCategory
                                         );
                 if (existingCategory is null)
                 {
-                    return Result<UpdateEventCategoryResponseModel>.NotFoundError("Category name not found");
+                    return Result<EventCategoryResponseModel>.NotFoundError("Category name not found");
                 }
 
                 existingCategory.Categoryname = request.CategoryName;
                 existingCategory.Modifiedby = CreatedByUserId;
                 existingCategory.Modifiedat = DateTime.Now;
-                var entry = _db.TblEventcategories.Update(existingCategory);
+
+                _db.Entry(existingCategory).State = EntityState.Modified;
                 await _db.SaveAndDetachAsync();
-
-                var updateEventCategory = entry.Entity;
-                var model = new UpdateEventCategoryResponseModel
-                {
-                    EventCategoryid = updateEventCategory.Eventcategoryid,
-                    EventCategorycode = updateEventCategory.Eventcategorycode,
-                    Categoryname = updateEventCategory.Categoryname,
-                    Modifiedat = updateEventCategory.Modifiedat,
-                    Modifiedby = updateEventCategory.Modifiedby
-                };
-
-                return Result<UpdateEventCategoryResponseModel>.Success(model, "Category Name updated successfully");
+                return Result<EventCategoryResponseModel>.Success(model, "Category Name updated successfully");
             }
             catch (Exception ex)
             {
                 _logger.LogExceptionError(ex);
-                return Result<UpdateEventCategoryResponseModel>.SystemError(ex.Message);
+                return Result<EventCategoryResponseModel>.SystemError(ex.Message);
             }
         }
     }
@@ -177,7 +163,7 @@ public class DA_EventCategory
                         );
             if (data is null)
             {
-                return Result<EventCategoryResponseModel>.NotFoundError($"No Event Category Found with Code: {categoryCode}");
+                return Result<EventCategoryResponseModel>.NotFoundError($"No Owner Found with Code: {categoryCode}");
             }
 
             data.Deleteflag = true;
