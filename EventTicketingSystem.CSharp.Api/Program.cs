@@ -1,3 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 #region Logging
 
 string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
@@ -27,12 +31,44 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddModularServices(builder);
 
+#region Jwt Token
+
+builder.Services.AddOptions<JwtSettings>()
+    .Bind(builder.Configuration.GetSection("JwtSettings"))
+    .ValidateDataAnnotations()
+    .Validate(settings => !string.IsNullOrWhiteSpace(settings.SecretKey), "SecretKey must be provided.")
+    .ValidateOnStart();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
+                  ?? throw new InvalidOperationException("JwtSettings configuration is missing or invalid.");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+#endregion
+
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
