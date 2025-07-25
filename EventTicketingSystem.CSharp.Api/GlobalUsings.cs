@@ -16,3 +16,8 @@ global using EventTicketingSystem.CSharp.Domain.Features.Venue;
 global using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
 global using EventTicketingSystem.CSharp.Domain.Features.Admin;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.Event;
+global using EventTicketingSystem.CSharp.Domain.Features.Event;
+global using EventTicketingSystem.CSharp.Shared;
+global using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;

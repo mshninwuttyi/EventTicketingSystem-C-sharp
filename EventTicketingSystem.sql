@@ -307,16 +307,16 @@ $$;
 alter function public.sp_sequencecode(integer) owner to postgres;
 
 
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BO', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('AD', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TT', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VT', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TI', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TR', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VE', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EV', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TP', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
-INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BE', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Event Category
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BO', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Business Owner
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('AD', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Admin
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TT', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Ticket Type
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VT', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Venue Type
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Ticket
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TI', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Transaction Ticket
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TR', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Transaction
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VE', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Venue
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EV', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Event
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Verification
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TP', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Ticket Price
+INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BE', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Business Email

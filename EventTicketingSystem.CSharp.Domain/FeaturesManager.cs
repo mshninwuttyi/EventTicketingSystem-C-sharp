@@ -1,4 +1,6 @@
-using EventTicketingSystem.CSharp.Domain.Features.OTP;
+using EventTicketingSystem.CSharp.Shared.Services;
+using System.Net;
+using System.Net.Mail;
 
 namespace EventTicketingSystem.CSharp.Domain;
 
@@ -61,12 +63,27 @@ public static class FeaturesManager
     {
         services.AddScoped<DapperService>();
         services.AddScoped<CommonService>();
+        services.AddScoped<EmailService>();
 
         return services;
     }
 
     public static WebApplicationBuilder AddBuilders(this WebApplicationBuilder builder)
     {
+
+        builder.Services
+            .AddFluentEmail("eventticketingsystem.opom@gmail.com")
+            .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(
+                        "eventticketingsystem.opom@gmail.com",
+                        "qpqo kczf gffk bycz"),
+                EnableSsl = true,
+                Port = 587,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Timeout = 10000
+            });
 
         return builder;
     }

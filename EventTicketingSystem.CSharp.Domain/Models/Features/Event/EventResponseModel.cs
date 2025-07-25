@@ -1,28 +1,16 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.Event;
 
-public class EventListResponseModel
+public class EventCreateResponseModel
 {
-    public List<EventResponseModel> EventListResponse { get; set; }
+
 }
 
-public class EventResponseModel
+public class EventUpdateResponseModel
 {
 
-    public string? Eventname { get; set; }
+}
 
-    public string? Description { get; set; }
+public class EventDeleteResponseModel
+{
 
-    public string? Address { get; set; }
-
-    public DateTime? Startdate { get; set; }
-
-    public DateTime? Enddate { get; set; }
-
-    public string? Eventimage { get; set; }
-
-    public bool? Isactive { get; set; }
-
-    public string? Eventstatus { get; set; }
-
-    public int? Totalticketquantity { get; set; }
 }

@@ -9,24 +9,28 @@ public class BL_EventCategory
         _dataAccess = dataAccess;
     }
 
-    public async Task<Result<EventCategoryResponseModel>> GetList()
+    public async Task<Result<EventCategoryListResponseModel>> List()
     {
-        return await _dataAccess.GetList();
+        return await _dataAccess.List();
     }
 
-    public async Task<Result<EventCategoryResponseModel>> CreateEventCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryEditResponseModel>> Edit(string eventCategoryCode)
     {
-      
-        return await _dataAccess.CreateCategory(request);
+        return await _dataAccess.Edit(eventCategoryCode);
     }
 
-    public async Task<Result<EventCategoryResponseModel>> UpdateEventCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryCreateResponseModel>> Create(EventCategoryCreateRequestModel requestModel)
     {
-        return await _dataAccess.UpdateCategory(request);
+        return await _dataAccess.Create(requestModel);
     }
 
-    public async Task<Result<EventCategoryResponseModel>> DeleteEventCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryUpdateResponseModel>> Update(EventCategoryUpdateRequestModel requestModel)
     {
-        return await _dataAccess.DeleteCategory(request.EventCategoryCode,request.AdminCode);
+        return await _dataAccess.Update(requestModel);
+    }
+
+    public async Task<Result<EventCategoryDeleteResponseModel>> Delete(string eventCategoryCode)
+    {
+        return await _dataAccess.Delete(eventCategoryCode);
     }
 }

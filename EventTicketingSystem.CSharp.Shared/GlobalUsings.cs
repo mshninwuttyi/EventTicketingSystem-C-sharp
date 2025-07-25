@@ -9,3 +9,4 @@ global using EventTicketingSystem.CSharp.Shared.Enums;
 global using EventTicketingSystem.CSharp.Shared.Models;
 global using System.Security.Cryptography;
 global using System.Text;
+global using FluentEmail.Core;

@@ -54,4 +54,30 @@ public class TicketController : ControllerBase
         }
         return Ok(result.Data);
     }
+
+    [HttpPost("DeleteTicket/{ticketCode}")]
+    public async Task<IActionResult> DeleteById(string ticketCode)
+    {
+        var result = await _blTicket.DeleteById(ticketCode);
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("UpdateTicket/{ticketCode},{isUsed}")]
+    public async Task<IActionResult> UpdateTicket(string ticketCode, bool isUsed)
+    {
+        var result = await _blTicket.UpdateTicket(ticketCode, isUsed);
+
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+
+        return Ok(result);
+    }
 }

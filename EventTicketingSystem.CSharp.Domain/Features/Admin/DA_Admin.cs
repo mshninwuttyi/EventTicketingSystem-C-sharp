@@ -25,6 +25,7 @@ public class DA_Admin
         {
             var data = await _db.TblAdmins
                         .Where(x => x.Deleteflag == false)
+                        .OrderBy(x => x.Adminid)
                         .ToListAsync();
             if (data is null)
             {

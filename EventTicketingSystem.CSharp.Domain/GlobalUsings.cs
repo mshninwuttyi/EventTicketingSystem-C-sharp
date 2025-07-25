@@ -33,3 +33,5 @@ global using EventTicketingSystem.CSharp.Domain.Models.Features.Event;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.EventCategory;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
+global using EventTicketingSystem.CSharp.Shared.Services;
+global using EventTicketingSystem.CSharp.Shared.Models;

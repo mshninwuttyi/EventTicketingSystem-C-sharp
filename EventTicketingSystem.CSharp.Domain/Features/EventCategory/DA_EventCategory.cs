@@ -14,60 +14,78 @@ public class DA_EventCategory
         _commonService = commonService;
     }
 
-    #region Get category list
+    #region Event Category List
 
-    public async Task<Result<EventCategoryResponseModel>> GetList()
+    public async Task<Result<EventCategoryListResponseModel>> List()
     {
-        var responseModel = new Result<EventCategoryResponseModel>();
-        var model = new EventCategoryResponseModel();
+        var model = new EventCategoryListResponseModel();
         try
         {
             var data = await _db.TblEventcategories
                                 .Where(x => x.Deleteflag == false)
+                                .OrderByDescending(x => x.Eventcategoryid)
                                 .ToListAsync();
             if (data is null)
             {
-                return Result<EventCategoryResponseModel>.NotFoundError("No Event Categories Found!");
+                return Result<EventCategoryListResponseModel>.NotFoundError("Event Type Not Found.");
             }
 
-            model.EventCategories = data.Select(x => new EventCategoryModel
-            {
-                EventCategoryid = x.Eventcategoryid,
-                EventCategorycode = x.Eventcategorycode,
-                Categoryname = x.Categoryname,
-                Createdby = x.Createdby,
-                Createdat = x.Createdat,
-                Modifiedby = x.Modifiedby,
-                Modifiedat = x.Modifiedat,
-                Deleteflag = false
-
-            }).ToList();
-
-            return Result<EventCategoryResponseModel>.Success(model);
+            model.EventCategories = data.Select(EventCategoryListModel.FromTblCategory).ToList();
+            return Result<EventCategoryListResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+            return Result<EventCategoryListResponseModel>.SystemError(ex.Message);
         }
     }
 
     #endregion
 
-    #region create category
+    #region Event Category Edit
 
-    public async Task<Result<EventCategoryResponseModel>> CreateCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryEditResponseModel>> Edit(string eventCategoryCode)
     {
-        var responseModel = new Result<EventCategoryResponseModel>();
-        var model = new EventCategoryResponseModel();
-
-        if (request.CategoryName.IsNullOrEmpty())
+        var model = new EventCategoryEditResponseModel();
+        if (eventCategoryCode.IsNullOrEmpty())
         {
-            return Result<EventCategoryResponseModel>.ValidationError("Fill up Category Name!");
+            return Result<EventCategoryEditResponseModel>.UserInputError("Event Type Not Found.");
         }
-        else if (isCategoryNameExist(request.CategoryName))
+        try
         {
-            return Result<EventCategoryResponseModel>.ValidationError("CategoryName already exist!");
+            var item = await _db.TblEventcategories
+                                        .FirstOrDefaultAsync(
+                                            x => x.Eventcategorycode == eventCategoryCode &&
+                                            x.Deleteflag == false
+                                        );
+            if (item is null)
+            {
+                return Result<EventCategoryEditResponseModel>.NotFoundError("Event Type Not Found.");
+            }
+
+            model.Event = EventCategoryEditModel.FromTblCategory(item);
+            return Result<EventCategoryEditResponseModel>.Success(model);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<EventCategoryEditResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    #endregion
+
+    #region Event Category Create
+
+    public async Task<Result<EventCategoryCreateResponseModel>> Create(EventCategoryCreateRequestModel requestModel)
+    {
+        if (requestModel.CategoryName.IsNullOrEmpty())
+        {
+            return Result<EventCategoryCreateResponseModel>.ValidationError("Event Type Name Required.");
+        }
+        else if (isCategoryNameExist(requestModel.CategoryName))
+        {
+            return Result<EventCategoryCreateResponseModel>.ValidationError("Event Type Name already exist.");
         }
         else
         {
@@ -77,7 +95,7 @@ public class DA_EventCategory
                 {
                     Eventcategoryid = Ulid.NewUlid().ToString(),
                     Eventcategorycode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_EventCategory),
-                    Categoryname = request.CategoryName,
+                    Categoryname = requestModel.CategoryName,
                     Createdat = DateTime.Now,
                     Createdby = CreatedByUserId,
                     Deleteflag = false
@@ -85,33 +103,29 @@ public class DA_EventCategory
                 await _db.TblEventcategories.AddAsync(newCategory);
                 await _db.SaveAndDetachAsync();
 
-                model.eventCategory = EventCategoryModel.FromTblCategory(newCategory);
-                responseModel = Result<EventCategoryResponseModel>.Success(model, "New Category Created");
+                return Result<EventCategoryCreateResponseModel>.Success("Event Type Created Successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogExceptionError(ex);
-                return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+                return Result<EventCategoryCreateResponseModel>.SystemError(ex.Message);
             }
         }
-
-        return responseModel;
     }
 
     #endregion
 
-    #region Update Category
+    #region Event Category Update
 
-    public async Task<Result<EventCategoryResponseModel>> UpdateCategory(EventCategoryRequestModel request)
+    public async Task<Result<EventCategoryUpdateResponseModel>> Update(EventCategoryUpdateRequestModel requestModel)
     {
-        var model = new EventCategoryResponseModel();
-        if (request.AdminCode.IsNullOrEmpty())
+        if (requestModel.EventCategoryCode.IsNullOrEmpty())
         {
-            return Result<EventCategoryResponseModel>.ValidationError("Admin not found");
+            return Result<EventCategoryUpdateResponseModel>.ValidationError("Event Type Not Found.");
         }
-        else if (request.CategoryName.IsNullOrEmpty())
+        else if (requestModel.CategoryName.IsNullOrEmpty())
         {
-            return Result<EventCategoryResponseModel>.ValidationError("Category name not found");
+            return Result<EventCategoryUpdateResponseModel>.ValidationError("Event Type Name Required.");
         }
         else
         {
@@ -119,80 +133,78 @@ public class DA_EventCategory
             {
                 var existingCategory = await _db.TblEventcategories
                                         .FirstOrDefaultAsync(
-                                            x => x.Eventcategorycode == request.EventCategoryCode &&
+                                            x => x.Eventcategorycode == requestModel.EventCategoryCode &&
                                             x.Deleteflag == false
                                         );
                 if (existingCategory is null)
                 {
-                    return Result<EventCategoryResponseModel>.NotFoundError("Category name not found");
+                    return Result<EventCategoryUpdateResponseModel>.NotFoundError("Event Type Name Not Found");
                 }
 
-                existingCategory.Categoryname = request.CategoryName;
+                existingCategory.Categoryname = requestModel.CategoryName;
                 existingCategory.Modifiedby = CreatedByUserId;
                 existingCategory.Modifiedat = DateTime.Now;
-
                 _db.Entry(existingCategory).State = EntityState.Modified;
                 await _db.SaveAndDetachAsync();
-                return Result<EventCategoryResponseModel>.Success(model, "Category Name updated successfully");
+
+                return Result<EventCategoryUpdateResponseModel>.Success("Event Type Updated Successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogExceptionError(ex);
-                return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+                return Result<EventCategoryUpdateResponseModel>.SystemError(ex.Message);
             }
         }
     }
 
     #endregion
 
-    #region Delete Category
+    #region Event Category Delete
 
-    public async Task<Result<EventCategoryResponseModel>> DeleteCategory(string? categoryCode, string userCode)
+    public async Task<Result<EventCategoryDeleteResponseModel>> Delete(string eventCategoryCode)
     {
-        if (categoryCode.IsNullOrEmpty())
+        if (eventCategoryCode.IsNullOrEmpty())
         {
-            return Result<EventCategoryResponseModel>.UserInputError("Category Code can't be Null or Empty!");
+            return Result<EventCategoryDeleteResponseModel>.UserInputError("Event Type Not Found.");
         }
 
         try
         {
-            var data = await _db.TblEventcategories
+            var item = await _db.TblEventcategories
                         .FirstOrDefaultAsync(
-                            x => x.Eventcategorycode == categoryCode &&
+                            x => x.Eventcategorycode == eventCategoryCode &&
                             x.Deleteflag == false
                         );
-            if (data is null)
+            if (item is null)
             {
-                return Result<EventCategoryResponseModel>.NotFoundError($"No Owner Found with Code: {categoryCode}");
+                return Result<EventCategoryDeleteResponseModel>.NotFoundError("Event Type Not Found.");
             }
 
-            data.Deleteflag = true;
-            data.Modifiedby = CreatedByUserId;
-            data.Modifiedat = DateTime.Now;
-            _db.Entry(data).State = EntityState.Modified;
+            item.Deleteflag = true;
+            item.Modifiedby = CreatedByUserId;
+            item.Modifiedat = DateTime.Now;
+            _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            return Result<EventCategoryResponseModel>.Success("Category Deleted Successfully!");
+            return Result<EventCategoryDeleteResponseModel>.Success("Event Type Deleted Successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventCategoryResponseModel>.SystemError(ex.Message);
+            return Result<EventCategoryDeleteResponseModel>.SystemError(ex.Message);
         }
     }
 
     #endregion
 
     #region Private function
-    
-    private bool isCategoryNameExist(string? categoryName)
+
+    private bool isCategoryNameExist(string categoryName)
     {
-
         return _db.TblEventcategories
-    .AsEnumerable()
-    .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
+            .AsEnumerable()
+            .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
     }
-
 
     #endregion
 }

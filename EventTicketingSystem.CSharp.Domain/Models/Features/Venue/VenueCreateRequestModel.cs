@@ -1,10 +1,7 @@
 namespace EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
 
-public class UpdateVenueRequestModel
+public class VenueCreateRequestModel
 {
-    [Required]
-    public required string VenueId { get; set; }  
-    
     [Required]
     public required string VenueTypeCode { get; set; }
 
@@ -23,6 +20,4 @@ public class UpdateVenueRequestModel
     public string? Addons { get; set; }
 
     public string? Image { get; set; }  
-    
-    public bool DeleteFlag { get; set; }
 }

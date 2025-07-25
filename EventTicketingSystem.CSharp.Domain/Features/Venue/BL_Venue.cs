@@ -9,23 +9,28 @@ public class BL_Venue
         _daService = dataAccess;
     }
 
-    public async Task<Result<List<VenueResponseModel>>> GetList()
+    public async Task<Result<VenueListResponseModel>> List()
     {
-        return await _daService.GetList();
+        return await _daService.List();
     }
 
-    public async Task<Result<VenueResponseModel>> CreateVenue(CreateVenueRequestModel createVenue)
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueId)
     {
-        return await _daService.CreateVenue(createVenue);
+        return await _daService.Edit(venueId);
     }
 
-    public async Task<Result<VenueResponseModel>> UpdateVenue(UpdateVenueRequestModel updateVenue)
+    public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
-        return await  _daService.UpdateVenue(updateVenue);
+        return await _daService.Create(requestModel);
     }
-    
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId)
+
+    public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
     {
-        return await _daService.DeleteVenue(venueId);
+        return await _daService.Update(requestModel);
+    }
+
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
+    {
+        return await _daService.Delete(venueId);
     }
 }

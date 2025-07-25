@@ -14,171 +14,144 @@ public class DA_Venue
         _commonService = commonService;
     }
 
-    public async Task<Result<List<VenueResponseModel>>> GetList()
+    public async Task<Result<VenueListResponseModel>> List()
     {
-        var model = new VenueResponseModel();
+        var model = new VenueListResponseModel();
         try
         {
             var data = await _db.TblVenues
                         .Where(x => x.Deleteflag == false)
-                        .OrderBy(x => x.Venuecode)
+                        .OrderBy(x => x.Venueid)
                         .ToListAsync();
             if (data is null)
             {
-                return Result<List<VenueResponseModel>>.NotFoundError("Venue Not Found.");
+                return Result<VenueListResponseModel>.NotFoundError("Venue Not Found.");
             }
 
-            var venues = data
-                .Select(MapToResponseModel)
-                .ToList();
-
-            return Result<List<VenueResponseModel>>.Success(venues);
+            model.VenueList = data.Select(VenueListModel.FromTblVenue).ToList();
+            return Result<VenueListResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<List<VenueResponseModel>>.SystemError(ex.Message);
+            return Result<VenueListResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<VenueResponseModel>> CreateVenue(CreateVenueRequestModel createVenueRequest)
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueId)
+    {
+        var model = new VenueEditResponseModel();
+        try
+        {
+            var venue = await _db.TblVenues
+                            .FirstOrDefaultAsync(
+                                x => x.Venueid == venueId && 
+                                x.Deleteflag == false
+                            );
+            if (venue is null)
+            {
+                return Result<VenueEditResponseModel>.NotFoundError("Venue not found.");
+            }
+
+            model.Venue = VenueEditModel.FromTblVenue(venue);
+            return Result<VenueEditResponseModel>.Success(model);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<VenueEditResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
         try
         {
-            // Map VenueRequestModel into the TblVenue Entities
             var venueEntity = new TblVenue()
             {
                 Venueid = GenerateUlid(),
                 Venuecode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Venue),
-                Venuetypecode = createVenueRequest.VenueTypeCode,
-                Venuename = createVenueRequest.VenueName,
-                Description = createVenueRequest.Description,
-                Address = createVenueRequest.Address,
-                Capacity = createVenueRequest.Capacity,
-                Facilities = createVenueRequest.Facilities,
-                Addons = createVenueRequest.Addons,
-                Venueimage = createVenueRequest.Image, // To Edit: Convert to the format to save into the db later
+                Venuetypecode = requestModel.VenueTypeCode,
+                Venuename = requestModel.VenueName,
+                Description = requestModel.Description,
+                Address = requestModel.Address!,
+                Capacity = requestModel.Capacity,
+                Facilities = requestModel.Facilities,
+                Addons = requestModel.Addons,
+                Venueimage = requestModel.Image!,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
-
-            // Add venueEntity to Db
             await _db.TblVenues.AddAsync(venueEntity);
-
-            // Save changes
             await _db.SaveAndDetachAsync();
 
-            // Map created entity to response model
-            var venueResponse = MapToResponseModel(venueEntity);
-
-            return Result<VenueResponseModel>.Success(venueResponse, "Venue created successfully.");
+            return Result<VenueCreateResponseModel>.Success("Venue created successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<VenueResponseModel>.SystemError(ex.Message);
+            return Result<VenueCreateResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<VenueResponseModel>> UpdateVenue(UpdateVenueRequestModel updateVenueRequest)
+    public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
     {
         try
         {
-            // Find existing venue by ID
-            var existingVenue = await _db.TblVenues.FindAsync(updateVenueRequest.VenueId);
+            var existingVenue = await _db.TblVenues.FindAsync(requestModel.VenueId);
 
             if (existingVenue is null)
             {
-                return Result<VenueResponseModel>.NotFoundError("Venue not found.");
+                return Result<VenueUpdateResponseModel>.NotFoundError("Venue not found.");
             }
 
-            // Update
-            existingVenue.Venuetypecode = updateVenueRequest.VenueTypeCode;
-            existingVenue.Venuename = updateVenueRequest.VenueName;
-            existingVenue.Description = updateVenueRequest.Description;
-            existingVenue.Address = updateVenueRequest.Address;
-            existingVenue.Capacity = updateVenueRequest.Capacity;
-            existingVenue.Facilities = updateVenueRequest.Facilities;
-            existingVenue.Addons = updateVenueRequest.Addons;
-            existingVenue.Venueimage = updateVenueRequest.Image;    // To Edit: save the actual location of the image later
+            existingVenue.Venuetypecode = requestModel.VenueTypeCode;
+            existingVenue.Venuename = requestModel.VenueName;
+            existingVenue.Description = requestModel.Description;
+            existingVenue.Address = requestModel.Address!;
+            existingVenue.Capacity = requestModel.Capacity;
+            existingVenue.Facilities = requestModel.Facilities;
+            existingVenue.Addons = requestModel.Addons;
+            existingVenue.Venueimage = requestModel.Image!;
             existingVenue.Modifiedby = CreatedByUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
-            // Force EF to consider the entity modified
             _db.Entry(existingVenue).State = EntityState.Modified;
+            await _db.SaveAndDetachAsync();
 
-            // Save changes
-            var rows = await _db.SaveAndDetachAsync();
-            _logger.LogInformation(rows == 0 ? "no rows updated" : "there is an update");
-
-            // Map updated entity to response model
-            var venueResponse = MapToResponseModel(existingVenue);
-
-            return Result<VenueResponseModel>.Success(venueResponse, "Venue updated successfully.");
+            return Result<VenueUpdateResponseModel>.Success("Venue updated successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<VenueResponseModel>.SystemError(ex.Message);
+            return Result<VenueUpdateResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId)
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
     {
-        var model = new VenueResponseModel();
         try
         {
             var venue = await _db.TblVenues.FindAsync(venueId);
 
             if (venue is null)
             {
-                return Result<VenueResponseModel>.NotFoundError("Venue not found");
+                return Result<VenueDeleteResponseModel>.NotFoundError("Venue not found");
             }
-
-            _logger.LogInformation($"Found venue: {venue.Venuecode}, Deleteflag before update: {venue.Deleteflag}");
 
             venue.Deleteflag = true;
             venue.Modifiedby = CreatedByUserId;
             venue.Modifiedat = DateTime.Now;
-
-            // Force EF to consider the entity modified
             _db.Entry(venue).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            _logger.LogInformation($"Deleting venue ID: {venueId}, Deleteflag after save: {venue.Deleteflag}");
-
-            // Map deleted entity to response model
-            var venueResponse = MapToResponseModel(venue);
-
-            return Result<VenueResponseModel>.Success(venueResponse, "Venue deleted successfully.");
+            return Result<VenueDeleteResponseModel>.Success("Venue deleted successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<VenueResponseModel>.SystemError(ex.Message);
+            return Result<VenueDeleteResponseModel>.SystemError(ex.Message);
         }
-    }
-
-    private static VenueResponseModel MapToResponseModel(TblVenue venue)
-    {
-        return new VenueResponseModel
-        {
-            VenueId = venue.Venueid,
-            VenueCode = venue.Venuecode,
-            VenueTypeCode = venue.Venuetypecode,
-            VenueName = venue.Venuename,
-            Description = venue.Description,
-            Address = venue.Address,
-            Capacity = venue.Capacity,
-            Facilities = venue.Facilities,
-            Addons = venue.Addons,
-            Image = venue.Venueimage,
-            DeleteFlag = venue.Deleteflag,
-            CreatedBy = venue.Createdby,
-            CreatedAt = venue.Createdat,
-            ModifiedBy = venue.Modifiedby,
-            ModifiedAt = venue.Modifiedat
-        };
     }
 }
