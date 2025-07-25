@@ -1,5 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.Venue;
 
 public class DA_Venue

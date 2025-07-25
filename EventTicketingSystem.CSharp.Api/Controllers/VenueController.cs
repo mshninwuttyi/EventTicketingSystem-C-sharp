@@ -1,7 +1,8 @@
-using EventTicketingSystem.CSharp.Shared;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
+[Authorize]
 [Tags("Venue")]
 [Route("api/[controller]")]
 [ApiController]
@@ -15,6 +16,9 @@ public class VenueController : ControllerBase
         _blService = blService;
         _logger = logger;
     }
+    
+    // Get current AdminCode from JWT claims
+    private string CurrentUserId => User.GetCurrentUserId(_logger);
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -26,34 +30,26 @@ public class VenueController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
     {
-        // Get login user ID from claims
-        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
-        
-        var result = await _blService.CreateVenue(request, currentUserId);
+        var result = await _blService.CreateVenue(request, CurrentUserId);
 
         if (result.IsSuccess)
         {
             return Ok(result);
         }
-        
+
         return StatusCode(500, new { message = result.Message });
     }
 
     [HttpPut("{venueId}")]
     public async Task<IActionResult> Update(string venueId, [FromBody] UpdateVenueRequestModel request)
     {
-        _logger.LogInformation("Incoming UpdateVenue Request: {Request}", request.ToJson());
-        
         // validate the Venue ID in URL matches the Venue ID in request body
         if (venueId != request.VenueId)
         {
             return BadRequest(new { message = "Venue ID mismatch." });
         }
-        
-        // Get login user ID from claims
-        var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
 
-        var result = await _blService.UpdateVenue(request, currentUserId);
+        var result = await _blService.UpdateVenue(request, CurrentUserId);
 
         if (result.IsSuccess)
         {
@@ -71,10 +67,7 @@ public class VenueController : ControllerBase
     [HttpDelete("{venueId}")]
     public async Task<IActionResult> Delete(string venueId)
     {
-        // Get login user ID from claims
-        var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
-        
-        var result = await _blService.DeleteVenue(venueId, currentUserId);
+        var result = await _blService.DeleteVenue(venueId, CurrentUserId);
         
         if (result.IsSuccess)
         {
