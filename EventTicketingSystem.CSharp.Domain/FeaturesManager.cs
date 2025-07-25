@@ -1,3 +1,5 @@
+using EventTicketingSystem.CSharp.Domain.Features.OTP;
+
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
@@ -33,7 +35,9 @@ public static class FeaturesManager
         services.AddScoped<BL_QrCode>();
         services.AddScoped<BL_Ticket>();
         services.AddScoped<BL_SearchEventsAndVenues>();
+        services.AddScoped<BL_VerificationCode>();
         services.AddScoped<BL_Venue>();
+        services.AddScoped<BL_Admin>();
 
         return services;
     }
@@ -46,7 +50,9 @@ public static class FeaturesManager
         services.AddScoped<DA_QrCode>();
         services.AddScoped<DA_Ticket>();
         services.AddScoped<DA_SearchEventsAndVenues>();
+        services.AddScoped<DA_VerificationCode>();
         services.AddScoped<DA_Venue>();
+        services.AddScoped<DA_Admin>();
 
         return services;
     }

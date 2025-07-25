@@ -19,6 +19,7 @@ public class TicketResponseModel
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
+
     public string? Ticketpriceid { get; set; }
 
     public string? Eventcode { get; set; }
@@ -28,6 +29,7 @@ public class TicketResponseModel
     public decimal? Ticketprice { get; set; }
 
     public int? Ticketquantity { get; set; }
+
     public string? Tickettypeid { get; set; }
 
     public string? Tickettypename { get; set; }
@@ -46,6 +48,7 @@ public class TicketListResponseModel
     public DateTime? Modifiedat { get; set; }
 
     public bool? Deleteflag { get; set; }
+
     public string? Ticketpriceid { get; set; }
 
     public string? Eventcode { get; set; }
@@ -55,6 +58,7 @@ public class TicketListResponseModel
     public decimal? Ticketprice { get; set; }
 
     public int? Ticketquantity { get; set; }
+
     public string? Tickettypeid { get; set; }
 
     public string? Tickettypename { get; set; }

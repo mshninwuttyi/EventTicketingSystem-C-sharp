@@ -1,5 +1,10 @@
 #region Logging
 
+using EventTicketingSystem.CSharp.Domain.Features.OTP;
+using System.Net;
+using System.Net.Mail;
+
+
 string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
 string logFileName = Path.Combine(logFolderPath, "logs_");
 
@@ -21,7 +26,21 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSerilog();
 
+builder.Services
+    .AddFluentEmail("eventticketingsystem.opom@gmail.com")
+    .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+    {
+        UseDefaultCredentials = false,
+        Credentials = new NetworkCredential(
+                "eventticketingsystem.opom@gmail.com",
+                "qpqo kczf gffk bycz"),
+        EnableSsl = true,
+        Port = 587,
+        DeliveryMethod = SmtpDeliveryMethod.Network,
+        Timeout = 10000
+    });
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

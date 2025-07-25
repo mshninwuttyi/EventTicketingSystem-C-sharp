@@ -23,7 +23,7 @@ public class BL_Ticket
     {
         return await _da_Ticket.GetTicketList();
     }
-
+  
     public async Task<Result<TicketResponseModel>> DeleteById(string ticketCode)
     {
         return await _da_Ticket.DeleteById(ticketCode);

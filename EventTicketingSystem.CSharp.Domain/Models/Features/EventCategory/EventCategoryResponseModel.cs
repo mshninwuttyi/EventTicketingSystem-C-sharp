@@ -9,9 +9,9 @@ public class EventCategoryResponseModel
 
 public class EventCategoryModel
 {
-    public string? Categoryid { get; set; }
+    public string? EventCategoryid { get; set; }
 
-    public string? Categorycode { get; set; }
+    public string? EventCategorycode { get; set; }
 
     public string? Categoryname { get; set; }
 
@@ -29,14 +29,11 @@ public class EventCategoryModel
     {
         return new EventCategoryModel
         {
-           Categoryid = category.Eventcategoryid,
-           Categorycode = category.Eventcategorycode,
+           EventCategoryid = category.Eventcategoryid,
+           EventCategorycode = category.Eventcategorycode,
            Categoryname = category.Categoryname,
            Createdby = category.Createdby,
-           Createdat = category.Createdat,
-           Modifiedby = category.Modifiedby,
-           Modifiedat = category.Modifiedat,
-           Deleteflag = category.Deleteflag,
+           Createdat = category.Createdat
         };
     }
 }
