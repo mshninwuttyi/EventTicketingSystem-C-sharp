@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using FluentEmail.Core;
+using System.Security.Cryptography;
+using static System.Net.WebRequestMethods;
 namespace EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
 
 public class DA_VerificationCode
@@ -6,13 +8,15 @@ public class DA_VerificationCode
     private readonly ILogger<DA_VerificationCode> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
+    private readonly IFluentEmail _emailSender;
     private const string CreatedByUserId = "Admin";
 
-    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, CommonService commonService)
+    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, CommonService commonService, IFluentEmail emailSender)
     {
         _logger = logger;
         _db = db;
         _commonService = commonService;
+        _emailSender = emailSender;
     }
 
     #region Private Functions
@@ -118,12 +122,18 @@ public class DA_VerificationCode
                 responseModel = Result<bool>.ValidationError("Invalid Email or Code!");
                 goto ReturnResult;
             }
+
             var data = await _db.TblVerifications
                         .AsNoTracking()
                         .Where(x => x.Deleteflag == false && x.Email == email).OrderByDescending(x => x.Createdat).FirstOrDefaultAsync();
 
             if (data != null)
             {
+                if (DateTime.Now > data.Expiredtime)
+                {
+                    responseModel = Result<bool>.ValidationError("Verification code expired!");
+                    goto ReturnResult;
+                }
                 if (data.Verificationcode.Equals(code))
                 {
                     responseModel = Result<bool>.Success(true, "The verification code is correct!");
@@ -155,28 +165,37 @@ public class DA_VerificationCode
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
 
-        if (reqData.Email.IsNullOrEmpty() || reqData.Email.IsValidEmail())
+        if (reqData.Email.IsNullOrEmpty() || !reqData.Email.IsValidEmail())
         {
             return Result<VCResponseModel>.ValidationError("Email is invalid!");
         }
 
         try
         {
+            string otp = new Random().Next(100000, 999999).ToString();
+            var expiry = DateTime.Now.AddMinutes(3);
             var newVC = new TblVerification()
             {
                 Verificationid = GenerateUlid(),
-                Verificationcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Verification),
+                Verificationcode = otp,
                 Email = reqData.Email,
+                Expiredtime = expiry,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
 
+            var emailResult = await _emailSender
+                                .To(reqData.Email)
+                               .Subject("Your OTP Code")
+                               .Body($"Your OTP code is: <b>{newVC.Verificationcode}</b>", isHtml: true)
+                               .SendAsync();
+
             await _db.TblVerifications.AddAsync(newVC);
             await _db.SaveAndDetachAsync();
 
             model.VerificationCode = VCodeModel.FromTblVerification(newVC);
-            return Result<VCResponseModel>.Success(model, $"Here is the verification code for {reqData.Email}");
+            return Result<VCResponseModel>.Success(model, "Verification code sent");    //$"Here is the verification code for {reqData.Email}
         }
         catch (Exception ex)
         {

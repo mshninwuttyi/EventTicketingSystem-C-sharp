@@ -1,3 +1,5 @@
+using EventTicketingSystem.CSharp.Domain.Features.OTP;
+
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager

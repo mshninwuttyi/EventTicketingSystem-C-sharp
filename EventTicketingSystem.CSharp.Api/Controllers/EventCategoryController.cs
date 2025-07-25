@@ -25,9 +25,9 @@ public class EventCategoryController : ControllerBase
     [HttpPost("CreateEventCategory")]
     public async Task<IActionResult> CreateEventCategory([FromBody] EventCategoryRequestModel requestModel)
     {
-        if (requestModel == null)
+        if (requestModel.CategoryName == null)
         {
-            return BadRequest("Request model cannot be null.");
+            return BadRequest("Category Name cannot be null.");
         }
         requestModel.AdminCode = userCode;
         var response = await _blEventCategory.CreateEventCategory(requestModel);
@@ -36,7 +36,7 @@ public class EventCategoryController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
         }
-        return Ok(response.Data);
+        return Ok(response);
     }
 
     [HttpPost("UpdateEventCategory/{eventCategoryCode}")]
@@ -44,16 +44,26 @@ public class EventCategoryController : ControllerBase
     {
         request.AdminCode = userCode; 
         request.EventCategoryCode = eventCategoryCode;
-        return Ok(await _blEventCategory.UpdateEventCategory(request));
+        var response = await _blEventCategory.UpdateEventCategory(request);
+        if (response.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
+        }
+        return Ok(response.Message);
     }
 
-    [HttpDelete("DeleteEventCategory/{eventCategoryCode}")]
+    [HttpPost("DeleteEventCategory/{eventCategoryCode}")]
     public async Task<IActionResult> DeleteEventCategory(string eventCategoryCode)
     {
         var request = new EventCategoryRequestModel();
         request.AdminCode = userCode;
         request.EventCategoryCode = eventCategoryCode;
-        return Ok(await _blEventCategory.DeleteEventCategory(request));
+        var response = await _blEventCategory.DeleteEventCategory(request);
+        if (response.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
+        }
+        return Ok(response.Message);
     }
 
     #endregion

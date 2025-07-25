@@ -32,8 +32,8 @@ public class DA_EventCategory
 
             model.EventCategories = data.Select(x => new EventCategoryModel
             {
-                Categoryid = x.Eventcategoryid,
-                Categorycode = x.Eventcategorycode,
+                EventCategoryid = x.Eventcategoryid,
+                EventCategorycode = x.Eventcategorycode,
                 Categoryname = x.Categoryname,
                 Createdby = x.Createdby,
                 Createdat = x.Createdat,
@@ -133,7 +133,7 @@ public class DA_EventCategory
 
                 _db.Entry(existingCategory).State = EntityState.Modified;
                 await _db.SaveAndDetachAsync();
-                return Result<EventCategoryResponseModel>.Success(model);
+                return Result<EventCategoryResponseModel>.Success(model, "Category Name updated successfully");
             }
             catch (Exception ex)
             {
@@ -193,25 +193,6 @@ public class DA_EventCategory
     .Any(x => string.Equals(x.Categoryname, categoryName, StringComparison.OrdinalIgnoreCase));
     }
 
-    //private bool isCategoryIDExist(string? categoryID)
-    //{
-    //    if (_db.TblEventcategories.FirstOrDefault(x => x.Eventcategoryid == categoryID) is not null)
-    //    {
-    //        return true;
-    //    }
-
-    //    else
-    //    {
-    //        return false;
-    //    }
-    //}
-
-    //private string GenerateCategoryCode()
-    //{
-    //    var categoryCount = _db.TblEventcategories.Count();
-    //    categoryCount++;
-    //    return "CAT" + categoryCount.ToString("D3");
-    //}
 
     #endregion
 }
