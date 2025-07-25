@@ -14,9 +14,9 @@ public class DA_Event
         _commonService = commonService;
     }
 
-    #region Read All
+    #region Event List
 
-    public async Task<Result<EventListResponseModel>> GetEventList()
+    public async Task<Result<EventListResponseModel>> List()
     {
         var responseModel = new Result<EventListResponseModel>();
         var model = new EventListResponseModel();
@@ -24,19 +24,16 @@ public class DA_Event
         try
         {
             var data = await _db.TblEvents
-                .Where(x => x.Deleteflag == false)
-                .ToListAsync();
-            model.EventListResponse = data.Select(x => new EventResponseModel
+                        .Where(x => x.Deleteflag == false)
+                        .OrderByDescending(x => x.Eventid)
+                        .ToListAsync();
+            if (data is null)
             {
-                Eventname = x.Eventname,
-                Startdate = x.Startdate,
-                Enddate = x.Enddate,
-                Eventstatus = x.Eventstatus,
+                return Result<EventListResponseModel>.NotFoundError("No Data Found.");
+            }
 
-            }).ToList();
-
+            model.EventList = data.Select(EventListModel.FromTblEvent).ToList();
             return Result<EventListResponseModel>.Success(model);
-
         }
         catch (Exception ex)
         {
@@ -47,15 +44,15 @@ public class DA_Event
 
     #endregion
 
-    #region Event Detail
+    #region Event Edit
 
-    public async Task<Result<EventResponseModel>> EventDetail(string? eventCode)
+    public async Task<Result<EventEditResponseModel>> Edit(string eventCode)
     {
-        var model = new EventResponseModel();
+        var model = new EventEditResponseModel();
 
         if (eventCode.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.UserInputError("Need Event Code!");
+            return Result<EventEditResponseModel>.UserInputError("Event Code Required.");
         }
 
         try
@@ -67,78 +64,69 @@ public class DA_Event
                         );
             if (item is null)
             {
-                return Result<EventResponseModel>.NotFoundError("The event not found!");
+                return Result<EventEditResponseModel>.NotFoundError("Event Not Found.");
             }
 
-            model.Eventname = item.Eventname;
-            model.Startdate = item.Startdate;
-            model.Enddate = item.Enddate;
-            model.Isactive = item.Isactive;
-            model.Eventstatus = item.Eventstatus;
-            model.Totalticketquantity = item.Totalticketquantity;
-
-            return Result<EventResponseModel>.Success(model);
+            model.Event = EventEditModel.FromTblEvent(item);
+            return Result<EventEditResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventResponseModel>.SystemError(ex.Message);
+            return Result<EventEditResponseModel>.SystemError(ex.Message);
         }
     }
 
     #endregion
 
-    #region Create Event
+    #region Event Create
 
-    public async Task<Result<EventResponseModel>> CreateEvent(EventRequestModel requestModel)
+    public async Task<Result<EventCreateResponseModel>> Create(EventCreateRequestModel requestModel)
     {
-        var responseModel = new Result<EventResponseModel>();
-        var model = new EventResponseModel();
-
         if (requestModel.Eventname.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Event Name Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Event Name Is Required!");
         }
         if (requestModel.Description.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Descripiton Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Descripiton Is Required!");
         }
         if (requestModel.Address.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Address Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Address Is Required!");
         }
         if (requestModel.Startdate.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Start Date Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Start Date Is Required!");
         }
         if (requestModel.Enddate.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("End Date Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("End Date Is Required!");
         }
         if (requestModel.Eventimage.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Event Image Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Event Image Is Required!");
         }
         if (requestModel.Eventstatus.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Event Status Is Required");
+            return Result<EventCreateResponseModel>.ValidationError("Event Status Is Required");
         }
         if (requestModel.Totalticketquantity.IsNullOrEmpty() || requestModel.Totalticketquantity <= 0)
         {
-            return Result<EventResponseModel>.ValidationError("Invalid Ticket Quantity!");
+            return Result<EventCreateResponseModel>.ValidationError("Invalid Ticket Quantity!");
         }
 
         try
         {
             var newEvent = new TblEvent()
             {
-                Eventid = Ulid.NewUlid().ToString(),
+                Eventid = GenerateUlid(),
                 Eventcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Event),
                 Eventname = requestModel.Eventname,
                 Startdate = requestModel.Startdate,
                 Enddate = requestModel.Enddate,
                 Isactive = true,
-                Eventstatus = requestModel.Eventstatus,
+                Eventstatus = EnumEventStatus.Upcoming.ToString(),
                 Totalticketquantity = requestModel.Totalticketquantity,
                 Soldoutcount = 0,
                 Createdby = CreatedByUserId,
@@ -148,52 +136,34 @@ public class DA_Event
             await _db.AddAsync(newEvent);
             await _db.SaveAndDetachAsync();
 
-            model = new EventResponseModel
-            {
-                Eventname = newEvent.Eventname,
-                Startdate = newEvent.Startdate,
-                Enddate = newEvent.Enddate,
-                Isactive = true,
-                Eventstatus = newEvent.Eventstatus,
-                Totalticketquantity = newEvent.Totalticketquantity,
-
-            };
-            return Result<EventResponseModel>.Success(model, "Event is successfully Created");
+            return Result<EventCreateResponseModel>.Success("Event is successfully Created");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventResponseModel>.SystemError(ex.Message);
+            return Result<EventCreateResponseModel>.SystemError(ex.Message);
         }
     }
 
     #endregion
 
-    #region Update Event
+    #region Event Update
 
-    public async Task<Result<EventResponseModel>> UpdateEvent(EventRequestModel requestModel)
+    public async Task<Result<EventUpdateResponseModel>> Update(EventUpdateRequestModel requestModel)
     {
-        var responseModel = new Result<EventResponseModel>();
-        var model = new EventResponseModel();
-
-        if (requestModel.Admin.IsNullOrEmpty())
-        {
-            return Result<EventResponseModel>.ValidationError("Need admin!", model);
-        }
-
         try
         {
             var item = await _db.TblEvents
                         .FirstOrDefaultAsync(
-                            x => x.Eventcode == requestModel.Eventcode &&
+                            x => x.Eventcode == requestModel.EventCode &&
                             x.Deleteflag == false
                         );
             if (item is null)
             {
-                return Result<EventResponseModel>.NotFoundError("The Event doesn't Exist!");
+                return Result<EventUpdateResponseModel>.NotFoundError("Event Not Found.");
             }
 
-            item.Eventname = requestModel.Eventname;
+            item.Eventname = requestModel.EventName;
             item.Startdate = requestModel.Startdate;
             item.Enddate = requestModel.Enddate;
             item.Isactive = requestModel.Isactive;
@@ -201,51 +171,39 @@ public class DA_Event
             item.Totalticketquantity = requestModel.Totalticketquantity;
             item.Modifiedby = CreatedByUserId;
             item.Modifiedat = DateTime.Now;
-
             _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            model.Eventname = item.Eventname;
-            model.Startdate = item.Startdate;
-            model.Enddate = item.Enddate;
-            model.Isactive = item.Isactive;
-            model.Eventstatus = item.Eventstatus;
-            model.Totalticketquantity = item.Totalticketquantity;
-
-            responseModel = Result<EventResponseModel>.Success(model);
+            return Result<EventUpdateResponseModel>.Success("Event Updated Successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventResponseModel>.SystemError(ex.Message);
+            return Result<EventUpdateResponseModel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
-    #region Delete Event
+    #region Event Delete
 
-    public async Task<Result<EventResponseModel>> DeleteEvent(string EventCode)
+    public async Task<Result<EventDeleteResponseModel>> Delete(string eventCode)
     {
-        var responseModel = new EventResponseModel();
-
-        if (EventCode.IsNullOrEmpty())
+        if (eventCode.IsNullOrEmpty())
         {
-            return Result<EventResponseModel>.ValidationError("Need Event Code!");
+            return Result<EventDeleteResponseModel>.ValidationError("Event Code Required.");
         }
 
         try
         {
             var item = await _db.TblEvents
                         .FirstOrDefaultAsync(
-                            x => x.Eventcode == EventCode &&
+                            x => x.Eventcode == eventCode &&
                             x.Deleteflag == false
                         );
             if (item is null)
             {
-                return Result<EventResponseModel>.NotFoundError("Event Not Found!");
+                return Result<EventDeleteResponseModel>.NotFoundError("Event Not Found.");
             }
 
             item.Deleteflag = true;
@@ -254,21 +212,12 @@ public class DA_Event
             _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            responseModel = new EventResponseModel
-            {
-                Eventname = item.Eventname,
-                Startdate = item.Startdate,
-                Enddate = item.Enddate,
-                Eventstatus = item.Eventstatus,
-                Totalticketquantity = item.Totalticketquantity,
-            };
-
-            return Result<EventResponseModel>.Success(responseModel, "Event Delet Successfully!");
+            return Result<EventDeleteResponseModel>.Success("Event Deleted Successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<EventResponseModel>.SystemError(ex.Message);
+            return Result<EventDeleteResponseModel>.SystemError(ex.Message);
         }
     }
 
