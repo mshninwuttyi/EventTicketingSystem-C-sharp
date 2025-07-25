@@ -14,13 +14,13 @@ public class BL_EventCategory
         return await _dataAccess.GetList();
     }
 
-    public async Task<Result<EventCategoryResponseModel>> CreateEventCategory(EventCategoryRequestModel request)
+    public async Task<Result<CreateEventCategoryResponseModel>> CreateEventCategory(EventCategoryRequestModel request)
     {
       
         return await _dataAccess.CreateCategory(request);
     }
 
-    public async Task<Result<EventCategoryResponseModel>> UpdateEventCategory(EventCategoryRequestModel request)
+    public async Task<Result<UpdateEventCategoryResponseModel>> UpdateEventCategory(EventCategoryRequestModel request)
     {
         return await _dataAccess.UpdateCategory(request);
     }

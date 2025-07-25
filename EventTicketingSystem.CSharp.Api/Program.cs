@@ -1,6 +1,4 @@
 #region Logging
-
-using EventTicketingSystem.CSharp.Domain.Features.OTP;
 using System.Net;
 using System.Net.Mail;
 
