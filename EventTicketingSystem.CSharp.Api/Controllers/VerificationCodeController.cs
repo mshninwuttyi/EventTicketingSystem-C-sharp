@@ -33,7 +33,7 @@ public class VerificationCodeController : Controller
         return Ok(await _vcService.CreateNewVC(req));
     }
 
-    [HttpPut("VerifyCode")]
+    [HttpPost("VerifyCode")]
     public async Task<IActionResult> VerifyCode([FromBody] VCRequestModel req)
     {
         return Ok(await _vcService.VerifyCode(req));

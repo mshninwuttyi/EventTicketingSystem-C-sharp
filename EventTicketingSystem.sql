@@ -1,62 +1,6 @@
 create database eventticketingsystem
     with owner postgres;
 
-create table public.tbl_admin
-(
-    adminid    varchar   not null
-        constraint tbl_admin_pk
-            primary key,
-    admincode  varchar   not null,
-    username   varchar   not null,
-    email      varchar   not null,
-    phoneno    varchar   not null,
-    password   varchar   not null,
-    createdby  varchar   not null,
-    createdat  timestamp not null,
-    modifiedby varchar,
-    modifiedat timestamp,
-    deleteflag boolean   not null
-);
-
-alter table public.tbl_admin
-    owner to postgres;
-
-create table public.tbl_eventcategory
-(
-    eventcategoryid   varchar   not null
-        constraint tbl_eventcategory_pk
-            primary key,
-    eventcategorycode varchar   not null,
-    categoryname      varchar   not null,
-    createdby         varchar   not null,
-    createdat         timestamp not null,
-    modifiedby        varchar,
-    modifiedat        timestamp,
-    deleteflag        boolean   not null
-);
-
-alter table public.tbl_eventcategory
-    owner to postgres;
-
-create table public.tbl_businessowner
-(
-    businessownerid   varchar   not null
-        constraint tbl_businessowner_pk
-            primary key,
-    businessownercode varchar   not null,
-    name              varchar   not null,
-    email             varchar   not null,
-    phonenumber       varchar   not null,
-    createdby         varchar   not null,
-    createdat         timestamp not null,
-    modifiedby        varchar,
-    modifiedat        timestamp,
-    deleteflag        boolean   not null
-);
-
-alter table public.tbl_businessowner
-    owner to postgres;
-
 create table public.tbl_businessemail
 (
     businessemailid   varchar   not null
@@ -170,36 +114,6 @@ create table public.tbl_venuetype
 alter table public.tbl_venuetype
     owner to postgres;
 
-create table public.tbl_event
-(
-    eventid             varchar   not null
-        constraint tbl_event_pk
-            primary key,
-    eventcode           varchar   not null,
-    venuecode           varchar   not null,
-    eventname           varchar   not null,
-    eventcategorycode   varchar   not null,
-    description         text,
-    address             varchar   not null,
-    startdate           timestamp not null,
-    enddate             timestamp not null,
-    eventimage          varchar   not null,
-    isactive            boolean   not null,
-    eventstatus         varchar   not null,
-    businessownercode   varchar   not null,
-    totalticketquantity integer   not null,
-    soldoutcount        integer   not null,
-    uniquename          varchar   not null,
-    createdby           varchar   not null,
-    createdat           timestamp not null,
-    modifiedby          varchar,
-    modifiedat          timestamp,
-    deleteflag          boolean   not null
-);
-
-alter table public.tbl_event
-    owner to postgres;
-
 create table public.tbl_transactionticket
 (
     transactionticketid   varchar        not null
@@ -208,7 +122,7 @@ create table public.tbl_transactionticket
     transactionticketcode varchar        not null,
     transactioncode       varchar        not null,
     ticketcode            varchar        not null,
-    qrstring              varchar        not null,
+    qrimage               varchar        not null,
     price                 numeric(20, 2) not null,
     createdby             varchar        not null,
     createdat             timestamp      not null,
@@ -218,30 +132,6 @@ create table public.tbl_transactionticket
 );
 
 alter table public.tbl_transactionticket
-    owner to postgres;
-
-create table public.tbl_venue
-(
-    venueid       varchar   not null
-        constraint tbl_venue_pk
-            primary key,
-    venuecode     varchar   not null,
-    venuetypecode varchar   not null,
-    venuename     varchar   not null,
-    description   text,
-    address       varchar   not null,
-    capacity      integer   not null,
-    facilities    text,
-    addons        text,
-    image         varchar   not null,
-    createdby     varchar   not null,
-    createdat     timestamp not null,
-    modifiedby    varchar,
-    modifiedat    timestamp,
-    deleteflag    boolean   not null
-);
-
-alter table public.tbl_venue
     owner to postgres;
 
 create table public.tbl_verification
@@ -279,6 +169,116 @@ create table public.tbl_sequence
 alter table public.tbl_sequence
     owner to postgres;
 
+create table public.tbl_venue
+(
+    venueid       varchar   not null
+        constraint tbl_venue_pk
+            primary key,
+    venuecode     varchar   not null,
+    venuetypecode varchar   not null,
+    venuename     varchar   not null,
+    description   text,
+    address       varchar   not null,
+    capacity      integer   not null,
+    facilities    text,
+    addons        text,
+    venueimage    varchar   not null,
+    createdby     varchar   not null,
+    createdat     timestamp not null,
+    modifiedby    varchar,
+    modifiedat    timestamp,
+    deleteflag    boolean   not null
+);
+
+alter table public.tbl_venue
+    owner to postgres;
+
+create table public.tbl_admin
+(
+    adminid      varchar   not null
+        constraint tbl_admin_pk
+            primary key,
+    admincode    varchar   not null,
+    fullname     varchar   not null,
+    username     varchar   not null,
+    email        varchar   not null,
+    phone        varchar   not null,
+    password     varchar   not null,
+    profileimage varchar,
+    isfirsttime  boolean   not null,
+    createdby    varchar   not null,
+    createdat    timestamp not null,
+    modifiedby   varchar,
+    modifiedat   timestamp,
+    deleteflag   boolean   not null
+);
+
+alter table public.tbl_admin
+    owner to postgres;
+
+create table public.tbl_businessowner
+(
+    businessownerid   varchar   not null
+        constraint tbl_businessowner_pk
+            primary key,
+    businessownercode varchar   not null,
+    fullname          varchar   not null,
+    email             varchar   not null,
+    phone             varchar   not null,
+    createdby         varchar   not null,
+    createdat         timestamp not null,
+    modifiedby        varchar,
+    modifiedat        timestamp,
+    deleteflag        boolean   not null
+);
+
+alter table public.tbl_businessowner
+    owner to postgres;
+
+create table public.tbl_event
+(
+    eventid             varchar   not null
+        constraint tbl_event_pk
+            primary key,
+    eventcode           varchar   not null,
+    venuecode           varchar   not null,
+    eventname           varchar   not null,
+    eventcategorycode   varchar   not null,
+    startdate           timestamp not null,
+    enddate             timestamp not null,
+    isactive            boolean   not null,
+    eventstatus         varchar   not null,
+    businessownercode   varchar   not null,
+    totalticketquantity integer   not null,
+    soldoutcount        integer   not null,
+    uniquename          varchar   not null,
+    createdby           varchar   not null,
+    createdat           timestamp not null,
+    modifiedby          varchar,
+    modifiedat          timestamp,
+    deleteflag          boolean   not null
+);
+
+alter table public.tbl_event
+    owner to postgres;
+
+create table public.tbl_eventcategory
+(
+    eventcategoryid   varchar   not null
+        constraint tbl_eventcategory_pk
+            primary key,
+    eventcategorycode varchar   not null,
+    categoryname      varchar   not null,
+    createdby         varchar   not null,
+    createdat         timestamp not null,
+    modifiedby        varchar,
+    modifiedat        timestamp,
+    deleteflag        boolean   not null
+);
+
+alter table public.tbl_eventcategory
+    owner to postgres;
+
 create function public.sp_sequencecode(id integer) returns character varying
     language plpgsql
 as
@@ -305,6 +305,7 @@ END;
 $$;
 
 alter function public.sp_sequencecode(integer) owner to postgres;
+
 
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BO', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false);

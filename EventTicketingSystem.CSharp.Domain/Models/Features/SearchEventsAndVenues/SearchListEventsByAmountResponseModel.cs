@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
+namespace EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
 
 public class SearchListEventsByAmountResponseModel
 {

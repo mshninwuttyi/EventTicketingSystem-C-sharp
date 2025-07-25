@@ -4,3 +4,8 @@ global using System.Runtime.CompilerServices;
 global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel;
 global using System.Reflection;
+global using Microsoft.AspNetCore.Http;
+global using EventTicketingSystem.CSharp.Shared.Enums;
+global using EventTicketingSystem.CSharp.Shared.Models;
+global using System.Security.Cryptography;
+global using System.Text;

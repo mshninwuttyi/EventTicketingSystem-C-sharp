@@ -1,6 +1,4 @@
-using EventTicketingSystem.CSharp.Domain.Features.QR;
-using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
-using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
+using EventTicketingSystem.CSharp.Domain.Features.OTP;
 
 namespace EventTicketingSystem.CSharp.Domain;
 
@@ -39,6 +37,7 @@ public static class FeaturesManager
         services.AddScoped<BL_SearchEventsAndVenues>();
         services.AddScoped<BL_VerificationCode>();
         services.AddScoped<BL_Venue>();
+        services.AddScoped<BL_Admin>();
 
         return services;
     }
@@ -53,6 +52,7 @@ public static class FeaturesManager
         services.AddScoped<DA_SearchEventsAndVenues>();
         services.AddScoped<DA_VerificationCode>();
         services.AddScoped<DA_Venue>();
+        services.AddScoped<DA_Admin>();
 
         return services;
     }

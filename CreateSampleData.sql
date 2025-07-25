@@ -1,20 +1,12 @@
 -- Sample ULIDs generated for illustration (you can generate your own using a ULID library or tool)
-INSERT INTO Tbl_Admin (
-    UserId, UserCode, Username, Email, Password, 
-    CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeleteFlag
-) VALUES
-(
-    '01H9Z7F6X1QV3ZP6BK3G2M18ZJ', 'ADM001', 'alice_admin', 'alice@example.com', 'P@ssw0rd1',
-    'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, FALSE
-),
-(
-    '01H9Z7F9J9RKVBC3QW1ZQZXWME', 'ADM002', 'bob_admin', 'bob@example.com', 'P@ssw0rd2',
-    'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, FALSE
-),
-(
-    '01H9Z7FBTCA8B6F5EBDVKMKXEN', 'ADM003', 'charlie_admin', 'charlie@example.com', 'P@ssw0rd3',
-    'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, TRUE
-);
+INSERT INTO tbl_admin (adminid, admincode, username, email, phoneno, password, profileimage,
+    createdby, createdat, modifiedby, modifiedat, deleteflag)
+VALUES ('01H9Z7F6X1QV3ZP6BK3G2M18ZJ', 'ADM001', 'alice_admin', 'alice@example.com', '123456', 'P@ssw0rd1', '123456',
+        'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, FALSE),
+       ('01H9Z7F9J9RKVBC3QW1ZQZXWME', 'ADM002', 'bob_admin', 'bob@example.com', '123456', 'P@ssw0rd2', '123456',
+        'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, FALSE),
+       ('01H9Z7FBTCA8B6F5EBDVKMKXEN', 'ADM003', 'charlie_admin', 'charlie@example.com', '123456', 'P@ssw0rd3', '123456',
+        'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, TRUE);
 
 -- Sample data for Tbl_Category
 INSERT INTO tbl_eventcategory (
