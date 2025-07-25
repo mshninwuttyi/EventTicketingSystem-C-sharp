@@ -1,22 +1,17 @@
-﻿using FluentEmail.Core;
-using System.Security.Cryptography;
-using static System.Net.WebRequestMethods;
-namespace EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
 
 public class DA_VerificationCode
 {
     private readonly ILogger<DA_VerificationCode> _logger;
     private readonly AppDbContext _db;
-    private readonly CommonService _commonService;
-    private readonly IFluentEmail _emailSender;
+    private readonly EmailService _emailService;
     private const string CreatedByUserId = "Admin";
 
-    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, CommonService commonService, IFluentEmail emailSender)
+    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, EmailService emailService)
     {
         _logger = logger;
         _db = db;
-        _commonService = commonService;
-        _emailSender = emailSender;
+        _emailService = emailService;
     }
 
     #region Private Functions
@@ -162,10 +157,7 @@ public class DA_VerificationCode
 
     public async Task<Result<VCResponseModel>> CreateVCode(VCRequestModel reqData)
     {
-        var responseModel = new Result<VCResponseModel>();
-        var model = new VCResponseModel();
-
-        if (reqData.Email.IsNullOrEmpty() || !reqData.Email.IsValidEmail())
+        if (reqData.Email.IsNullOrEmpty() || !reqData.Email!.IsValidEmail())
         {
             return Result<VCResponseModel>.ValidationError("Email is invalid!");
         }
@@ -178,24 +170,30 @@ public class DA_VerificationCode
             {
                 Verificationid = GenerateUlid(),
                 Verificationcode = otp,
-                Email = reqData.Email,
+                Email = reqData.Email!,
                 Expiredtime = expiry,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
 
-            var emailResult = await _emailSender
-                                .To(reqData.Email)
-                               .Subject("Your OTP Code")
-                               .Body($"Your OTP code is: <b>{newVC.Verificationcode}</b>", isHtml: true)
-                               .SendAsync();
-
             await _db.TblVerifications.AddAsync(newVC);
             await _db.SaveAndDetachAsync();
 
-            model.VerificationCode = VCodeModel.FromTblVerification(newVC);
-            return Result<VCResponseModel>.Success(model, "Verification code sent");    //$"Here is the verification code for {reqData.Email}
+            var emailTemplate = new EmailModel()
+            {
+                Email = reqData.Email!,
+                Subject = EmailSubjectTemplates.Verification,
+                Body = EmailBodyTemplates.Otp.Replace("(@otp)", otp)
+            };
+
+            var result = await _emailService.SendEmailVerification(emailTemplate);
+            if (result is false)
+            {
+                return Result<VCResponseModel>.SystemError("Failed to send verification code via email.");
+            }
+
+            return Result<VCResponseModel>.Success("Verification Code send to your Email.");    //$"Here is the verification code for {reqData.Email}
         }
         catch (Exception ex)
         {

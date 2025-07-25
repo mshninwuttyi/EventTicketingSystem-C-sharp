@@ -138,7 +138,7 @@ public class DA_SearchEventsAndVenues
         }
     }
 
-    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(decimal FromAmount, Decimal ToAmount)
+    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(decimal FromAmount, decimal ToAmount)
     {
         try
         {
@@ -162,38 +162,16 @@ public class DA_SearchEventsAndVenues
                                     Modifiedat = tp.Modifiedat
                                 })
                                 .ToListAsync();
-
-            var EventResult = events.Select(e => new SearchEventByAmountResponseModel
-            {
-                Eventid = e.Eventid,
-                Eventcode = e.Eventcode,
-                Eventname = e.Eventname,
-                Categorycode = e.Eventcategorycode,
-                Description = e.Description,
-                Address = e.Address,
-                Startdate = e.Startdate,
-                Enddate = e.Enddate,
-                Eventimage = e.Eventimage,
-                Isactive = e.Isactive,
-                Eventstatus = e.Eventstatus,
-                Businessownercode = e.Businessownercode,
-                Totalticketquantity = e.Totalticketquantity,
-                Soldoutcount = e.Soldoutcount,
-                Createdby = e.Createdby,
-                Createdat = e.Createdat,
-                Modifiedby = e.Modifiedby,
-                Modifiedat = e.Modifiedat,
-                TotalTicketPrice = TickPriceResult.Where(tp => tp.Eventcode == e.Eventcode).ToList()
-            }).ToList();
+            var EventCodes = TicketPriceResult.Select(tp => tp.Eventcode).Distinct().ToList();
 
             var SearchResult = new SearchListEventsByAmountResponseModel
             {
-                Events = await _db.TblEvents
+                Events = _db.TblEvents
                         .Where(
                             e => EventCodes.Contains(e.Eventcode) &&
                             e.Deleteflag == false
                         )
-                        .Select(e => new SearchEventResponseModel
+                        .Select(e => new SearchEventByAmountResponseModel
                         {
                             Eventid = e.Eventid,
                             Eventcode = e.Eventcode,
@@ -211,7 +189,8 @@ public class DA_SearchEventsAndVenues
                             Modifiedby = e.Modifiedby,
                             Modifiedat = e.Modifiedat
                         })
-                        .ToListAsync(),
+                        .ToList(),
+                //TicketPrice = TicketPriceResult
             };
 
             if (SearchResult.Events.Count == 0)

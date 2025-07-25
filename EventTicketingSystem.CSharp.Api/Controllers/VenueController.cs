@@ -17,19 +17,26 @@ public class VenueController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> List()
     {
-        var result = await _blService.GetList();
+        var result = await _blService.List();
         return Ok(result);
     }
-    
+
+    [HttpGet("{venueId}")]
+    public async Task<IActionResult> Edit(string venueId)
+    {
+        var result = await _blService.Edit(venueId);
+        return Ok(result);
+    }
+
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
+    public async Task<IActionResult> Create([FromBody] VenueCreateRequestModel request)
     {
         // Get login user ID from claims
         //var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
         
-        var result = await _blService.CreateVenue(request);
+        var result = await _blService.Create(request);
 
         if (result.IsSuccess)
         {
@@ -40,7 +47,7 @@ public class VenueController : ControllerBase
     }
 
     [HttpPut("{venueId}")]
-    public async Task<IActionResult> Update(string venueId, [FromBody] UpdateVenueRequestModel request)
+    public async Task<IActionResult> Update(string venueId, [FromBody] VenueUpdateRequestModel request)
     {
         _logger.LogInformation("Incoming UpdateVenue Request: {Request}", request.ToJson());
         
@@ -53,7 +60,7 @@ public class VenueController : ControllerBase
         // Get login user ID from claims
         //var currentUserId = "AD000001";   // To Edit: Get Login User ID from the incoming request later
 
-        var result = await _blService.UpdateVenue(request);
+        var result = await _blService.Update(request);
 
         if (result.IsSuccess)
         {
@@ -74,7 +81,7 @@ public class VenueController : ControllerBase
         // Get login user ID from claims
         //var currentUserId = "AD000001";  // To Edit: Get Login User ID from the incoming request later
         
-        var result = await _blService.DeleteVenue(venueId);
+        var result = await _blService.Delete(venueId);
         
         if (result.IsSuccess)
         {
