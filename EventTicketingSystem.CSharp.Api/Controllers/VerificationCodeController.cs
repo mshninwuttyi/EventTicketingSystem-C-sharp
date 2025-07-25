@@ -1,10 +1,9 @@
-﻿using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
-using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
-using Microsoft.AspNetCore.Mvc;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-namespace EventTicketingSystem.CSharp.Api.Controllers;
-
-public class VerificationCodeController : Controller
+[Tags("Verification Code")]
+[Route("api/[controller]")]
+[ApiController]
+public class VerificationCodeController : ControllerBase
 {
     private readonly BL_VerificationCode _vcService;
 
@@ -13,30 +12,27 @@ public class VerificationCodeController : Controller
         _vcService = vcService;
     }
 
-    #region Create, Get List, Get By Id and Verify Code
-    [HttpGet("GetList")]
-    public async Task<IActionResult> GetList()
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        return Ok(await _vcService.GetList());
+        return Ok(await _vcService.List());
     }
 
-    [HttpGet("GetCode/{vcId}")]
-    public async Task<IActionResult> GetById(string vcId)
+    [HttpGet("Edit/{vcId}")]
+    public async Task<IActionResult> Edit(string vcId)
     {
-        var req = new VCRequestModel { Verificationid = vcId };
-        return Ok(await _vcService.GetVCById(req));
+        return Ok(await _vcService.Edit(vcId));
     }
 
-    [HttpPost("CreateNewVC")]
-    public async Task<IActionResult> CreateNewVC([FromBody] VCRequestModel req)
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] VCRequestModel requestModel)
     {
-        return Ok(await _vcService.CreateNewVC(req));
+        return Ok(await _vcService.Create(requestModel));
     }
 
     [HttpPost("VerifyCode")]
-    public async Task<IActionResult> VerifyCode([FromBody] VCRequestModel req)
+    public async Task<IActionResult> VerifyCode([FromBody] VCRequestModel requestModel)
     {
-        return Ok(await _vcService.VerifyCode(req));
+        return Ok(await _vcService.VerifyCode(requestModel));
     }
-    #endregion
 }

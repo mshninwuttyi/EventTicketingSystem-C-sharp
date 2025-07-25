@@ -32,7 +32,7 @@ public class DA_VerificationCode
 
     #region Get Verification Code List
 
-    public async Task<Result<VCResponseModel>> GetList()
+    public async Task<Result<VCResponseModel>> List()
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
@@ -71,12 +71,12 @@ public class DA_VerificationCode
 
     #region Get Verification Code
 
-    public async Task<Result<VCResponseModel>> GetVCodeById(string? id)
+    public async Task<Result<VCResponseModel>> Edit(string vcId)
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
 
-        if (id is null)
+        if (vcId is null)
         {
             return Result<VCResponseModel>.ValidationError("Id can't be null here.");
         }
@@ -85,13 +85,13 @@ public class DA_VerificationCode
         {
             var data = await _db.TblVerifications
                         .FirstOrDefaultAsync(
-                            x => x.Verificationid == id &&
+                            x => x.Verificationid == vcId &&
                             x.Deleteflag == false
                         );
 
             if (data is null)
             {
-                return Result<VCResponseModel>.NotFoundError($"Verification Code with Id: {id} is not found!");
+                return Result<VCResponseModel>.NotFoundError($"Verification Code with Id: {vcId} is not found!");
             }
 
             model.VerificationCode = VCodeModel.FromTblVerification(data);
@@ -107,7 +107,7 @@ public class DA_VerificationCode
     #endregion
 
     #region Verify Code
-    public async Task<Result<bool>> VerifyCodeByEmail(string? email, string? code)
+    public async Task<Result<bool>> VerifyCode(string? email, string? code)
     {
         var responseModel = new Result<bool>();
         try
@@ -155,7 +155,7 @@ public class DA_VerificationCode
 
     #region Create Verification Code
 
-    public async Task<Result<VCResponseModel>> CreateVCode(VCRequestModel reqData)
+    public async Task<Result<VCResponseModel>> Create(VCRequestModel reqData)
     {
         if (reqData.Email.IsNullOrEmpty() || !reqData.Email!.IsValidEmail())
         {

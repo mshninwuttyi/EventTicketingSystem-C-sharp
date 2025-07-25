@@ -12,8 +12,6 @@ public class EventCategoryController : ControllerBase
         _blEventCategory = blEventCategory;
     }
 
-    #region Event Category
-
     [HttpGet("List")]
     public async Task<IActionResult> List()
     {
@@ -33,7 +31,7 @@ public class EventCategoryController : ControllerBase
     }
 
     [HttpPost("Update")]
-    public async Task<IActionResult> Update(string eventCategoryCode,[FromBody] EventCategoryUpdateRequestModel requestModel)
+    public async Task<IActionResult> Update(string eventCategoryCode, [FromBody] EventCategoryUpdateRequestModel requestModel)
     {
         return Ok(await _blEventCategory.Update(requestModel));
     }
@@ -43,6 +41,4 @@ public class EventCategoryController : ControllerBase
     {
         return Ok(await _blEventCategory.Delete(eventCategoryCode));
     }
-
-    #endregion
 }

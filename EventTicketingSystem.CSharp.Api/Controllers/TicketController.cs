@@ -55,7 +55,7 @@ public class TicketController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpDelete("DeleteTicket/{ticketCode}")]
+    [HttpPost("DeleteTicket/{ticketCode}")]
     public async Task<IActionResult> DeleteById(string ticketCode)
     {
         var result = await _blTicket.DeleteById(ticketCode);
@@ -68,7 +68,7 @@ public class TicketController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPatch("UpdateTicket/{ticketCode},{isUsed}")]
+    [HttpPost("UpdateTicket/{ticketCode},{isUsed}")]
     public async Task<IActionResult> UpdateTicket(string ticketCode, bool isUsed)
     {
         var result = await _blTicket.UpdateTicket(ticketCode, isUsed);
@@ -80,6 +80,4 @@ public class TicketController : ControllerBase
 
         return Ok(result);
     }
-
-
 }

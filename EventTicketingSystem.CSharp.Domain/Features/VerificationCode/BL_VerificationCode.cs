@@ -9,23 +9,23 @@ public class BL_VerificationCode
         _daService = dataAccess;
     }
 
-    public async Task<Result<VCResponseModel>> GetList()
+    public async Task<Result<VCResponseModel>> List()
     {
-        return await _daService.GetList();
+        return await _daService.List();
     }
 
-    public async Task<Result<VCResponseModel>> GetVCById(VCRequestModel request)
+    public async Task<Result<VCResponseModel>> Edit(string vcId)
     {
-        return await _daService.GetVCodeById(request.Verificationid);
+        return await _daService.Edit(vcId);
     }
 
-    public async Task<Result<VCResponseModel>> CreateNewVC(VCRequestModel request)
+    public async Task<Result<VCResponseModel>> Create(VCRequestModel request)
     {
-        return await _daService.CreateVCode(request);
+        return await _daService.Create(request);
     }
 
     public async Task<Result<bool>> VerifyCode(VCRequestModel request)
     {
-        return await _daService.VerifyCodeByEmail(request.Email, request.Verificationcode);
+        return await _daService.VerifyCode(request.Email, request.Verificationcode);
     }
 }
