@@ -1,3 +1,7 @@
+using EventTicketingSystem.CSharp.Shared.Services;
+using System.Net;
+using System.Net.Mail;
+
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
@@ -33,7 +37,9 @@ public static class FeaturesManager
         services.AddScoped<BL_QrCode>();
         services.AddScoped<BL_Ticket>();
         services.AddScoped<BL_SearchEventsAndVenues>();
+        services.AddScoped<BL_VerificationCode>();
         services.AddScoped<BL_Venue>();
+        services.AddScoped<BL_Admin>();
 
         return services;
     }
@@ -46,7 +52,9 @@ public static class FeaturesManager
         services.AddScoped<DA_QrCode>();
         services.AddScoped<DA_Ticket>();
         services.AddScoped<DA_SearchEventsAndVenues>();
+        services.AddScoped<DA_VerificationCode>();
         services.AddScoped<DA_Venue>();
+        services.AddScoped<DA_Admin>();
 
         return services;
     }
@@ -55,12 +63,27 @@ public static class FeaturesManager
     {
         services.AddScoped<DapperService>();
         services.AddScoped<CommonService>();
+        services.AddScoped<EmailService>();
 
         return services;
     }
 
     public static WebApplicationBuilder AddBuilders(this WebApplicationBuilder builder)
     {
+
+        builder.Services
+            .AddFluentEmail("eventticketingsystem.opom@gmail.com")
+            .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(
+                        "eventticketingsystem.opom@gmail.com",
+                        "qpqo kczf gffk bycz"),
+                EnableSsl = true,
+                Port = 587,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Timeout = 10000
+            });
 
         return builder;
     }

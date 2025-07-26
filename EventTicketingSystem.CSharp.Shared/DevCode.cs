@@ -2,6 +2,8 @@
 
 public static partial class DevCode
 {
+    private const long MaxFileSize = 5 * 1024 * 1024;
+
     #region Extensions
 
     public static string ToJson(this object obj)
@@ -154,6 +156,105 @@ public static partial class DevCode
         }
 
         return res;
+    }
+
+    #endregion
+
+    #region File Upload
+
+    public static async Task<FileUploadData> UploadFileAsync(IFormFile file, EnumDirectory directory)
+    {
+        if (file is null || file.Length is 0)
+        {
+            throw new Exception("Error: No file was uploaded.");
+        }
+
+        if (file.Length > MaxFileSize)
+        {
+            throw new Exception($"Error: '{file.FileName}' exceeds 5MB limit.");
+        }
+
+        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), directory.ToString());
+        if (!Directory.Exists(uploadPath))
+        {
+            Directory.CreateDirectory(uploadPath);
+        }
+
+        var fileName = $"{GenerateUlid()}.jpeg";
+        var filePath = Path.Combine(uploadPath, fileName);
+
+        try
+        {
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            fileStream.Position = 0;
+
+            return new FileUploadData
+            {
+                FilePath = filePath,
+                FileName = fileName
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error uploading '{file.FileName}': {ex.Message}");
+        }
+    }
+
+    #endregion
+
+    #region Get Base64 File Extension
+
+    public static async Task<string> GetBase64FromFile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            throw new Exception($"File not found at path: {filePath}");
+        }
+
+        byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
+        return Convert.ToBase64String(fileBytes);
+    }
+
+    #endregion
+
+    #region Hash Password
+
+    public static string HashPassword(this string password, string username)
+    {
+        password = password.Trim();
+        username = username.Trim();
+        string saltedCode = EncodedSalt(username);
+        string hashString;
+        using (var sha256 = SHA256.Create())
+        {
+            var hash = sha256.ComputeHash(Encoding.Default.GetBytes(password + saltedCode));
+            hashString = ToHex(hash, false);
+        }
+
+        return hashString;
+    }
+
+    private static string EncodedSalt(string decodeString)
+    {
+        decodeString = decodeString.ToLower()
+            .Replace("a", "@")
+            .Replace("i", "!")
+            .Replace("l", "1")
+            .Replace("e", "3")
+            .Replace("o", "0")
+            .Replace("s", "$")
+            .Replace("n", "&");
+        return decodeString;
+    }
+
+    public static string ToHex(byte[] bytes, bool upperCase)
+    {
+        StringBuilder result = new StringBuilder(bytes.Length * 2);
+        for (int i = 0; i < bytes.Length; i++)
+            result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
+        return result.ToString();
     }
 
     #endregion

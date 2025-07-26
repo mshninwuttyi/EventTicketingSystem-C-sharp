@@ -13,11 +13,11 @@ public class BusinessOwnerModel
 
     public string? Businessownercode { get; set; }
 
-    public string? Name { get; set; }
+    public string? FullName { get; set; }
 
     public string? Email { get; set; }
 
-    public string? Phonenumber { get; set; }
+    public string? Phone { get; set; }
 
     public string? Createdby { get; set; }
 
@@ -35,9 +35,9 @@ public class BusinessOwnerModel
         {
             Businessownerid = owner.Businessownerid,
             Businessownercode = owner.Businessownercode,
-            Name = owner.Name,
+            FullName = owner.Fullname,
             Email = owner.Email,
-            Phonenumber = owner.Phonenumber,
+            Phone = owner.Phone,
             Createdby = owner.Createdby,
             Createdat = owner.Createdat,
             Modifiedat = owner.Modifiedat,
@@ -45,4 +45,19 @@ public class BusinessOwnerModel
             Deleteflag = owner.Deleteflag,
         };
     }
+}
+
+public class BusinessOwnerCreateResponseMOdel
+{
+
+}
+
+public class BusinessOwnerUpdateResponseMOdel
+{
+
+}
+
+public class BusinessOwnerDeleteResponseMOdel
+{
+
 }

@@ -1,44 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EventTicketingSystem.CSharp.Domain.Models.Features.Event;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.Event;
 
-namespace EventTicketingSystem.CSharp.Domain.Features.Event
+public class BL_Event
 {
-    public class BL_Event
+    private readonly DA_Event _daService;
+
+    public BL_Event(DA_Event service)
     {
-        private readonly BL_Event _service;
+        _daService = service;
+    }
 
-        public BL_Event(BL_Event service)
-        {
-            _service = service;
-        }
+    public async Task<Result<EventListResponseModel>> List()
+    {
+        return await _daService.List();
+    }
 
-        public async Task<Result<EventListResponseModel>> GetEventList()
-        {
-            return await _service.GetEventList();
-        }
+    public async Task<Result<EventEditResponseModel>> Edit(string eventCode)
+    {
+        return await _daService.Edit(eventCode);
+    }
 
-        public async Task<Result<EventResponseModel>> EventDetial(string? EventCode)
-        {
-            return await _service.EventDetial(EventCode);
-        }
+    public async Task<Result<EventCreateResponseModel>> Create(EventCreateRequestModel requestModel)
+    {
+        return await _daService.Create(requestModel);
+    }
 
-        public async Task<Result<EventResponseModel>> CreateEvent(EventRequestModel requestModel)
-        {
-            return await _service.CreateEvent(requestModel);
-        }
+    public async Task<Result<EventUpdateResponseModel>> Update(EventUpdateRequestModel requestModel)
+    {
+        return await _daService.Update(requestModel);
+    }
 
-        public async Task<Result<EventResponseModel>> UpdateEvent(EventRequestModel requestModel)
-        {
-            return await _service.UpdateEvent(requestModel);
-        }
-
-        public async Task<Result<EventResponseModel>> DeleteEvent(string EventCode, string Admin)
-        {
-            return await _service.DeleteEvent(EventCode, Admin);
-        }
+    public async Task<Result<EventDeleteResponseModel>> Delete(string eventCode)
+    {
+        return await _daService.Delete(eventCode);
     }
 }

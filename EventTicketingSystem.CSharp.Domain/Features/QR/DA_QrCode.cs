@@ -33,8 +33,8 @@ public class DA_QrCode
             return Result<QrGenerateResponseModel>.SystemError("Invalid data provided for QR code generation.");
         }
 
-        string GateOpenTime = "GateOpenTime";
-        string VenueName = "VenueName";
+        //string GateOpenTime = "GateOpenTime";
+        //string VenueName = "VenueName";
 
         string qrString = $"{tblEvent.Eventname}" +
             $"|{tblEvent.Eventcode}" +
@@ -47,8 +47,7 @@ public class DA_QrCode
             $"|{tblTicketType.Tickettypename}" +
             $"|{requestModel.FullName}" +
             $"|{requestModel.Email}" +
-            $"|VenueName" +
-            $"|{tblEvent.Address}";
+            $"|VenueName";
 
         response.QrString = qrString;
 
@@ -56,7 +55,7 @@ public class DA_QrCode
 
     }
 
-    public async Task<Result<QrCheckResponseModel>> CheckQr(string qrString)
+    public Result<QrCheckResponseModel> CheckQr(string qrString)
     {
         var response = new QrCheckResponseModel();
 

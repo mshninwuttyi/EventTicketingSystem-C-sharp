@@ -67,6 +67,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Email)
                 .HasColumnType("character varying")
                 .HasColumnName("email");
+            entity.Property(e => e.Fullname)
+                .HasColumnType("character varying")
+                .HasColumnName("fullname");
+            entity.Property(e => e.Isfirsttime).HasColumnName("isfirsttime");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
@@ -76,9 +80,12 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password)
                 .HasColumnType("character varying")
                 .HasColumnName("password");
-            entity.Property(e => e.Phoneno)
+            entity.Property(e => e.Phone)
                 .HasColumnType("character varying")
-                .HasColumnName("phoneno");
+                .HasColumnName("phone");
+            entity.Property(e => e.Profileimage)
+                .HasColumnType("character varying")
+                .HasColumnName("profileimage");
             entity.Property(e => e.Username)
                 .HasColumnType("character varying")
                 .HasColumnName("username");
@@ -142,18 +149,18 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Email)
                 .HasColumnType("character varying")
                 .HasColumnName("email");
+            entity.Property(e => e.Fullname)
+                .HasColumnType("character varying")
+                .HasColumnName("fullname");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
             entity.Property(e => e.Modifiedby)
                 .HasColumnType("character varying")
                 .HasColumnName("modifiedby");
-            entity.Property(e => e.Name)
+            entity.Property(e => e.Phone)
                 .HasColumnType("character varying")
-                .HasColumnName("name");
-            entity.Property(e => e.Phonenumber)
-                .HasColumnType("character varying")
-                .HasColumnName("phonenumber");
+                .HasColumnName("phone");
         });
 
         modelBuilder.Entity<TblEvent>(entity =>
@@ -165,9 +172,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Eventid)
                 .HasColumnType("character varying")
                 .HasColumnName("eventid");
-            entity.Property(e => e.Address)
-                .HasColumnType("character varying")
-                .HasColumnName("address");
             entity.Property(e => e.Businessownercode)
                 .HasColumnType("character varying")
                 .HasColumnName("businessownercode");
@@ -178,7 +182,6 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
-            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Enddate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("enddate");
@@ -188,9 +191,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Eventcode)
                 .HasColumnType("character varying")
                 .HasColumnName("eventcode");
-            entity.Property(e => e.Eventimage)
-                .HasColumnType("character varying")
-                .HasColumnName("eventimage");
             entity.Property(e => e.Eventname)
                 .HasColumnType("character varying")
                 .HasColumnName("eventname");
@@ -440,9 +440,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Price)
                 .HasPrecision(20, 2)
                 .HasColumnName("price");
-            entity.Property(e => e.Qrstring)
+            entity.Property(e => e.Qrimage)
                 .HasColumnType("character varying")
-                .HasColumnName("qrstring");
+                .HasColumnName("qrimage");
             entity.Property(e => e.Ticketcode)
                 .HasColumnType("character varying")
                 .HasColumnName("ticketcode");
@@ -477,9 +477,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Facilities).HasColumnName("facilities");
-            entity.Property(e => e.Image)
-                .HasColumnType("character varying")
-                .HasColumnName("image");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
@@ -489,6 +486,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Venuecode)
                 .HasColumnType("character varying")
                 .HasColumnName("venuecode");
+            entity.Property(e => e.Venueimage)
+                .HasColumnType("character varying")
+                .HasColumnName("venueimage");
             entity.Property(e => e.Venuename)
                 .HasColumnType("character varying")
                 .HasColumnName("venuename");

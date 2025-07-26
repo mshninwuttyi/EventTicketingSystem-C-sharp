@@ -13,7 +13,7 @@ public partial class TblTransactionticket
 
     public string Ticketcode { get; set; } = null!;
 
-    public string Qrstring { get; set; } = null!;
+    public string Qrimage { get; set; } = null!;
 
     public decimal Price { get; set; }
 

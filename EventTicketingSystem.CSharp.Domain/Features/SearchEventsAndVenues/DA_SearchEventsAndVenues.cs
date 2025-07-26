@@ -1,14 +1,10 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndVenues;
-using EventTicketingSystem.CSharp.Shared;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
 
 public class DA_SearchEventsAndVenues
 {
     private readonly ILogger<DA_SearchEventsAndVenues> _logger;
-
     private readonly AppDbContext _db;
+
     public DA_SearchEventsAndVenues(ILogger<DA_SearchEventsAndVenues> logger, AppDbContext db)
     {
         _logger = logger;
@@ -20,19 +16,18 @@ public class DA_SearchEventsAndVenues
         try
         {
             var EventResult = await _db.TblEvents
-                .Where(e => EF.Functions.ILike(e.Eventname!, "%" + searchTerm + "%")
-                && e.Deleteflag == false)
+                            .Where(
+                                e => EF.Functions.ILike(e.Eventname!, "%" + searchTerm + "%") &&
+                                e.Deleteflag == false
+                            )
             .Select(e => new SearchEventResponseModel
             {
                 Eventid = e.Eventid,
                 Eventcode = e.Eventcode,
                 Eventname = e.Eventname,
                 Categorycode = e.Eventcategorycode,
-                Description = e.Description,
-                Address = e.Address,
                 Startdate = e.Startdate,
                 Enddate = e.Enddate,
-                Eventimage = e.Eventimage,
                 Isactive = e.Isactive,
                 Eventstatus = e.Eventcode,
                 Businessownercode = e.Businessownercode,
@@ -43,12 +38,13 @@ public class DA_SearchEventsAndVenues
                 Modifiedby = e.Modifiedby,
                 Modifiedat = e.Modifiedat
             })
-            .AsNoTracking()
             .ToListAsync();
 
             var VenueResult = await _db.TblVenues
-                .Where(v => EF.Functions.ILike(v.Venuename!, "%" + searchTerm + "%")
-                && v.Deleteflag == false)
+                            .Where(
+                                v => EF.Functions.ILike(v.Venuename!, "%" + searchTerm + "%") &&
+                                v.Deleteflag == false
+                            )
                 .Select(v => new SearchVenuesResponseModel
                 {
                     Venueid = v.Venueid,
@@ -66,7 +62,6 @@ public class DA_SearchEventsAndVenues
                     Modifiedby = v.Modifiedby,
                     Modifiedat = v.Modifiedat
                 })
-                .AsNoTracking()
                 .ToListAsync();
 
             var SearchResult = new SearchListEventsAndVenuesResponseModel
@@ -95,31 +90,34 @@ public class DA_SearchEventsAndVenues
     {
         try
         {
+            // Add day 1 to include 23:59:59 on the original EndDate
+            var nextDay = Enddate.AddDays(1);
+
             var EventResult = await _db.TblEvents
-            .Where(e => e.Startdate >= Startdate && e.Startdate <= Enddate && e.Deleteflag == false)
-            .Select(e => new SearchEventResponseModel
-            {
-                Eventid = e.Eventid,
-                Eventcode = e.Eventcode,
-                Eventname = e.Eventname,
-                Categorycode = e.Eventcategorycode,
-                Description = e.Description,
-                Address = e.Address,
-                Startdate = e.Startdate,
-                Enddate = e.Enddate,
-                Eventimage = e.Eventimage,
-                Isactive = e.Isactive,
-                Eventstatus = e.Eventstatus,
-                Businessownercode = e.Businessownercode,
-                Totalticketquantity = e.Totalticketquantity,
-                Soldoutcount = e.Soldoutcount,
-                Createdby = e.Createdby,
-                Createdat = e.Createdat,
-                Modifiedby = e.Modifiedby,
-                Modifiedat = e.Modifiedat
-            })
-            .AsNoTracking()
-            .ToListAsync();
+                            .Where(
+                                e => e.Startdate >= Startdate &&
+                                e.Startdate <= nextDay &&
+                                e.Deleteflag == false
+                            )
+                            .Select(e => new SearchEventResponseModel
+                            {
+                                Eventid = e.Eventid,
+                                Eventcode = e.Eventcode,
+                                Eventname = e.Eventname,
+                                Categorycode = e.Eventcategorycode,
+                                Startdate = e.Startdate,
+                                Enddate = e.Enddate,
+                                Isactive = e.Isactive,
+                                Eventstatus = e.Eventstatus,
+                                Businessownercode = e.Businessownercode,
+                                Totalticketquantity = e.Totalticketquantity,
+                                Soldoutcount = e.Soldoutcount,
+                                Createdby = e.Createdby,
+                                Createdat = e.Createdat,
+                                Modifiedby = e.Modifiedby,
+                                Modifiedat = e.Modifiedat
+                            })
+                            .ToListAsync();
 
             var SearchResult = new SearchListEventsResponseModel
             {
@@ -140,63 +138,64 @@ public class DA_SearchEventsAndVenues
         }
     }
 
-    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(decimal FromAmount, Decimal ToAmount)
+    public async Task<Result<SearchListEventsByAmountResponseModel>> SearchEventsByAmountAsync(decimal FromAmount, decimal ToAmount)
     {
         try
         {
             var TicketPriceResult = await _db.TblTicketprices
-                .Where(tp => tp.Ticketprice >= FromAmount && tp.Ticketprice <= ToAmount && tp.Deleteflag == false)
-                .Select(tp => new SearchTicketPriceResponseModel
-                {
-                    Ticketpriceid = tp.Ticketpriceid,
-                    Ticketpricecode = tp.Ticketpricecode,
-                    Eventcode = tp.Eventcode,
-                    Tickettypecode = tp.Tickettypecode,
-                    Ticketprice = tp.Ticketprice,
-                    Ticketquantity = tp.Ticketquantity,
-                    Createdby = tp.Createdby,
-                    Createdat = tp.Createdat,
-                    Modifiedby = tp.Modifiedby,
-                    Modifiedat = tp.Modifiedat
-                })
-                .AsNoTracking()
-                .ToListAsync();
-
+                                .Where(
+                                    tp => tp.Ticketprice >= FromAmount &&
+                                    tp.Ticketprice <= ToAmount &&
+                                    tp.Deleteflag == false
+                                )
+                                .Select(tp => new SearchTicketPriceResponseModel
+                                {
+                                    Ticketpriceid = tp.Ticketpriceid,
+                                    Ticketpricecode = tp.Ticketpricecode,
+                                    Eventcode = tp.Eventcode,
+                                    Tickettypecode = tp.Tickettypecode,
+                                    Ticketprice = tp.Ticketprice,
+                                    Ticketquantity = tp.Ticketquantity,
+                                    Createdby = tp.Createdby,
+                                    Createdat = tp.Createdat,
+                                    Modifiedby = tp.Modifiedby,
+                                    Modifiedat = tp.Modifiedat
+                                })
+                                .ToListAsync();
             var EventCodes = TicketPriceResult.Select(tp => tp.Eventcode).Distinct().ToList();
 
             var SearchResult = new SearchListEventsByAmountResponseModel
             {
                 Events = _db.TblEvents
-                    .Where(e => EventCodes.Contains(e.Eventcode) && e.Deleteflag == false)
-                    .Select(e => new SearchEventResponseModel
-                    {
-                        Eventid = e.Eventid,
-                        Eventcode = e.Eventcode,
-                        Eventname = e.Eventname,
-                        Categorycode = e.Eventcategorycode,
-                        Description = e.Description,
-                        Address = e.Address,
-                        Startdate = e.Startdate,
-                        Enddate = e.Enddate,
-                        Eventimage = e.Eventimage,
-                        Isactive = e.Isactive,
-                        Eventstatus = e.Eventstatus,
-                        Businessownercode = e.Businessownercode,
-                        Totalticketquantity = e.Totalticketquantity,
-                        Soldoutcount = e.Soldoutcount,
-                        Createdby = e.Createdby,
-                        Createdat = e.Createdat,
-                        Modifiedby = e.Modifiedby,
-                        Modifiedat = e.Modifiedat
-                    })
-                    .AsNoTracking()
-                    .ToList(),
-                TicketPrice = TicketPriceResult
+                        .Where(
+                            e => EventCodes.Contains(e.Eventcode) &&
+                            e.Deleteflag == false
+                        )
+                        .Select(e => new SearchEventByAmountResponseModel
+                        {
+                            Eventid = e.Eventid,
+                            Eventcode = e.Eventcode,
+                            Eventname = e.Eventname,
+                            Categorycode = e.Eventcategorycode,
+                            Startdate = e.Startdate,
+                            Enddate = e.Enddate,
+                            Isactive = e.Isactive,
+                            Eventstatus = e.Eventstatus,
+                            Businessownercode = e.Businessownercode,
+                            Totalticketquantity = e.Totalticketquantity,
+                            Soldoutcount = e.Soldoutcount,
+                            Createdby = e.Createdby,
+                            Createdat = e.Createdat,
+                            Modifiedby = e.Modifiedby,
+                            Modifiedat = e.Modifiedat
+                        })
+                        .ToList(),
+                //TicketPrice = TicketPriceResult
             };
 
             if (SearchResult.Events.Count == 0)
             {
-                return Result<SearchListEventsByAmountResponseModel>.NotFoundError("No events found matching the search date.");
+                return Result<SearchListEventsByAmountResponseModel>.NotFoundError("No events found matching the search Amount.");
             }
 
             return Result<SearchListEventsByAmountResponseModel>.Success(SearchResult);

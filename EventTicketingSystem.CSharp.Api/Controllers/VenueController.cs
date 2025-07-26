@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Authorize]
@@ -21,64 +19,32 @@ public class VenueController : ControllerBase
     private string CurrentUserId => User.GetCurrentUserId(_logger);
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> List()
     {
-        var result = await _blService.GetList();
-        return Ok(result);
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateVenueRequestModel request)
-    {
-        var result = await _blService.CreateVenue(request, CurrentUserId);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        return StatusCode(500, new { message = result.Message });
+        return Ok(await _blService.List());
     }
 
-    [HttpPut("{venueId}")]
-    public async Task<IActionResult> Update(string venueId, [FromBody] UpdateVenueRequestModel request)
+    [HttpGet("Edit/{venueId}")]
+    public async Task<IActionResult> Edit(string venueId)
     {
-        // validate the Venue ID in URL matches the Venue ID in request body
-        if (venueId != request.VenueId)
-        {
-            return BadRequest(new { message = "Venue ID mismatch." });
-        }
-
-        var result = await _blService.UpdateVenue(request, CurrentUserId);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        if (result.Message == "Venue not found.")
-        {
-            return NotFound(new { message = result.Message});
-        }
-        
-        return StatusCode(500, new { message = result.Message });
+        return Ok(await _blService.Edit(venueId));
     }
-    
-    [HttpDelete("{venueId}")]
+
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] VenueCreateRequestModel requestModel)
+    {
+        return Ok(await _blService.Create(requestModel));
+    }
+
+    [HttpPut("Update")]
+    public async Task<IActionResult> Update([FromBody] VenueUpdateRequestModel requestModel)
+    {
+        return Ok(await _blService.Update(requestModel));
+    }
+
+    [HttpDelete("Delete/{venueId}")]
     public async Task<IActionResult> Delete(string venueId)
     {
-        var result = await _blService.DeleteVenue(venueId, CurrentUserId);
-        
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-        
-        if (result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
-        {
-            return NotFound(new { message = result.Message });
-        }
-        
-        return StatusCode(500, new { message = result.Message });
+        return Ok(await _blService.Delete(venueId));
     }
 }
