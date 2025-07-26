@@ -244,6 +244,8 @@ create table public.tbl_event
     venuecode           varchar   not null,
     eventname           varchar   not null,
     eventcategorycode   varchar   not null,
+    description         varchar   not null,
+    Address             varchar   not null,
     startdate           timestamp not null,
     enddate             timestamp not null,
     isactive            boolean   not null,
