@@ -14,3 +14,4 @@ global using EventTicketingSystem.CSharp.Domain.Features.QR;
 global using EventTicketingSystem.CSharp.Domain.Features.Ticket;
 global using EventTicketingSystem.CSharp.Domain.Features.Venue;
 global using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+global using EventTicketingSystem.CSharp.Shared.Extensions;
