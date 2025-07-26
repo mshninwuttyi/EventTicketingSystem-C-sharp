@@ -121,7 +121,7 @@ public class DA_EventCategory
     {
         if (requestModel.EventCategoryCode.IsNullOrEmpty())
         {
-            return Result<EventCategoryUpdateResponseModel>.ValidationError("Event Type Not Found.");
+            return Result<EventCategoryUpdateResponseModel>.ValidationError("Event Type Code Not Found.");
         }
         else if (requestModel.CategoryName.IsNullOrEmpty())
         {

@@ -31,7 +31,7 @@ public class EventCategoryController : ControllerBase
     }
 
     [HttpPost("Update")]
-    public async Task<IActionResult> Update(string eventCategoryCode, [FromBody] EventCategoryUpdateRequestModel requestModel)
+    public async Task<IActionResult> Update([FromBody] EventCategoryUpdateRequestModel requestModel)
     {
         return Ok(await _blEventCategory.Update(requestModel));
     }
