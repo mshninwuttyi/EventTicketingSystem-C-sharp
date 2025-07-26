@@ -25,7 +25,8 @@ public class VenueController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] VenueCreateRequestModel requestModel)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] VenueCreateRequestModel requestModel)
     {
         return Ok(await _blService.Create(requestModel));
     }

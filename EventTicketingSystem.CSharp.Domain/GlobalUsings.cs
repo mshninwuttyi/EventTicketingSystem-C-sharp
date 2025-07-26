@@ -35,3 +35,7 @@ global using EventTicketingSystem.CSharp.Domain.Models.Features.SearchEventsAndV
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
 global using EventTicketingSystem.CSharp.Shared.Services;
 global using EventTicketingSystem.CSharp.Shared.Models;
+global using EventTicketingSystem.CSharp.Domain.Features.VenueType;
+global using Microsoft.Extensions.FileProviders;
+global using System.Net;
+global using System.Net.Mail;

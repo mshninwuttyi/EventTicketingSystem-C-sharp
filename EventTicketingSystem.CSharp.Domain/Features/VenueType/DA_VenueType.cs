@@ -101,7 +101,7 @@ namespace EventTicketingSystem.CSharp.Domain.Features.VenueType
                     var newVenueType = new TblVenuetype
                     {
                         Venuetypeid = Ulid.NewUlid().ToString(),
-                        Venuetypecode = "00",//await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_VenueType),
+                        Venuetypecode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_VenueType),
                         Venuetypename = requestModel.VenueTypeName,
                         Createdat = DateTime.Now,
                         Createdby = CreatedByUserId,

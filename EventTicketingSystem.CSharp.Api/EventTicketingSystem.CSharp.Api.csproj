@@ -18,4 +18,10 @@
 		<ProjectReference Include="..\EventTicketingSystem.CSharp.Domain\EventTicketingSystem.CSharp.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="QrImage\" />
+	  <Folder Include="ProfileImage\" />
+	  <Folder Include="VenueImage\" />
+	</ItemGroup>
+
 </Project>

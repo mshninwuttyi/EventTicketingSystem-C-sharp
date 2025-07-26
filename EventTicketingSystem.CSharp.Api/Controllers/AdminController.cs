@@ -40,10 +40,10 @@ public class AdminController : ControllerBase
         return Ok(data);
     }
 
-    [HttpPost("Delete/{adminCode}")]
-    public async Task<IActionResult> Delete(string adminCode)
+    [HttpPost("Delete")]
+    public async Task<IActionResult> Delete(AdminDeleteRequestModel requestModel)
     {
-        var data = await _blAdmin.Delete(adminCode);
+        var data = await _blAdmin.Delete(requestModel);
         return Ok(data);
     }
 }

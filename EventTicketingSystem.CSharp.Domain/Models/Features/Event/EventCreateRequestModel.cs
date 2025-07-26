@@ -12,8 +12,6 @@ public class EventCreateRequestModel
 
     public DateTime Enddate { get; set; }
 
-    public string Eventimage { get; set; }
-
     public bool Isactive { get; set; }
 
     public string Eventstatus { get; set; }

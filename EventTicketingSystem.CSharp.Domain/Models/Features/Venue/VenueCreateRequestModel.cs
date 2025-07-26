@@ -13,11 +13,11 @@ public class VenueCreateRequestModel
     public string? Address { get; set; }             // Address of the venue
 
     [Range(1, int.MaxValue)]
-    public int Capacity { get; set; } 
+    public int Capacity { get; set; }
 
     public string? Facilities { get; set; }
 
     public string? Addons { get; set; }
 
-    public string? Image { get; set; }  
+    public List<IFormFile> VenueImage { get; set; }
 }

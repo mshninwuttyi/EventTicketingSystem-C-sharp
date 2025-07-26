@@ -1,7 +1,3 @@
-using EventTicketingSystem.CSharp.Shared;
-using System.Net.Sockets;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.Ticket;
 
 public class DA_Ticket
@@ -37,9 +33,9 @@ public class DA_Ticket
                 Modifiedat = DateTime.Now,
                 Deleteflag = false
             };
-            
+
             await _db.TblTickets.AddAsync(newTicket);
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
             var responseModel = new TicketResponseModel
             {
@@ -153,27 +149,27 @@ public class DA_Ticket
             //                .ToListAsync();
 
             var tickets = await (from t in _db.TblTickets.AsNoTracking()
-                                join tp in _db.TblTicketprices on t.Ticketpricecode equals tp.Ticketpricecode
-                                join tt in _db.TblTickettypes on tp.Tickettypecode equals tt.Tickettypecode
-                                select new TicketResponseModel
-                                    {
-                                        Ticketid = t.Ticketid,
-                                        Ticketcode = t.Ticketcode,
-                                        Ticketpricecode = t.Ticketpricecode,
-                                        Isused = t.Isused,
-                                        Createdby = t.Createdby,
-                                        Createdat = t.Createdat,
-                                        Modifiedby = t.Modifiedby,
-                                        Modifiedat = t.Modifiedat,
-                                        Deleteflag = t.Deleteflag,
-                                        Ticketpriceid = tp.Ticketpriceid,
-                                        Eventcode = tp.Eventcode,
-                                        Tickettypecode = tp.Tickettypecode,
-                                        Ticketprice = tp.Ticketprice,
-                                        Ticketquantity = tp.Ticketquantity,
-                                        Tickettypeid = tt.Tickettypeid,
-                                        Tickettypename = tt.Tickettypename
-                                    }
+                                 join tp in _db.TblTicketprices on t.Ticketpricecode equals tp.Ticketpricecode
+                                 join tt in _db.TblTickettypes on tp.Tickettypecode equals tt.Tickettypecode
+                                 select new TicketResponseModel
+                                 {
+                                     Ticketid = t.Ticketid,
+                                     Ticketcode = t.Ticketcode,
+                                     Ticketpricecode = t.Ticketpricecode,
+                                     Isused = t.Isused,
+                                     Createdby = t.Createdby,
+                                     Createdat = t.Createdat,
+                                     Modifiedby = t.Modifiedby,
+                                     Modifiedat = t.Modifiedat,
+                                     Deleteflag = t.Deleteflag,
+                                     Ticketpriceid = tp.Ticketpriceid,
+                                     Eventcode = tp.Eventcode,
+                                     Tickettypecode = tp.Tickettypecode,
+                                     Ticketprice = tp.Ticketprice,
+                                     Ticketquantity = tp.Ticketquantity,
+                                     Tickettypeid = tt.Tickettypeid,
+                                     Tickettypename = tt.Tickettypename
+                                 }
                                 ).ToListAsync();
 
 
@@ -227,7 +223,7 @@ public class DA_Ticket
 
             data!.Modifiedat = DateTime.Now;
             _db.Entry(data).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
             var model = new TicketResponseModel()
             {
                 Isused = data.Isused,

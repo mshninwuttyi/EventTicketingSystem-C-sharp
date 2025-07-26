@@ -1,24 +1,30 @@
-using EventTicketingSystem.CSharp.Domain.Features.VenueType;
-using EventTicketingSystem.CSharp.Shared.Services;
-using System.Net;
-using System.Net.Mail;
-
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
 {
     public static IServiceCollection AddModularServices(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        services.AddDatabaseConnection(builder);
-        services.AddBusinessLogic();
-        services.AddDataAccessLogic();
-        services.AddServices();
-        builder.AddBuilders();
+        services.AddBuilderServies(builder)
+            .AddServices()
+            .AddBusinessLogic()
+            .AddDataAccessLogic();
 
         return services;
     }
 
-    public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, WebApplicationBuilder builder)
+    public static void UseLogicalFileService(this IApplicationBuilder app, string physicalPath, string folderName)
+    {
+        Directory.CreateDirectory(Path.Combine(physicalPath, folderName));
+
+        app.UseFileServer(new FileServerOptions
+        {
+            FileProvider = new PhysicalFileProvider(Path.Combine(physicalPath, folderName)),
+            RequestPath = new PathString("/" + folderName),
+            EnableDirectoryBrowsing = false
+        });
+    }
+
+    public static IServiceCollection AddBuilderServies(this IServiceCollection services, WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<AppDbContext>(
                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
@@ -26,6 +32,29 @@ public static class FeaturesManager
                 ServiceLifetime.Transient,
                 ServiceLifetime.Transient
         );
+
+        builder.Services
+            .AddFluentEmail("eventticketingsystem.opom@gmail.com")
+            .AddSmtpSender(new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(
+                        "eventticketingsystem.opom@gmail.com",
+                        "qpqo kczf gffk bycz"),
+                EnableSsl = true,
+                Port = 587,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Timeout = 10000
+            });
+
+        return services;
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<DapperService>();
+        services.AddScoped<CommonService>();
+        services.AddScoped<EmailService>();
 
         return services;
     }
@@ -60,34 +89,5 @@ public static class FeaturesManager
         services.AddScoped<DA_VenueType>();
 
         return services;
-    }
-
-    private static IServiceCollection AddServices(this IServiceCollection services)
-    {
-        services.AddScoped<DapperService>();
-        services.AddScoped<CommonService>();
-        services.AddScoped<EmailService>();
-
-        return services;
-    }
-
-    public static WebApplicationBuilder AddBuilders(this WebApplicationBuilder builder)
-    {
-
-        builder.Services
-            .AddFluentEmail("eventticketingsystem.opom@gmail.com")
-            .AddSmtpSender(new SmtpClient("smtp.gmail.com")
-            {
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(
-                        "eventticketingsystem.opom@gmail.com",
-                        "qpqo kczf gffk bycz"),
-                EnableSsl = true,
-                Port = 587,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Timeout = 10000
-            });
-
-        return builder;
     }
 }

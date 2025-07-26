@@ -9,6 +9,4 @@ public class AdminCreateRequestModel
     public string PhoneNo { get; set; }
 
     public string Password { get; set; }
-
-    public string ProfileImage { get; set; }
 }
