@@ -14,93 +14,42 @@ public class DA_BusinessOwner
         _commonService = commonService;
     }
 
-    #region Private Helper Functions
-    private int getTotalOwnerCount()
-    {
-        return _db.TblBusinessowners.Count();
-    }
-    private bool isOwnerCodeExist(String ownerCode)
-    {
-        var owner = _db.TblBusinessowners.AsNoTracking().FirstOrDefault(x => x.Businessownercode == ownerCode && x.Deleteflag == true);
-        return owner == null;
-    }
-    private bool isEmailUsed(String email)
-    {
-        var owner = _db.TblBusinessowners.AsNoTracking().FirstOrDefault(x => x.Email == email);
-        return owner == null;
-    }
-    private int getLastestCount()
-    {
-        int count = 0;
-
-        var result = _db.TblBusinessowners.AsNoTracking().OrderByDescending(x => x.Createdat).Select(x => x.Businessownercode).FirstOrDefault();
-        if (result != null)
-        {
-            count = getIntFromCode(result);
-        }
-        return count;
-    }
-    private int getIntFromCode(string code)
-    {
-        string noString = code.Substring(3, code.Length - 1);
-        return int.Parse(noString);
-    }
-    #endregion
-
     #region Get Business Owner List
 
-    public async Task<Result<BusinessOwnerResponseModel>> GetList()
+    public async Task<Result<BusinessOwnerListResponseModel>> List()
     {
-        var responseModel = new Result<BusinessOwnerResponseModel>();
-        var model = new BusinessOwnerResponseModel();
+        var model = new BusinessOwnerListResponseModel();
         try
         {
             var data = await _db.TblBusinessowners
-                        .AsNoTracking()
                         .Where(x => x.Deleteflag == false)
+                        .OrderByDescending(x => x.Businessownerid)
                         .ToListAsync();
             if (data is null)
             {
-                return Result<BusinessOwnerResponseModel>.NotFoundError("No Owner Found.");
+                return Result<BusinessOwnerListResponseModel>.NotFoundError("No Owner Found.");
             }
 
-            model.BusinessOwners = data.Select(x => new BusinessOwnerModel
-            {
-                Businessownerid = x.Businessownerid,
-                Businessownercode = x.Businessownercode,
-                FullName = x.Fullname,
-                Email = x.Email,
-                Phone = x.Phone,
-                Createdby = x.Createdby,
-                Createdat = x.Createdat,
-                Modifiedby = x.Modifiedby,
-                Modifiedat = x.Modifiedat,
-                Deleteflag = false
-            }).ToList();
-
-            responseModel = Result<BusinessOwnerResponseModel>.Success(model);
+            model.BusinessOwners = data.Select(BusinessOwnerListModel.FromTblOwner).ToList();
+            return Result<BusinessOwnerListResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
+            return Result<BusinessOwnerListResponseModel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Get Business Owner By Code
 
-    public async Task<Result<BusinessOwnerResponseModel>> GetByCode(string? ownerCode)
+    public async Task<Result<BusinessOwnerEditResponseModel>> Edit(string ownerCode)
     {
-        var responseModel = new Result<BusinessOwnerResponseModel>();
-        var model = new BusinessOwnerResponseModel();
-
+        var model = new BusinessOwnerEditResponseModel();
         if (ownerCode.IsNullOrEmpty())
         {
-            return Result<BusinessOwnerResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+            return Result<BusinessOwnerEditResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
         }
 
         try
@@ -112,53 +61,36 @@ public class DA_BusinessOwner
                         );
             if (data is null)
             {
-                responseModel = Result<BusinessOwnerResponseModel>.NotFoundError($"No Owner Found with Code: {ownerCode}");
+                return Result<BusinessOwnerEditResponseModel>.NotFoundError("Owner Not Found.");
             }
 
-            model.BusinessOwner = new BusinessOwnerModel
-            {
-                Businessownerid = data.Businessownerid,
-                Businessownercode = data.Businessownercode,
-                FullName = data.Fullname,
-                Email = data.Email,
-                Phone = data.Phone,
-                Createdby = data.Createdby,
-                Createdat = data.Createdat,
-                Modifiedby = data.Modifiedby,
-                Modifiedat = data.Modifiedat,
-                Deleteflag = false
-            };
-            responseModel = Result<BusinessOwnerResponseModel>.Success(model);
+            model.BusinessOwner = BusinessOwnerEditModel.FromTblOwner(data!);
+            return Result<BusinessOwnerEditResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
+            return Result<BusinessOwnerEditResponseModel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Create Business Owner
 
-    public async Task<Result<BusinessOwnerResponseModel>> CreateBusinessOwner(BusinessOwnerRequestModel owner)
+    public async Task<Result<BusinessOwnerCreateResponseMOdel>> Create(BusinessOwnerCreateRequestModel owner)
     {
-        var responseModel = new Result<BusinessOwnerResponseModel>();
-        var model = new BusinessOwnerResponseModel();
-
         if (owner.Email.IsNullOrEmpty() || !owner.Email.IsValidEmail() || isEmailUsed(owner.Email))
         {
-            return Result<BusinessOwnerResponseModel>.ValidationError("Email is already used or invalid!");
+            return Result<BusinessOwnerCreateResponseMOdel>.ValidationError("Email is already used or invalid.");
         }
         else if (owner.FullName.IsNullOrEmpty() || owner.FullName.Length < 3)
         {
-            return Result<BusinessOwnerResponseModel>.ValidationError("Name can't be blank or less than 3 characters.");
+            return Result<BusinessOwnerCreateResponseMOdel>.ValidationError("Name can't be blank or less than 3 characters.");
         }
         else if (owner.Phone.IsNullOrEmpty() || owner.Phone.Length < 9)
         {
-            return Result<BusinessOwnerResponseModel>.ValidationError("Phone No can't be empty or less than 9 digits!");
+            return Result<BusinessOwnerCreateResponseMOdel>.ValidationError("Phone No can't be empty or less than 9 digits!");
         }
         else
         {
@@ -166,7 +98,7 @@ public class DA_BusinessOwner
             {
                 var newOwner = new TblBusinessowner()
                 {
-                    Businessownerid = Ulid.NewUlid().ToString(),
+                    Businessownerid = GenerateUlid(),
                     Businessownercode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_BusinessOwner),
                     Fullname = owner.FullName,
                     Email = owner.Email,
@@ -178,53 +110,48 @@ public class DA_BusinessOwner
                 await _db.TblBusinessowners.AddAsync(newOwner);
                 await _db.SaveAndDetachAsync();
 
-                model.BusinessOwner = BusinessOwnerModel.FromTblOwner(newOwner);
-                responseModel = Result<BusinessOwnerResponseModel>.Success(model, "New Owner Created!");
+                return Result<BusinessOwnerCreateResponseMOdel>.Success("New Owner Created Successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogExceptionError(ex);
-                responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
+                return Result<BusinessOwnerCreateResponseMOdel>.SystemError(ex.Message);
             }
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Update Business Owner
 
-    public async Task<Result<BusinessOwnerResponseModel>> UpdateBusinessOwner(BusinessOwnerRequestModel owner)
+    public async Task<Result<BusinessOwnerUpdateResponseMOdel>> Update(BusinessOwnerUpdateRequestModel requestModel)
     {
-        var responseModel = new Result<BusinessOwnerResponseModel>();
-        var model = new BusinessOwnerResponseModel();
         string errorMessage = string.Empty;
 
-        if (owner.Businessownercode.IsNullOrEmpty() || owner.Admin.IsNullOrEmpty())
+        if (requestModel.Businessownercode.IsNullOrEmpty())
         {
-            return Result<BusinessOwnerResponseModel>.NotFoundError("Owner Code or Admin can't be empty!");
+            return Result<BusinessOwnerUpdateResponseMOdel>.NotFoundError("Owner Code is Required.");
         }
 
         try
         {
             var data = await _db.TblBusinessowners
                         .FirstOrDefaultAsync(
-                            x => x.Businessownercode == owner.Businessownercode &&
+                            x => x.Businessownercode == requestModel.Businessownercode &&
                             x.Deleteflag == false
                         );
             if (data is null)
             {
-                return Result<BusinessOwnerResponseModel>.NotFoundError($"Owner not found with Code: {owner.Businessownercode}");
+                return Result<BusinessOwnerUpdateResponseMOdel>.NotFoundError("Owner Not Found.");
             }
 
-            if (!owner.Email.IsNullOrEmpty() && owner.Email != data.Email)
+            if (!requestModel.Email.IsNullOrEmpty() && requestModel.Email != data.Email)
             {
-                if (owner.Email.IsValidEmail())
+                if (requestModel.Email.IsValidEmail())
                 {
-                    if (!isEmailUsed(owner.Email))
+                    if (!isEmailUsed(requestModel.Email))
                     {
-                        data.Email = owner.Email;
+                        data.Email = requestModel.Email;
                     }
                     else
                     {
@@ -237,11 +164,11 @@ public class DA_BusinessOwner
                 }
             }
 
-            if (!owner.FullName.IsNullOrEmpty() && data.Fullname != owner.FullName)
+            if (!requestModel.FullName.IsNullOrEmpty() && data.Fullname != requestModel.FullName)
             {
-                if (owner.FullName.Length >= 3)
+                if (requestModel.FullName.Length >= 3)
                 {
-                    data.Fullname = owner.FullName;
+                    data.Fullname = requestModel.FullName;
                 }
                 else
                 {
@@ -249,11 +176,11 @@ public class DA_BusinessOwner
                 }
             }
 
-            if (!owner.Phone.IsNullOrEmpty() && data.Phone != owner.Phone)
+            if (!requestModel.Phone.IsNullOrEmpty() && data.Phone != requestModel.Phone)
             {
-                if (owner.Phone.Length >= 9 && owner.Phone.Length < 11)
+                if (requestModel.Phone.Length >= 9 && requestModel.Phone.Length < 11)
                 {
-                    data.Phone = owner.Phone;
+                    data.Phone = requestModel.Phone;
                 }
                 else
                 {
@@ -263,42 +190,35 @@ public class DA_BusinessOwner
 
             data.Modifiedby = CreatedByUserId;
             data.Modifiedat = DateTime.Now;
-
             _db.Entry(data).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            model.BusinessOwner = BusinessOwnerModel.FromTblOwner(data);
             if (errorMessage.IsNullOrEmpty())
             {
-                responseModel = Result<BusinessOwnerResponseModel>.Success(model);
+                return Result<BusinessOwnerUpdateResponseMOdel>.Success();
             }
             else
             {
-                responseModel = Result<BusinessOwnerResponseModel>.ValidationError(errorMessage, model);
+                return Result<BusinessOwnerUpdateResponseMOdel>.ValidationError(errorMessage);
             }
 
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
+            return Result<BusinessOwnerUpdateResponseMOdel>.SystemError(ex.Message);
         }
-
-        return responseModel;
     }
 
     #endregion
 
     #region Delete Business Owner By Code
 
-    public async Task<Result<BusinessOwnerResponseModel>> DeleteOwnerByCode(string? ownerCode)
+    public async Task<Result<BusinessOwnerDeleteResponseMOdel>> Delete(string ownerCode)
     {
-        var responseModel = new Result<BusinessOwnerResponseModel>();
-        var model = new BusinessOwnerResponseModel();
-
         if (ownerCode.IsNullOrEmpty())
         {
-            return Result<BusinessOwnerResponseModel>.UserInputError("Owner Code can't be Null or Empty!");
+            return Result<BusinessOwnerDeleteResponseMOdel>.UserInputError("Owner Code is Required.");
         }
 
         try
@@ -311,24 +231,32 @@ public class DA_BusinessOwner
 
             if (data != null)
             {
-                responseModel = Result<BusinessOwnerResponseModel>.NotFoundError($"No Owner Found with Code: {ownerCode}");
+                return Result<BusinessOwnerDeleteResponseMOdel>.NotFoundError("Owner Not Found.");
             }
 
-            data.Modifiedby = CreatedByUserId;
+            data!.Modifiedby = CreatedByUserId;
             data.Modifiedat = DateTime.Now;
             data.Deleteflag = true;
             _db.Entry(data).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
-            responseModel = Result<BusinessOwnerResponseModel>.Success(model, "Owner Deleted Successfully!");
+            return Result<BusinessOwnerDeleteResponseMOdel>.Success("Owner Deleted Successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<BusinessOwnerResponseModel>.SystemError(ex.Message);
+            return Result<BusinessOwnerDeleteResponseMOdel>.SystemError(ex.Message);
         }
+    }
 
-        return responseModel;
+    #endregion
+
+    #region Private Helper Functions
+
+    private bool isEmailUsed(String email)
+    {
+        var owner = _db.TblBusinessowners.AsNoTracking().FirstOrDefault(x => x.Email == email);
+        return owner == null;
     }
 
     #endregion

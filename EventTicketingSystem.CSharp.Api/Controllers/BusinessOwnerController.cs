@@ -12,39 +12,33 @@ public class BusinessOwnerController : ControllerBase
         _blBusinessOwner = blBusinessOwner;
     }
 
-    #region CURD Business Owner
-
-    [HttpGet("GetList")]
-    public async Task<IActionResult> GetList()
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        return Ok(await _blBusinessOwner.GetList());
+        return Ok(await _blBusinessOwner.List());
     }
 
-    [HttpGet("GetOwnerByCode/{ownerCode}")]
-    public async Task<IActionResult> GetByCode(string ownerCode)
+    [HttpGet("Edit/{ownerCode}")]
+    public async Task<IActionResult> Edit(string ownerCode)
     {
-        var req = new BusinessOwnerRequestModel { Businessownercode = ownerCode };
-        return Ok(await _blBusinessOwner.GetBusinessOwner(req));
+        return Ok(await _blBusinessOwner.Edit(ownerCode));
     }
 
-    [HttpPost("CreateOwner")]
-    public async Task<IActionResult> CreateOwner([FromBody] BusinessOwnerRequestModel req)
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] BusinessOwnerCreateRequestModel requestModel)
     {
-        return Ok(await _blBusinessOwner.CreateNewBusinessOwner(req));
+        return Ok(await _blBusinessOwner.Create(requestModel));
     }
 
-    [HttpPatch("GetBOwnerByCode")]
-    public async Task<IActionResult> UpdateOwner([FromBody] BusinessOwnerRequestModel req)
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update([FromBody] BusinessOwnerUpdateRequestModel requestModel)
     {
-        return Ok(await _blBusinessOwner.UpdateBusinessOwner(req));
+        return Ok(await _blBusinessOwner.Update(requestModel));
     }
 
-    [HttpDelete("DeleteOwner/{ownerCode}")]
-    public async Task<IActionResult> DeleteByCode(string ownerCode)
+    [HttpPost("Delete/{ownerCode}")]
+    public async Task<IActionResult> Delete(string ownerCode)
     {
-        var req = new BusinessOwnerRequestModel { Businessownercode = ownerCode };
-        return Ok(await _blBusinessOwner.GetBusinessOwner(req));
+        return Ok(await _blBusinessOwner.Delete(ownerCode));
     }
-
-    #endregion
 }
