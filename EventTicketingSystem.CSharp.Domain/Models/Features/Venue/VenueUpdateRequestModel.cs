@@ -11,6 +11,7 @@ public class VenueUpdateRequestModel
 
     public string? Facilities { get; set; }
 
-    public string? Addons { get; set; }
+    public List<string>? Addons { get; set; }
+
 
 }

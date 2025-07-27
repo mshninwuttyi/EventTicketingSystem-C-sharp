@@ -21,8 +21,8 @@ public class VenueEditModel
     
     public string? Description { get; set; }
     
-    public string? Addons { get; set; }
-
+    public List<string>? Addons { get; set; }
+    
     public string? Facilities { get; set; }
 
     public List<string> VenueImage { get; set; }
@@ -38,7 +38,7 @@ public class VenueEditModel
             Capacity = venue.Capacity,
             Address = venue.Address,
             Description = venue.Description,
-            Addons = venue.Addons,
+            Addons = new List<string>(),
             Facilities = venue.Facilities,
             VenueImage = new List<string>()
         };
@@ -46,6 +46,15 @@ public class VenueEditModel
         if (!string.IsNullOrWhiteSpace(venue.Venueimage))
         {
             venueModel.VenueImage = venue.Venueimage
+                .Split([','], StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
+        }
+        
+        if (!string.IsNullOrWhiteSpace(venue.Addons))
+        {
+            venueModel.Addons = venue.Addons
                 .Split([','], StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
                 .Where(x => !string.IsNullOrWhiteSpace(x))

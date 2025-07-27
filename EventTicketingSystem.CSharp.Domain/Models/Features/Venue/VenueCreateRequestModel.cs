@@ -17,7 +17,7 @@ public class VenueCreateRequestModel
     
     public string? Facilities { get; set; }
     
-    public string? Addons { get; set; }
+    public List<string>? Addons { get; set; }
 
     public List<IFormFile> VenueImage { get; set; }
 }

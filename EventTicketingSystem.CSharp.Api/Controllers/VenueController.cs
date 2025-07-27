@@ -1,6 +1,5 @@
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
-[Authorize]
 [Tags("Venue")]
 [Route("api/[controller]")]
 [ApiController]
@@ -15,7 +14,7 @@ public class VenueController : ControllerBase
     // Get current AdminCode from JWT claims
     private string CurrentUserId => User.GetCurrentUserId();
 
-    [HttpGet]
+    [HttpGet("List")]
     public async Task<IActionResult> List()
     {
         var data = await _blVenue.List();
@@ -44,7 +43,7 @@ public class VenueController : ControllerBase
         return Ok(data);
     }
 
-    [HttpPost("Delete/{venueId}")]
+    [HttpPost("Delete")]
     public async Task<IActionResult> Delete(VenueDeleteRequestModel requestModel)
     {
         var data = await _blVenue.Delete(requestModel);

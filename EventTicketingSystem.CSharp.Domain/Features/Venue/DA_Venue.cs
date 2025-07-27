@@ -79,6 +79,8 @@ public class DA_Venue
     public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
         string imageLink = string.Empty;
+        string addons = string.Empty;
+        
         try
         {
             if (requestModel.VenueImage != null && requestModel.VenueImage.Count > 0)
@@ -86,6 +88,11 @@ public class DA_Venue
                 var uploadResults = await EnumDirectory.VenueImage.UploadFilesAsync(requestModel.VenueImage);
 
                 imageLink = string.Join(",", uploadResults.Select(x => x.FilePath));
+            }
+
+            if (requestModel.Addons != null && requestModel.Addons.Count > 0)
+            {
+                addons = string.Join(",", requestModel.Addons.Select( a => a.Trim()));
             }
 
             var newVenue = new TblVenue()
@@ -98,7 +105,7 @@ public class DA_Venue
                 Address = requestModel.Address!,
                 Capacity = requestModel.Capacity,
                 Facilities = requestModel.Facilities,
-                Addons = requestModel.Addons,
+                Addons = addons,
                 Venueimage = imageLink,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
@@ -123,6 +130,8 @@ public class DA_Venue
 
     public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
     {
+        string addons = string.Empty;
+        
         if (requestModel.VenueId.IsNullOrEmpty())
         {
             return Result<VenueUpdateResponseModel>.UserInputError("Venue Id cannot be null or empty.");
@@ -136,11 +145,16 @@ public class DA_Venue
             {
                 return Result<VenueUpdateResponseModel>.NotFoundError("No venue found.");
             }
+            
+            if (requestModel.Addons != null && requestModel.Addons.Count > 0)
+            {
+                addons = string.Join(",", requestModel.Addons.Select( a => a.Trim()));
+            }
 
             existingVenue.Description = requestModel.Description;
             existingVenue.Address = requestModel.Address!;
             existingVenue.Facilities = requestModel.Facilities;
-            existingVenue.Addons = requestModel.Addons;
+            existingVenue.Addons = addons;
             existingVenue.Modifiedby = CreatedByUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
