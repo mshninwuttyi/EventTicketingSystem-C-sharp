@@ -1,5 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.Venue;
 
 public class BL_Venue
@@ -11,23 +9,28 @@ public class BL_Venue
         _daService = dataAccess;
     }
 
-    public async Task<Result<List<VenueResponseModel>>> GetList()
+    public async Task<Result<VenueListResponseModel>> List()
     {
-        return await _daService.GetList();
+        return await _daService.List();
     }
 
-    public async Task<Result<VenueResponseModel>> CreateVenue(VenueRequestModel venue, string currentUserId)
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueId)
     {
-        return await _daService.CreateVenue(venue, currentUserId);
+        return await _daService.Edit(venueId);
     }
 
-    public async Task<Result<VenueResponseModel>> UpdateVenue(VenueRequestModel venue, string currentUserId)
+    public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
-        return await  _daService.UpdateVenue(venue, currentUserId);
+        return await _daService.Create(requestModel);
     }
-    
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId, string currentUserId)
+
+    public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
     {
-        return await _daService.DeleteVenue(venueId, currentUserId);
+        return await _daService.Update(requestModel);
+    }
+
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
+    {
+        return await _daService.Delete(venueId);
     }
 }

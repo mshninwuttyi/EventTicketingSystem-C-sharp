@@ -9,11 +9,11 @@ public partial class TblBusinessowner
 
     public string Businessownercode { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
+    public string Fullname { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
-    public string Phonenumber { get; set; } = null!;
+    public string Phone { get; set; } = null!;
 
     public string Createdby { get; set; } = null!;
 

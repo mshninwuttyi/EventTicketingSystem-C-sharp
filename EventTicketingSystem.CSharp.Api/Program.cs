@@ -26,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSerilog();
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -67,6 +68,22 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+try
+{
+    string rootFolder = builder.Configuration.GetSection(Directory.GetCurrentDirectory()).Value!;
+    string qr = builder.Configuration.GetSection("Qr").Value!;
+    string profile = builder.Configuration.GetSection("Profile").Value!;
+    string venue = builder.Configuration.GetSection("Venue").Value!;
+
+    app.UseLogicalFileService(rootFolder, qr);
+    app.UseLogicalFileService(rootFolder, profile);
+    app.UseLogicalFileService(rootFolder, venue);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
 
 app.UseAuthentication();
 

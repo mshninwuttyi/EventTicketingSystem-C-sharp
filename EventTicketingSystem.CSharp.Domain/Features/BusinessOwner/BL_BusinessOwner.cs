@@ -9,29 +9,28 @@ public class BL_BusinessOwner
         _daService = dataAccess;
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> GetList()
+    public async Task<Result<BusinessOwnerListResponseModel>> List()
     {
-        return await _daService.GetList();
+        return await _daService.List();
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> GetBusinessOwner(BusinessOwnerRequestModel request)
+    public async Task<Result<BusinessOwnerEditResponseModel>> Edit(string ownerCode)
     {
-        return await _daService.GetByCode(request.Businessownercode);
+        return await _daService.Edit(ownerCode);
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> CreateNewBusinessOwner(BusinessOwnerRequestModel request)
+    public async Task<Result<BusinessOwnerCreateResponseMOdel>> Create(BusinessOwnerCreateRequestModel requestModel)
     {
-        return await _daService.CreateBusinessOwner(request);
+        return await _daService.Create(requestModel);
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> UpdateBusinessOwner(BusinessOwnerRequestModel request)
+    public async Task<Result<BusinessOwnerUpdateResponseMOdel>> Update(BusinessOwnerUpdateRequestModel requestModel)
     {
-        return await _daService.UpdateBusinessOwner(request);
+        return await _daService.Update(requestModel);
     }
 
-    public async Task<Result<BusinessOwnerResponseModel>> DeleteBusinessOwner(BusinessOwnerRequestModel request)
+    public async Task<Result<BusinessOwnerDeleteResponseMOdel>> Delete(string ownerCode)
     {
-        return await _daService.DeleteOwnerByCode(request.Businessownercode);
+        return await _daService.Delete(ownerCode);
     }
-
 }

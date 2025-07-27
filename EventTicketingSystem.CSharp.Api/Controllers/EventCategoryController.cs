@@ -12,42 +12,33 @@ public class EventCategoryController : ControllerBase
         _blEventCategory = blEventCategory;
     }
 
-    #region Event Category
-
-    [HttpGet("GetEventCategory")]
-    public async Task<IActionResult> GetCategoryList()
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        return Ok(await _blEventCategory.GetList());
+        return Ok(await _blEventCategory.List());
     }
 
-    [HttpPost("CreateEventCategory")]
-    public async Task<IActionResult> CreateEventCategory([FromBody] EventCategoryRequestModel requestModel)
+    [HttpGet("Edit/{eventCategoryCode}")]
+    public async Task<IActionResult> Edit(string eventCategoryCode)
     {
-        if (requestModel == null)
-        {
-            return BadRequest("Request model cannot be null.");
-        }
-        var response = await _blEventCategory.CreateEventCategory(requestModel);
-
-        if (response.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
-        }
-        return Ok(response.Data);
+        return Ok(await _blEventCategory.Edit(eventCategoryCode));
     }
 
-    [HttpPost("UpdateEventCategory")]
-    public async Task<IActionResult> UpdateEventCategory([FromBody] EventCategoryRequestModel request)
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] EventCategoryCreateRequestModel requestModel)
     {
-        return Ok(await _blEventCategory.UpdateEventCategory(request));
+        return Ok(await _blEventCategory.Create(requestModel));
     }
 
-    [HttpDelete("DeleteEventCategory/{eventCategoryCode}")]
-    public async Task<IActionResult> DeleteEventCategory(string eventCategoryCode)
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update([FromBody] EventCategoryUpdateRequestModel requestModel)
     {
-        var request = new EventCategoryRequestModel { EventCategoryCode = eventCategoryCode };
-        return Ok(await _blEventCategory.DeleteEventCategory(request));
+        return Ok(await _blEventCategory.Update(requestModel));
     }
 
-    #endregion
+    [HttpPost("Delete/{eventCategoryCode}")]
+    public async Task<IActionResult> Delete(string eventCategoryCode)
+    {
+        return Ok(await _blEventCategory.Delete(eventCategoryCode));
+    }
 }

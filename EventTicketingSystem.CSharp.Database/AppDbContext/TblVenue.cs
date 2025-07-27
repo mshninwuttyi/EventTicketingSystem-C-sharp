@@ -23,7 +23,7 @@ public partial class TblVenue
 
     public string? Addons { get; set; }
 
-    public string Image { get; set; } = null!;
+    public string Venueimage { get; set; } = null!;
 
     public string Createdby { get; set; } = null!;
 

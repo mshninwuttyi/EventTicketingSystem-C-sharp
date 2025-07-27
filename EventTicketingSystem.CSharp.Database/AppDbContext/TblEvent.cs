@@ -15,15 +15,9 @@ public partial class TblEvent
 
     public string Eventcategorycode { get; set; } = null!;
 
-    public string? Description { get; set; }
-
-    public string Address { get; set; } = null!;
-
     public DateTime Startdate { get; set; }
 
     public DateTime Enddate { get; set; }
-
-    public string Eventimage { get; set; } = null!;
 
     public bool Isactive { get; set; }
 
