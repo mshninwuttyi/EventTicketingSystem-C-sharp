@@ -1,42 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace EventTicketingSystem.CSharp.Domain.Features.TicketType;
 
-namespace EventTicketingSystem.CSharp.Domain.Features.TicketType
+public class BL_TicketType
 {
-    public class BL_TicketType
+    private readonly DA_TicketType _da_ticketType;
+
+    public BL_TicketType(DA_TicketType da_ticketType)
     {
-        public readonly DA_TicketType _daService;
+        _da_ticketType = da_ticketType;
+    }
 
-        public BL_TicketType(DA_TicketType service)
-        {
-            _daService = service;
-        }
+    public async Task<Result<TicketTypeListResponseModel>> getTicketTypeList()
+    {
+        var lst = await _da_ticketType.getTicketTypeListAsync();
+        return lst;
+    }
 
-        public async Task<Result<TicketTypeListResponseModel>> List()
-        {
-            return await _daService.ListAsync();
-        }
+    public async Task<Result<TicketTypeEditResponseModel>> getTicketTypeByCode(string code)
+    {
+        var ticketType = await _da_ticketType.getTicketTypeByCodeAsync(code);
+        return ticketType;
+    }
 
-        public async Task<Result<TicketTypeEditResponseModel>> Edit(string ticketTypeCode)
-        {
-            return await _daService.Edit(ticketTypeCode);
-        }
+    public async Task<Result<TicketTypeCreateResponseModel>> createTicketType (TicketTypeCreateRequestModel requestModel)
+    {
+        var result = await _da_ticketType.CreateTicketTypeAsync(requestModel);
+        return result;
+    }
 
-        public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
-        {
-            return await _daService.Create(requestModel);
-        }
+    public async Task<Result<TicketTypeUpdateResponseModel>> updateTicketType(TicketTypeUpdateRequestModel requestModel)
+    {
+        var result = await _da_ticketType.UpdateTicketTypeAsync(requestModel);
+        return result;
+    }
 
-        public async Task<Result<TicketTypeUpdateResponseModel>> Update(TicketTypeUpdateRequestModel requestModel)
-        {
-            return await _daService.Update(requestModel);   
-        }
-
-        public async Task<Result<TicketTypeDeleteResponseModel>> Delete(string ticketTypeCode)
-        {
-            return await _daService.Delete(ticketTypeCode);
-        }
+    public async Task<Result<TicketTypeDeleteResponseModel>> deleteTickeType(string code)
+    {
+        var result = await _da_ticketType.DeleteTicketTypeAsync(code);
+        return result;
+    }
 }

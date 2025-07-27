@@ -1,46 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
 
-namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType
+public class TicketTypeEditResponseModel
 {
-    public class TicketTypeEditResponseModel
+    public TicketTypeEditModel? TicketType { get; set; }
+}
+
+public class TicketTypeEditModel
+{
+    public string? TicketTypeId { get; set; }
+    public string? TicketTypeCode { get; set; }
+    public string? EventCode { get; set; }
+    public string? TicketTypeName { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public string? ModifiedBy { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+    public decimal Ticketprice { get; set; }
+    public string? TicketQuantity { get; set; }
+
+    public static TicketTypeEditModel FromTblTicketType (TblTickettype tblTickettype)
     {
-        public TicketTypeEditModel? ticketTypeEditModel { get; set; }
-    }
-    public class TicketTypeEditModel
-    {
-        public string Tickettypeid { get; set; } 
-
-        public string Tickettypecode { get; set; }
-
-        public string Tickettypename { get; set; } 
-
-        public string Createdby { get; set; }
-
-        public DateTime Createdat { get; set; }
-
-        public string? Modifiedby { get; set; }
-
-        public DateTime? Modifiedat { get; set; }
-
-        public static TicketTypeEditModel FromTblTickettypes(TblTickettype tickettypes)
+        return new TicketTypeEditModel
         {
-            return new TicketTypeEditModel
-            {
-                Tickettypeid = tickettypes.Tickettypeid,
-                Tickettypecode = tickettypes.Tickettypecode,
-                //Eventcode  
-                Tickettypename = tickettypes.Tickettypename,
-                Createdby = tickettypes.Createdby,
-                Createdat = tickettypes.Createdat,
-                Modifiedby = tickettypes.Modifiedby,    
-                Modifiedat = tickettypes.Modifiedat,
-
-            };
-        }
+            TicketTypeId = tblTickettype.Tickettypeid,
+            TicketTypeCode = tblTickettype.Tickettypecode,
+            EventCode = tblTickettype.Eventcode,
+            TicketTypeName = tblTickettype.Tickettypename,
+            CreatedBy = tblTickettype.Createdby,
+            CreatedAt = tblTickettype.Createdat,
+            ModifiedBy = tblTickettype.Modifiedby,
+            ModifiedAt = tblTickettype.Modifiedat,
+        };
     }
-
 }

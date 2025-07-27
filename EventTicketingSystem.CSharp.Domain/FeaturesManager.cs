@@ -1,3 +1,8 @@
+using EventTicketingSystem.CSharp.Domain.Features.TicketType;
+using EventTicketingSystem.CSharp.Shared.Services;
+using System.Net;
+using System.Net.Mail;
+
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
@@ -70,6 +75,7 @@ public static class FeaturesManager
         services.AddScoped<BL_VerificationCode>();
         services.AddScoped<BL_Venue>();
         services.AddScoped<BL_Admin>();
+        services.AddScoped<BL_TicketType>();
         services.AddScoped<BL_VenueType>();
 
         return services;
@@ -86,6 +92,7 @@ public static class FeaturesManager
         services.AddScoped<DA_VerificationCode>();
         services.AddScoped<DA_Venue>();
         services.AddScoped<DA_Admin>();
+        services.AddScoped<DA_TicketType>();
         services.AddScoped<DA_VenueType>();
 
         return services;
