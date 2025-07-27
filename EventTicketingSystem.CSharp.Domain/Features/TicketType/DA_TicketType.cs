@@ -14,7 +14,7 @@ public class DA_TicketType
         _commonService = commonService;
     }
 
-
+    #region List
     public async Task<Result<TicketTypeListResponseModel>> ListAsync()
     {
             var resopnseModel = new Result<TicketTypeListResponseModel>();
@@ -42,7 +42,8 @@ public class DA_TicketType
                 return Result<TicketTypeListResponseModel>.SystemError(ex.Message);
             }
     }
-
+    #endregion
+    #region Edit
     public async Task<Result<TicketTypeEditResponseModel>> Edit(string ticketTypeCode)
     {
         var model = new TicketTypeEditResponseModel();
@@ -73,7 +74,8 @@ public class DA_TicketType
 
         }
     }
-
+    #endregion
+    #region Create
     public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
     {
         if(requestModel.Tickettypename.IsNullOrEmpty())
@@ -104,7 +106,9 @@ public class DA_TicketType
             return Result<TicketTypeCreateResponseModel>.SystemError(ex.Message);
         }
     }
+    #endregion
 
+    #region Update
     public async Task<Result<TicketTypeUpdateResponseModel>> Update(TicketTypeUpdateRequestModel requestModel)
     {
         if (requestModel.Tickettypecode.IsNullOrEmpty())
@@ -139,7 +143,8 @@ public class DA_TicketType
             return Result<TicketTypeUpdateResponseModel>.SystemError(ex.Message);
         }
     }
-
+    #endregion
+    #region Delete
     public async Task<Result<TicketTypeDeleteResponseModel>> Delete(string ticketTypeCode)
     {
         if(ticketTypeCode == null)
@@ -172,4 +177,5 @@ public class DA_TicketType
             return Result<TicketTypeDeleteResponseModel>.SystemError(ex.Message);
         }
     }
+    #endregion
 }
