@@ -9,33 +9,33 @@ public class BL_TicketType
         _da_ticketType = da_ticketType;
     }
 
-    public async Task<Result<TicketTypeListResponseModel>> getTicketTypeList()
+    public async Task<Result<TicketTypeListResponseModel>> List()
     {
-        var lst = await _da_ticketType.getTicketTypeListAsync();
+        var lst = await _da_ticketType.List();
         return lst;
     }
 
-    public async Task<Result<TicketTypeEditResponseModel>> getTicketTypeByCode(string code)
+    public async Task<Result<TicketTypeEditResponseModel>> Edit(string code)
     {
-        var ticketType = await _da_ticketType.getTicketTypeByCodeAsync(code);
+        var ticketType = await _da_ticketType.Edit(code);
         return ticketType;
     }
 
-    public async Task<Result<TicketTypeCreateResponseModel>> createTicketType (TicketTypeCreateRequestModel requestModel)
+    public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
     {
-        var result = await _da_ticketType.CreateTicketTypeAsync(requestModel);
+        var result = await _da_ticketType.Create(requestModel);
         return result;
     }
 
-    public async Task<Result<TicketTypeUpdateResponseModel>> updateTicketType(TicketTypeUpdateRequestModel requestModel)
+    public async Task<Result<TicketTypeUpdateResponseModel>> Update(TicketTypeUpdateRequestModel requestModel)
     {
-        var result = await _da_ticketType.UpdateTicketTypeAsync(requestModel);
+        var result = await _da_ticketType.Update(requestModel);
         return result;
     }
 
-    public async Task<Result<TicketTypeDeleteResponseModel>> deleteTickeType(string code)
+    public async Task<Result<TicketTypeDeleteResponseModel>> Delete(string code)
     {
-        var result = await _da_ticketType.DeleteTicketTypeAsync(code);
+        var result = await _da_ticketType.Delete(code);
         return result;
     }
 }

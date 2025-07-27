@@ -1,7 +1,4 @@
 using EventTicketingSystem.CSharp.Domain.Features.TicketType;
-using EventTicketingSystem.CSharp.Shared.Services;
-using System.Net;
-using System.Net.Mail;
 
 namespace EventTicketingSystem.CSharp.Domain;
 

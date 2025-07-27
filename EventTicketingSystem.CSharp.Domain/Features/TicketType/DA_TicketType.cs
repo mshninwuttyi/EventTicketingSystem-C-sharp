@@ -1,126 +1,125 @@
-using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
-using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
-using SixLabors.ImageSharp;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.TicketType;
 
 public class DA_TicketType
 {
-    private readonly AppDbContext _appDbContext;
+    private readonly AppDbContext _db;
     private readonly ILogger _logger;
     private readonly CommonService _commonService;
     private const string CreatedByUserId = "Admin";
     private readonly string _connection;
 
-    public DA_TicketType(AppDbContext appDbContext, ILogger<DA_TicketType> logger, IConfiguration configuration, CommonService commonService)
+    public DA_TicketType(AppDbContext db, ILogger<DA_TicketType> logger, IConfiguration configuration, CommonService commonService)
     {
-        _appDbContext = appDbContext;
+        _db = db;
         _logger = logger;
         _connection = configuration.GetConnectionString("DbConnection")!;
         _commonService = commonService;
     }
 
-    public async Task<Result<TicketTypeListResponseModel>> getTicketTypeListAsync()
+    public async Task<Result<TicketTypeListResponseModel>> List()
     {
-        var responseModel = new Result<TicketTypeListResponseModel>();
         var model = new TicketTypeListResponseModel();
 
-        string query = @"SELECT 
-            tt.tickettypecode,
-            tt.eventcode,
-            tt.tickettypename,
-            tt.createdby,
-            tt.createdat,
-            tt.modifiedby,
-            tt.modifiedat,
-            tt.deleteflag,
-            tt.tickettypeid,
-            tp.ticketprice,
-            tp.ticketquantity
-        FROM tbl_tickettype tt
-        LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
-        WHERE tt.deleteflag = false";
+        try
+        {
+            string query = @"SELECT 
+                                tt.tickettypecode,
+                                tt.eventcode,
+                                tt.tickettypename,
+                                tt.createdby,
+                                tt.createdat,
+                                tt.modifiedby,
+                                tt.modifiedat,
+                                tt.deleteflag,
+                                tt.tickettypeid,
+                                tp.ticketprice,
+                                tp.ticketquantity
+                            FROM tbl_tickettype tt
+                            LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+                            WHERE tt.deleteflag = false";
 
-        using IDbConnection dbConnection = new NpgsqlConnection(_connection);
-        dbConnection.Open();
+            using IDbConnection dbConnection = new NpgsqlConnection(_connection);
+            dbConnection.Open();
 
-        var ticketTypeList = (await dbConnection.QueryAsync<TicketTypeListModel>(query)).ToList();
-        model.TicketTypeList = ticketTypeList;
+            var ticketTypeList = (await dbConnection.QueryAsync<TicketTypeListModel>(query)).ToList();
+            model.TicketTypeList = ticketTypeList;
 
-        responseModel = Result<TicketTypeListResponseModel>.Success(model, "Ticket types are retrieved successfullly!");
-        return responseModel;
+            return Result<TicketTypeListResponseModel>.Success(model, "Ticket types are retrieved successfullly!");
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<TicketTypeListResponseModel>.SystemError(ex.ToString());
+        }
     }
 
-    public async Task<Result<TicketTypeEditResponseModel>> getTicketTypeByCodeAsync(string code)
+    public async Task<Result<TicketTypeEditResponseModel>> Edit(string code)
     {
-        var responseModel = new Result<TicketTypeEditResponseModel>();
         var model = new TicketTypeEditResponseModel();
 
-        string query = @"
-    SELECT 
-        tt.tickettypecode,
-        tt.eventcode,
-        tt.tickettypename,
-        tt.createdby,
-        tt.createdat,
-        tt.modifiedby,
-        tt.modifiedat,
-        tt.deleteflag,
-        tt.tickettypeid,
-        tp.ticketprice,
-        tp.ticketquantity
-    FROM tbl_tickettype tt
-    LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
-    WHERE tt.deleteflag = false
-      AND tt.tickettypecode = @TicketTypeCode";
-
-        using IDbConnection dbConnection = new NpgsqlConnection(_connection);
-        dbConnection.Open();
-
-        var ticekttype = (await dbConnection.QueryAsync<TicketTypeEditModel>(query, new
+        try
         {
-            TicketTypeCode = code
-        })).FirstOrDefault();
+            string query = @"SELECT 
+                                tt.tickettypecode,
+                                tt.eventcode,
+                                tt.tickettypename,
+                                tt.createdby,
+                                tt.createdat,
+                                tt.modifiedby,
+                                tt.modifiedat,
+                                tt.deleteflag,
+                                tt.tickettypeid,
+                                tp.ticketprice,
+                                tp.ticketquantity
+                            FROM tbl_tickettype tt
+                            LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+                            WHERE tt.deleteflag = false
+                              AND tt.tickettypecode = @TicketTypeCode";
 
-        model.TicketType = ticekttype;
+            using IDbConnection dbConnection = new NpgsqlConnection(_connection);
+            dbConnection.Open();
 
-        responseModel = Result<TicketTypeEditResponseModel>.Success(model, "Ticket is retrieved successfullly!");
-        return responseModel;
+            var ticekttype = (await dbConnection.QueryAsync<TicketTypeEditModel>(query, new
+            {
+                TicketTypeCode = code
+            })).FirstOrDefault();
+
+            model.TicketType = ticekttype;
+
+            return Result<TicketTypeEditResponseModel>.Success(model, "Ticket is retrieved successfullly!");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<TicketTypeEditResponseModel>.SystemError(ex.ToString());
+        }
     }
 
-    public async Task<Result<TicketTypeCreateResponseModel>> CreateTicketTypeAsync(TicketTypeCreateRequestModel requestModel)
+    public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
     {
         var responseModel = new Result<TicketTypeCreateResponseModel>();
-        if (string.IsNullOrEmpty(requestModel.TicketTypeName))
+        if (requestModel.TicketTypeName.IsNullOrEmpty())
         {
-            responseModel = Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type name cannot be Empty!");
-            goto ReturnErrorResponse;
+            return Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type name cannot be Empty!");
         }
         if (requestModel.Ticketprice <= 0)
         {
-            responseModel = Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type price must be greater than 0!");
-            goto ReturnErrorResponse;
+            return Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type price must be greater than 0!");
         }
         if (requestModel.TicketQuantity <= 0)
         {
-            responseModel = Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type quantity must be greater than 0!");
-            goto ReturnErrorResponse;
+            return Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type quantity must be greater than 0!");
         }
 
-        int totalQty = await _appDbContext.TblEvents
+        int totalQty = await _db.TblEvents
             .Where(x => x.Eventcode == requestModel.EventCode && !x.Deleteflag)
             .Select(x => x.Totalticketquantity)
             .FirstOrDefaultAsync();
 
-        int existingQty = await _appDbContext.TblTickettypes
+        int existingQty = await _db.TblTickettypes
             .Where(tt => tt.Eventcode == requestModel.EventCode && !tt.Deleteflag)
-            .Join(_appDbContext.TblTicketprices.Where(tp => !tp.Deleteflag),
+            .Join(_db.TblTicketprices.Where(tp => !tp.Deleteflag),
                 tt => tt.Tickettypecode,
                 tp => tp.Tickettypecode,
                 (tt, tp) => tp.Ticketquantity)
@@ -129,9 +128,7 @@ public class DA_TicketType
         int remainingQty = totalQty - existingQty;
         if (remainingQty - requestModel.TicketQuantity < 0)
         {
-            responseModel = Result<TicketTypeCreateResponseModel>.ValidationError("The total number of tickets exceeds the allowed quantity for this event.");
-            goto ReturnErrorResponse;
-
+            return Result<TicketTypeCreateResponseModel>.ValidationError("The total number of tickets exceeds the allowed quantity for this event.");
         }
 
         try
@@ -147,8 +144,8 @@ public class DA_TicketType
                 Deleteflag = false,
             };
 
-            await _appDbContext.TblTickettypes.AddAsync(TblTickettype);
-            await _appDbContext.SaveChangesAsync();
+            await _db.TblTickettypes.AddAsync(TblTickettype);
+            await _db.SaveAndDetachAsync();
 
             var ticketprice = new TblTicketprice
             {
@@ -162,8 +159,8 @@ public class DA_TicketType
                 Deleteflag = false,
             };
 
-            await _appDbContext.TblTicketprices.AddAsync(ticketprice);
-            await _appDbContext.SaveChangesAsync();
+            await _db.TblTicketprices.AddAsync(ticketprice);
+            await _db.SaveAndDetachAsync();
 
 
             var ticketList = new List<TblTicket>();
@@ -182,43 +179,35 @@ public class DA_TicketType
                 ticketList.Add(ticket);
             }
 
-            await _appDbContext.TblTickets.AddRangeAsync(ticketList);
-            await _appDbContext.SaveChangesAsync();
+            await _db.TblTickets.AddRangeAsync(ticketList);
+            await _db.SaveAndDetachAsync();
 
-            responseModel = Result<TicketTypeCreateResponseModel>.Success("Ticket Type and tickets are created successfully!");
+            return Result<TicketTypeCreateResponseModel>.Success("Ticket Type and tickets are created successfully!");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<TicketTypeCreateResponseModel>.SystemError(ex.ToString());
+            return Result<TicketTypeCreateResponseModel>.SystemError(ex.ToString());
         }
-
-        return responseModel;
-
-    ReturnErrorResponse:
-        return responseModel;
-
     }
 
-    public async Task<Result<TicketTypeUpdateResponseModel>> UpdateTicketTypeAsync(TicketTypeUpdateRequestModel requestModel)
+    public async Task<Result<TicketTypeUpdateResponseModel>> Update(TicketTypeUpdateRequestModel requestModel)
     {
-        var responseModel = new Result<TicketTypeUpdateResponseModel>();
-
-        if (string.IsNullOrEmpty(requestModel.TicketTypeCode))
+        if (requestModel.TicketTypeCode.IsNullOrEmpty())
         {
             return Result<TicketTypeUpdateResponseModel>.ValidationError("There is no ticket type code to update!");
         }
 
-        if (string.IsNullOrEmpty(requestModel.TicketTypeName))
+        if (requestModel.TicketTypeName.IsNullOrEmpty())
         {
             return Result<TicketTypeUpdateResponseModel>.ValidationError("Please enter the Ticket type name to update.");
         }
 
-        var tickettype = await _appDbContext.TblTickettypes
+        var tickettype = await _db.TblTickettypes
             .Where(x => !x.Deleteflag)
             .FirstOrDefaultAsync(x => x.Tickettypecode == requestModel.TicketTypeCode);
 
-        if (tickettype == null)
+        if (tickettype is null)
         {
             return Result<TicketTypeUpdateResponseModel>.NotFoundError("There is no ticket type with this code!");
         }
@@ -228,31 +217,26 @@ public class DA_TicketType
             tickettype.Tickettypename = requestModel.TicketTypeName;
             tickettype.Modifiedat = DateTime.Now;
             tickettype.Modifiedby = CreatedByUserId;
-            _appDbContext.Entry(tickettype).State = EntityState.Modified;
-            await _appDbContext.SaveChangesAsync();
+            _db.Entry(tickettype).State = EntityState.Modified;
+            await _db.SaveAndDetachAsync();
 
-            responseModel = Result<TicketTypeUpdateResponseModel>.Success("Ticket type is updated successfully!");
+            return Result<TicketTypeUpdateResponseModel>.Success("Ticket type is updated successfully!");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<TicketTypeUpdateResponseModel>.SystemError(ex.ToString());
+            return Result<TicketTypeUpdateResponseModel>.SystemError(ex.ToString());
         }
-
-        return responseModel;
     }
 
-    public async Task<Result<TicketTypeDeleteResponseModel>> DeleteTicketTypeAsync(string code)
+    public async Task<Result<TicketTypeDeleteResponseModel>> Delete(string code)
     {
-        var responseModel = new Result<TicketTypeDeleteResponseModel>();
-
-
-        if (string.IsNullOrEmpty(code))
+        if (code.IsNullOrEmpty())
         {
             return Result<TicketTypeDeleteResponseModel>.UserInputError("There is no ticket type code to delete!");
         }
 
-        var tickettype = await _appDbContext.TblTickettypes
+        var tickettype = await _db.TblTickettypes
         .Where(x => !x.Deleteflag)
             .FirstOrDefaultAsync(x => x.Tickettypecode == code);
 
@@ -261,12 +245,12 @@ public class DA_TicketType
             return Result<TicketTypeDeleteResponseModel>.NotFoundError("There is no ticket type with this code!");
         }
 
-        var ticketprice = await _appDbContext.TblTicketprices
+        var ticketprice = await _db.TblTicketprices
         .Where(x => !x.Deleteflag)
             .FirstOrDefaultAsync(x => x.Tickettypecode == code);
 
-        var tickets = await _appDbContext.TblTickets
-        .Where(x => !x.Deleteflag && x.Ticketpricecode == ticketprice.Ticketpricecode)
+        var tickets = await _db.TblTickets
+        .Where(x => !x.Deleteflag && x.Ticketpricecode == ticketprice!.Ticketpricecode)
             .ToListAsync();
 
         try
@@ -274,14 +258,14 @@ public class DA_TicketType
             tickettype.Deleteflag = true;
             tickettype.Modifiedat = DateTime.Now;
             tickettype.Modifiedby = CreatedByUserId;
-            _appDbContext.Entry(tickettype).State = EntityState.Modified;
+            _db.Entry(tickettype).State = EntityState.Modified;
 
-            if(ticketprice != null)
+            if (ticketprice != null)
             {
                 ticketprice.Deleteflag = true;
                 ticketprice.Modifiedat = DateTime.Now;
                 ticketprice.Modifiedby = CreatedByUserId;
-                _appDbContext.Entry(ticketprice).State = EntityState.Modified;
+                _db.Entry(ticketprice).State = EntityState.Modified;
 
                 if (tickets.Count > 0)
                 {
@@ -290,21 +274,19 @@ public class DA_TicketType
                         ticket.Deleteflag = true;
                         ticket.Modifiedat = DateTime.Now;
                         ticket.Modifiedby = CreatedByUserId;
-                        _appDbContext.Entry(ticket).State = EntityState.Modified;
+                        _db.Entry(ticket).State = EntityState.Modified;
                     }
                 }
             }
 
-            await _appDbContext.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
-            responseModel = Result<TicketTypeDeleteResponseModel>.Success("Ticket type is deleted successfully!");
+            return Result<TicketTypeDeleteResponseModel>.Success("Ticket type is deleted successfully!");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            responseModel = Result<TicketTypeDeleteResponseModel>.SystemError(ex.ToString());
+            return Result<TicketTypeDeleteResponseModel>.SystemError(ex.ToString());
         }
-
-        return responseModel;
     }
 }
