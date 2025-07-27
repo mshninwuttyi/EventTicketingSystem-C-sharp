@@ -45,7 +45,7 @@ public class DA_Venue
         {
             var venue = await _db.TblVenues
                             .FirstOrDefaultAsync(
-                                x => x.Venueid == venueId && 
+                                x => x.Venueid == venueId &&
                                 x.Deleteflag == false
                             );
             if (venue is null)
@@ -65,8 +65,16 @@ public class DA_Venue
 
     public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
+        string imageLink = string.Empty;
         try
         {
+            if (requestModel.VenueImage != null && requestModel.VenueImage.Count > 0)
+            {
+                var uploadResults = await EnumDirectory.VenueImage.UploadFilesAsync(requestModel.VenueImage);
+
+                imageLink = string.Join(",", uploadResults.Select(x => x.FilePath));
+            }
+
             var venueEntity = new TblVenue()
             {
                 Venueid = GenerateUlid(),
@@ -78,7 +86,7 @@ public class DA_Venue
                 Capacity = requestModel.Capacity,
                 Facilities = requestModel.Facilities,
                 Addons = requestModel.Addons,
-                Venueimage = requestModel.Image!,
+                Venueimage = imageLink,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false

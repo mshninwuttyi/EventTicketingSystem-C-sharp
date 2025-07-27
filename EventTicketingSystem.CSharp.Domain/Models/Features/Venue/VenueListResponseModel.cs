@@ -25,7 +25,7 @@ public class VenueListModel
 
     public string? Addons { get; set; }
 
-    public string? VenueImage { get; set; }
+    public List<string> VenueImage { get; set; }
 
     public string CreatedBy { get; set; }
 
@@ -37,7 +37,7 @@ public class VenueListModel
 
     public static VenueListModel FromTblVenue(TblVenue venue)
     {
-        return new VenueListModel
+        var venueModel = new VenueListModel
         {
             VenueId = venue.Venueid,
             VenueCode = venue.Venuecode,
@@ -48,11 +48,22 @@ public class VenueListModel
             Capacity = venue.Capacity,
             Facilities = venue.Facilities,
             Addons = venue.Addons,
-            VenueImage = venue.Venueimage,
+            VenueImage = new List<string>(),
             CreatedBy = venue.Createdby,
             CreatedAt = venue.Createdat,
             ModifiedBy = venue.Modifiedby,
             ModifiedAt = venue.Modifiedat,
         };
+
+        if (!string.IsNullOrWhiteSpace(venue.Venueimage))
+        {
+            venueModel.VenueImage = venue.Venueimage
+                .Split([','], StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
+        }
+
+        return venueModel;
     }
 }

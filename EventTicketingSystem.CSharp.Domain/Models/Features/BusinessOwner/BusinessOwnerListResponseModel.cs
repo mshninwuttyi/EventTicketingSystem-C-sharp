@@ -1,13 +1,11 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 
-public class BusinessOwnerResponseModel
+public class BusinessOwnerListResponseModel
 {
-    public List<BusinessOwnerModel> BusinessOwners { get; set; }
-
-    public BusinessOwnerModel BusinessOwner { get; set; }
+    public List<BusinessOwnerListModel>? BusinessOwners { get; set; }
 }
 
-public class BusinessOwnerModel
+public class BusinessOwnerListModel
 {
     public string? Businessownerid { get; set; }
 
@@ -29,9 +27,9 @@ public class BusinessOwnerModel
 
     public bool? Deleteflag { get; set; }
 
-    public static BusinessOwnerModel FromTblOwner(TblBusinessowner owner)
+    public static BusinessOwnerListModel FromTblOwner(TblBusinessowner owner)
     {
-        return new BusinessOwnerModel
+        return new BusinessOwnerListModel
         {
             Businessownerid = owner.Businessownerid,
             Businessownercode = owner.Businessownercode,
@@ -45,19 +43,4 @@ public class BusinessOwnerModel
             Deleteflag = owner.Deleteflag,
         };
     }
-}
-
-public class BusinessOwnerCreateResponseMOdel
-{
-
-}
-
-public class BusinessOwnerUpdateResponseMOdel
-{
-
-}
-
-public class BusinessOwnerDeleteResponseMOdel
-{
-
 }

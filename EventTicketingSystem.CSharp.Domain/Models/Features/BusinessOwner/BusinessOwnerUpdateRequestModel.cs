@@ -1,6 +1,6 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 
-public class BusinessOwnerRequestModel
+public class BusinessOwnerUpdateRequestModel
 {
     public string Businessownerid { get; set; }
 
@@ -11,8 +11,4 @@ public class BusinessOwnerRequestModel
     public string Email { get; set; }
 
     public string Phone { get; set; }
-
-    public string Admin { get; set; }
-
-    public bool Deleteflag { get; set; }
 }
