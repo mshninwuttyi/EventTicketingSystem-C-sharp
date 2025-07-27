@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Api.Controller;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Ticket Type")]
 [Route("api/[controller]")]

@@ -57,6 +57,7 @@ public static class FeaturesManager
         services.AddScoped<DapperService>();
         services.AddScoped<CommonService>();
         services.AddScoped<EmailService>();
+        services.AddScoped<ExportService>();
 
         return services;
     }
