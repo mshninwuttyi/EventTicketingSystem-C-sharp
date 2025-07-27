@@ -30,23 +30,24 @@ public class VenueController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] VenueCreateRequestModel requestModel)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create(VenueCreateRequestModel requestModel)
     {
         var data = await _blVenue.Create(requestModel);
         return Ok(data);
     }
 
     [HttpPost("Update")]
-    public async Task<IActionResult> Update([FromBody] VenueUpdateRequestModel requestModel)
+    public async Task<IActionResult> Update(VenueUpdateRequestModel requestModel)
     {
         var data = await _blVenue.Update(requestModel);
         return Ok(data);
     }
 
     [HttpPost("Delete/{venueId}")]
-    public async Task<IActionResult> Delete(string venueId)
+    public async Task<IActionResult> Delete(VenueDeleteRequestModel requestModel)
     {
-        var data = await _blVenue.Delete(venueId);
+        var data = await _blVenue.Delete(requestModel);
         return Ok(data);
     }
 }

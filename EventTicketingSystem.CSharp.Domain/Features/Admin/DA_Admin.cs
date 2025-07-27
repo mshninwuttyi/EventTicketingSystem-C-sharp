@@ -99,14 +99,14 @@ public class DA_Admin
                 Email = requestModel.Email,
                 Password = requestModel.Password.HashPassword(requestModel.Username),
                 Phone = requestModel.PhoneNo,
-                Profileimage = requestModel.ProfileImage,
+                Profileimage = null,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false,
             };
 
             await _db.TblAdmins.AddAsync(newAdmin);
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
             return Result<AdminCreateResponseModel>.Success("Admin Created Successfully.");
         }
@@ -132,7 +132,7 @@ public class DA_Admin
             return Result<AdminUpdateResponseModel>.UserInputError("Admin Not Found");
         }
 
-        if (requestModel.PhoneNo.IsNullOrEmpty() || requestModel.Password.IsNullOrEmpty() || requestModel.ProfileImage.IsNullOrEmpty())
+        if (requestModel.PhoneNo.IsNullOrEmpty() || requestModel.Password.IsNullOrEmpty())
         {
             return Result<AdminUpdateResponseModel>.UserInputError("All fields are empty. Please provide at least one field to update.");
         }
@@ -168,7 +168,7 @@ public class DA_Admin
             admin.Modifiedby = CreatedByUserId;
             admin.Modifiedat = DateTime.Now;
             _db.Entry(admin).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
             responseModel = Result<AdminUpdateResponseModel>.Success("Admin data was updated successufully!");
         }
@@ -185,30 +185,40 @@ public class DA_Admin
 
     #region Delete Admin
 
-    public async Task<Result<AdminDeleteResponseModel>> Delete(string adminCode)
+    public async Task<Result<AdminDeleteResponseModel>> Delete(AdminDeleteRequestModel requestModel)
     {
-        if (adminCode.IsNullOrEmpty())
+        if (requestModel.AdminCode.IsNullOrEmpty())
         {
-            return Result<AdminDeleteResponseModel>.UserInputError("The admin code cannot be null or empty.");
+            return Result<AdminDeleteResponseModel>.UserInputError("Admin Not Found.");
         }
-
-        var data = await _db.TblAdmins
-                        .FirstOrDefaultAsync(
-                            x => x.Admincode == adminCode &&
-                            x.Deleteflag == false
-                        );
-        if (data is null)
+        if (requestModel.Password.IsNullOrEmpty())
         {
-            return Result<AdminDeleteResponseModel>.NotFoundError("There is no admin with this admin code.");
+            return Result<AdminDeleteResponseModel>.UserInputError("Password is Required.");
         }
 
         try
         {
+            var data = await _db.TblAdmins
+                        .FirstOrDefaultAsync(
+                            x => x.Admincode == requestModel.AdminCode &&
+                            x.Deleteflag == false
+                        );
+            if (data is null)
+            {
+                return Result<AdminDeleteResponseModel>.NotFoundError("Admin Not Found.");
+            }
+
+            var passwordHash = requestModel.Password.HashPassword(data.Username);
+            if (data.Password != passwordHash)
+            {
+                return Result<AdminDeleteResponseModel>.UserInputError("Incorrect Password.");
+            }
+
             data.Modifiedby = CreatedByUserId;
             data.Modifiedat = DateTime.Now;
             data.Deleteflag = true;
             _db.Entry(data).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
             return Result<AdminDeleteResponseModel>.Success("Admin data is deleted successfully.");
         }
@@ -216,6 +226,44 @@ public class DA_Admin
         {
             _logger.LogExceptionError(ex);
             return Result<AdminDeleteResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    #endregion
+
+    #region Edit Profile Image
+
+    public async Task<Result<AdminEditProfileImageResponseModel>> EditProfileImage(AdminEditProfileImageRequestModel requestModel)
+    {
+        if (requestModel.AdminCode.IsNullOrEmpty())
+        {
+            return Result<AdminEditProfileImageResponseModel>.UserInputError("Admin Code cannot be null or empty.");
+        }
+        try
+        {
+            var admin = await _db.TblAdmins
+                            .FirstOrDefaultAsync(
+                                x => x.Admincode == requestModel.AdminCode &&
+                                x.Deleteflag == false
+                            );
+            if (admin is null)
+            {
+                return Result<AdminEditProfileImageResponseModel>.NotFoundError("Admin Not Found.");
+            }
+
+            var uploadResults = await EnumDirectory.ProfileImage.UploadFilesAsync(new List<IFormFile>() { requestModel.ProfileImage });
+            admin.Profileimage = string.Join(",", uploadResults.Select(x => x.FilePath));
+            admin.Modifiedby = CreatedByUserId;
+            admin.Modifiedat = DateTime.Now;
+            _db.Entry(admin).State = EntityState.Modified;
+            await _db.SaveAndDetachAsync();
+
+            return Result<AdminEditProfileImageResponseModel>.Success("Profile image updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<AdminEditProfileImageResponseModel>.SystemError(ex.Message);
         }
     }
 
@@ -268,11 +316,6 @@ public class DA_Admin
         if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
         {
             return Result<AdminCreateResponseModel>.ValidationError("Password must contain at least one special character!");
-        }
-
-        if (requestModel.ProfileImage.IsNullOrEmpty())
-        {
-            return Result<AdminCreateResponseModel>.ValidationError("Choose profile image!");
         }
 
         return null!;

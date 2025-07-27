@@ -14,3 +14,8 @@ public class AdminDeleteResponseModel
 {
 
 }
+
+public class AdminEditProfileImageResponseModel
+{
+
+}

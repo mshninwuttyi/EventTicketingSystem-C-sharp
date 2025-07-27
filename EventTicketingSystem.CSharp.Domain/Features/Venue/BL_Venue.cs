@@ -29,8 +29,8 @@ public class BL_Venue
         return await _dataAccess.Update(requestModel);
     }
 
-    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
+    public async Task<Result<VenueDeleteResponseModel>> Delete(VenueDeleteRequestModel requestModel)
     {
-        return await _dataAccess.Delete(venueId);
+        return await _dataAccess.Delete(requestModel);
     }
 }

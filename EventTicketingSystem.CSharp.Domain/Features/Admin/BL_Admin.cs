@@ -30,9 +30,9 @@ public class BL_Admin
         return data;
     }
 
-    public async Task<Result<AdminDeleteResponseModel>> Delete(string adminCode)
+    public async Task<Result<AdminDeleteResponseModel>> Delete(AdminDeleteRequestModel requestModel)
     {
-        var data = await _dataAccess.Delete(adminCode);
+        var data = await _dataAccess.Delete(requestModel);
         return data;
     }
 }

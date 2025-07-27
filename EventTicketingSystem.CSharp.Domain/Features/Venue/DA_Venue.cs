@@ -6,7 +6,7 @@ public class DA_Venue
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
     private const string CreatedByUserId = "Admin";
-    
+
     public DA_Venue(ILogger<DA_Venue> logger, AppDbContext db, CommonService commonService)
     {
         _logger = logger;
@@ -55,7 +55,7 @@ public class DA_Venue
         {
             var venue = await _db.TblVenues
                             .FirstOrDefaultAsync(
-                                x => x.Venueid == venueId && 
+                                x => x.Venueid == venueId &&
                                 x.Deleteflag == false
                             );
             if (venue is null)
@@ -78,8 +78,16 @@ public class DA_Venue
     #region Create Venue
     public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
+        string imageLink = string.Empty;
         try
         {
+            if (requestModel.VenueImage != null && requestModel.VenueImage.Count > 0)
+            {
+                var uploadResults = await EnumDirectory.VenueImage.UploadFilesAsync(requestModel.VenueImage);
+
+                imageLink = string.Join(",", uploadResults.Select(x => x.FilePath));
+            }
+
             var newVenue = new TblVenue()
             {
                 Venueid = GenerateUlid(),
@@ -91,15 +99,16 @@ public class DA_Venue
                 Capacity = requestModel.Capacity,
                 Facilities = requestModel.Facilities,
                 Addons = requestModel.Addons,
-                Venueimage = requestModel.Image!,
+                Venueimage = imageLink,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
+            
             await _db.TblVenues.AddAsync(newVenue);
             await _db.SaveAndDetachAsync();
 
-            return Result<VenueCreateResponseModel>.Success("Admin created successfully.");
+            return Result<VenueCreateResponseModel>.Success("Venue created successfully.");
         }
         catch (Exception ex)
         {
@@ -128,14 +137,10 @@ public class DA_Venue
                 return Result<VenueUpdateResponseModel>.NotFoundError("No venue found.");
             }
 
-            existingVenue.Venuetypecode = requestModel.VenueTypeCode;
-            existingVenue.Venuename = requestModel.VenueName;
             existingVenue.Description = requestModel.Description;
             existingVenue.Address = requestModel.Address!;
-            existingVenue.Capacity = requestModel.Capacity;
             existingVenue.Facilities = requestModel.Facilities;
             existingVenue.Addons = requestModel.Addons;
-            existingVenue.Venueimage = requestModel.Image!;
             existingVenue.Modifiedby = CreatedByUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
@@ -155,16 +160,16 @@ public class DA_Venue
     
     #region Delete Venue
 
-    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
+    public async Task<Result<VenueDeleteResponseModel>> Delete(VenueDeleteRequestModel requestModel)
     {
-        if (venueId.IsNullOrEmpty())
+        if (requestModel.VenueId.IsNullOrEmpty())
         {
             return Result<VenueDeleteResponseModel>.UserInputError("Venue Id cannot be null or empty.");
         }
         
         try
         {
-            var venue = await _db.TblVenues.FindAsync(venueId);
+            var venue = await _db.TblVenues.FindAsync(requestModel.VenueId);
 
             if (venue is null)
             {

@@ -7,17 +7,17 @@ public class VenueCreateRequestModel
 
     [Required]
     public required string VenueName { get; set; }         // Name of the venue
-
-    public string? Description { get; set; }         // Description
-
+    
+    [Range(1, int.MaxValue)]
+    public int Capacity { get; set; }
+    
     public string? Address { get; set; }             // Address of the venue
 
-    [Range(1, int.MaxValue)]
-    public int Capacity { get; set; } 
-
+    public string? Description { get; set; }         // Description
+    
     public string? Facilities { get; set; }
-
+    
     public string? Addons { get; set; }
 
-    public string? Image { get; set; }  
+    public List<IFormFile> VenueImage { get; set; }
 }
