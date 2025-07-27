@@ -9,7 +9,7 @@ public class BL_Ticket
         _da_Ticket = da_Ticket;
     }
 
-    public async Task<Result<TicketResponseModel>> CreateTicket(TicketRequestModel requestModel)
+    public async Task<Result<TicketEditResponseModel>> CreateTicket(TicketCreateRequestModel requestModel)
     {
         return await _da_Ticket.CreateTicket(requestModel);
     }
