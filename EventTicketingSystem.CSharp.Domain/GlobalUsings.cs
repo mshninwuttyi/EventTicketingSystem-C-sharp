@@ -10,7 +10,6 @@ global using Npgsql;
 global using System.Data;
 global using static EventTicketingSystem.CSharp.Shared.DevCode;
 global using EventTicketingSystem.CSharp.Shared;
-global using EventTicketingSystem.CSharp.Domain.Common;
 global using EventTicketingSystem.CSharp.Shared.Enums;
 global using EventTicketingSystem.CSharp.Shared.Constants;
 global using EventTicketingSystem.CSharp.Database.AppDbContext;
