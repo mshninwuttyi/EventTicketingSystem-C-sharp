@@ -4,42 +4,49 @@ namespace EventTicketingSystem.CSharp.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class VenueController : ControllerBase
-{
-    private readonly BL_Venue _blService;
-
+{   
+    private readonly BL_Venue _blVenue;
     public VenueController(BL_Venue blService)
     {
-        _blService = blService;
+        _blVenue = blService;
     }
+    
+    // Get current AdminCode from JWT claims
+    private string CurrentUserId => User.GetCurrentUserId();
 
-    [HttpGet]
+    [HttpGet("List")]
     public async Task<IActionResult> List()
     {
-        return Ok(await _blService.List());
+        var data = await _blVenue.List();
+        return Ok(data);
     }
 
     [HttpGet("Edit/{venueId}")]
     public async Task<IActionResult> Edit(string venueId)
     {
-        return Ok(await _blService.Edit(venueId));
+        var data = await _blVenue.Edit(venueId);
+        return Ok(data);
     }
 
     [HttpPost("Create")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> Create([FromForm] VenueCreateRequestModel requestModel)
+    public async Task<IActionResult> Create(VenueCreateRequestModel requestModel)
     {
-        return Ok(await _blService.Create(requestModel));
+        var data = await _blVenue.Create(requestModel);
+        return Ok(data);
     }
 
-    [HttpPut("Update")]
-    public async Task<IActionResult> Update([FromBody] VenueUpdateRequestModel requestModel)
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update(VenueUpdateRequestModel requestModel)
     {
-        return Ok(await _blService.Update(requestModel));
+        var data = await _blVenue.Update(requestModel);
+        return Ok(data);
     }
 
-    [HttpDelete("Delete/{venueId}")]
-    public async Task<IActionResult> Delete(string venueId)
+    [HttpPost("Delete")]
+    public async Task<IActionResult> Delete(VenueDeleteRequestModel requestModel)
     {
-        return Ok(await _blService.Delete(venueId));
+        var data = await _blVenue.Delete(requestModel);
+        return Ok(data);
     }
 }

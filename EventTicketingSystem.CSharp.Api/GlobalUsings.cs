@@ -1,4 +1,4 @@
-﻿global using EventTicketingSystem.CSharp.Domain;
+global using EventTicketingSystem.CSharp.Domain;
 global using Serilog;
 global using Microsoft.AspNetCore.Mvc;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.EventCategory;
@@ -21,5 +21,7 @@ global using EventTicketingSystem.CSharp.Domain.Features.Event;
 global using EventTicketingSystem.CSharp.Shared;
 global using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
+global using EventTicketingSystem.CSharp.Shared.Extensions;
+global using Microsoft.AspNetCore.Authorization;
 global using EventTicketingSystem.CSharp.Domain.Features.TicketType;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
