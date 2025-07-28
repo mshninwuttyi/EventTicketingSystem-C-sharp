@@ -45,10 +45,6 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<TblVerification> TblVerifications { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=eventticketingsystem;User Id=postgres;Password=sasa@123;TrustServerCertificate=True;");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TblAdmin>(entity =>
@@ -178,6 +174,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Eventid)
                 .HasColumnType("character varying")
                 .HasColumnName("eventid");
+            entity.Property(e => e.Address)
+                .HasColumnType("character varying")
+                .HasColumnName("address");
             entity.Property(e => e.Businessownercode)
                 .HasColumnType("character varying")
                 .HasColumnName("businessownercode");
@@ -188,6 +187,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Description)
+                .HasColumnType("character varying")
+                .HasColumnName("description");
             entity.Property(e => e.Enddate)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("enddate");
@@ -350,9 +352,6 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
-            entity.Property(e => e.Eventcode)
-                .HasColumnType("character varying")
-                .HasColumnName("eventcode");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
@@ -387,6 +386,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Eventcode)
+                .HasColumnType("character varying")
+                .HasColumnName("eventcode");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");

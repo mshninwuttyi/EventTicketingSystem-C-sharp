@@ -152,7 +152,7 @@ public class DA_SearchEventsAndVenues
                                 {
                                     Ticketpriceid = tp.Ticketpriceid,
                                     Ticketpricecode = tp.Ticketpricecode,
-                                    Eventcode = tp.Eventcode,
+                                    //Eventcode = tp.Eventcode,
                                     Tickettypecode = tp.Tickettypecode,
                                     Ticketprice = tp.Ticketprice,
                                     Ticketquantity = tp.Ticketquantity,

@@ -163,7 +163,7 @@ public class DA_Ticket
                                      Modifiedat = t.Modifiedat,
                                      Deleteflag = t.Deleteflag,
                                      Ticketpriceid = tp.Ticketpriceid,
-                                     Eventcode = tp.Eventcode,
+                                     //Eventcode = tp.Eventcode,
                                      Tickettypecode = tp.Tickettypecode,
                                      Ticketprice = tp.Ticketprice,
                                      Ticketquantity = tp.Ticketquantity,

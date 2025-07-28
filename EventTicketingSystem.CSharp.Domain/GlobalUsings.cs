@@ -29,7 +29,6 @@ global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
-global using static EventTicketingSystem.CSharp.Domain.Models.Features.TicketType.TicketTypeResponseModel;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Event;
