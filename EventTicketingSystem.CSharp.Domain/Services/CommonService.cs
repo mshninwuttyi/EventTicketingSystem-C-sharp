@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Domain.Common;
+﻿namespace EventTicketingSystem.CSharp.Domain.Services;
 
 public class CommonService
 {

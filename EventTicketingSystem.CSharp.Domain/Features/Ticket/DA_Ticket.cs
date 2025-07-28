@@ -4,6 +4,7 @@ public class DA_Ticket
 {
     private readonly ILogger<DA_Ticket> _logger;
     private readonly AppDbContext _db;
+    private const string CreatedByUserId = "Admin";
 
     public DA_Ticket(ILogger<DA_Ticket> logger, AppDbContext db)
     {
@@ -17,7 +18,7 @@ public class DA_Ticket
         return "T" + ticketCount.ToString("D6");
     }
 
-    public async Task<Result<TicketResponseModel>> CreateTicket(TicketRequestModel requestModel)
+    public async Task<Result<TicketEditResponseModel>> CreateTicket(TicketCreateRequestModel requestModel)
     {
         try
         {
@@ -27,7 +28,7 @@ public class DA_Ticket
                 Ticketcode = GenerateTicketCode(),
                 Ticketpricecode = requestModel.Ticketpricecode,
                 Isused = false,
-                Createdby = "",
+                Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Modifiedby = "",
                 Modifiedat = DateTime.Now,
@@ -37,7 +38,7 @@ public class DA_Ticket
             await _db.TblTickets.AddAsync(newTicket);
             await _db.SaveAndDetachAsync();
 
-            var responseModel = new TicketResponseModel
+            var responseModel = new TicketEditResponseModel
             {
                 Ticketid = newTicket.Ticketid,
                 Ticketcode = newTicket.Ticketcode,
@@ -46,12 +47,12 @@ public class DA_Ticket
                 Createdby = newTicket.Createdby,
                 Createdat = newTicket.Createdat,
             };
-            return Result<TicketResponseModel>.Success(responseModel, "Ticket is created successfully!");
+            return Result<TicketEditResponseModel>.Success(responseModel, "Ticket is created successfully!");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<TicketResponseModel>.SystemError(ex.Message);
+            return Result<TicketEditResponseModel>.SystemError(ex.Message);
         }
     }
     public async Task<Result<TicketEditResponseModel>> GetTicketByCode(string ticketCode)
@@ -163,7 +164,7 @@ public class DA_Ticket
                                      Modifiedat = t.Modifiedat,
                                      Deleteflag = t.Deleteflag,
                                      Ticketpriceid = tp.Ticketpriceid,
-                                     Eventcode = tp.Eventcode,
+                                     //Eventcode = tp.Eventcode,
                                      Tickettypecode = tp.Tickettypecode,
                                      Ticketprice = tp.Ticketprice,
                                      Ticketquantity = tp.Ticketquantity,

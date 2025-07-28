@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType
+namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType
 {
     public class TicketTypeListResponseModel
     {
@@ -23,5 +23,4 @@
         }
 
     }
-
 }

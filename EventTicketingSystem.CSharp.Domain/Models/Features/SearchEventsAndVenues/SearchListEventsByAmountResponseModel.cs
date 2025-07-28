@@ -43,7 +43,7 @@ public class SearchEventByAmountResponseModel
 
     public DateTime? Modifiedat { get; set; }
 
-    public List<SearchTicketPriceResponseModel> TotalTicketPrice { get; set; }
+    //public List<SearchTicketPriceResponseModel> TotalTicketPrice { get; set; }
 }
 
 public class SearchTicketPriceResponseModel

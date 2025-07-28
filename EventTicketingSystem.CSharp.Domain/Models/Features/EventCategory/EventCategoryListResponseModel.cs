@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory;
+﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.EventCategory;
 
 public class EventCategoryListResponseModel
 {

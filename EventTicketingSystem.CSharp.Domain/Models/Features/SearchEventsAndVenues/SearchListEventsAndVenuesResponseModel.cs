@@ -17,15 +17,15 @@ public class SearchEventResponseModel
 
     public string? Categorycode { get; set; }
 
-    public string? Description { get; set; }
+    //public string? Description { get; set; }
 
-    public string? Address { get; set; }
+    //public string? Address { get; set; }
 
     public DateTime? Startdate { get; set; }
 
     public DateTime? Enddate { get; set; }
 
-    public string? Eventimage { get; set; }
+    //public string? Eventimage { get; set; }
 
     public bool? Isactive { get; set; }
 
@@ -54,7 +54,7 @@ public class SearchVenuesResponseModel
 
     public string? Venuename { get; set; }
 
-    public string? Venuedetailcode { get; set; }
+    //public string? Venuedetailcode { get; set; }
 
     public string? Venuetypecode { get; set; }
 
