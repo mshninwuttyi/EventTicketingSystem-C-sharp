@@ -21,10 +21,10 @@ public class VenueController : ControllerBase
         return Ok(data);
     }
 
-    [HttpGet("Edit/{venueId}")]
-    public async Task<IActionResult> Edit(string venueId)
+    [HttpGet("Edit/{venueCode}")]
+    public async Task<IActionResult> Edit(string venueCode)
     {
-        var data = await _blVenue.Edit(venueId);
+        var data = await _blVenue.Edit(venueCode);
         return Ok(data);
     }
 
@@ -43,10 +43,10 @@ public class VenueController : ControllerBase
         return Ok(data);
     }
 
-    [HttpPost("Delete")]
-    public async Task<IActionResult> Delete(VenueDeleteRequestModel requestModel)
+    [HttpPost("Delete/{venueCode}")]
+    public async Task<IActionResult> Delete(string venueCode)
     {
-        var data = await _blVenue.Delete(requestModel);
+        var data = await _blVenue.Delete(venueCode);
         return Ok(data);
     }
 }

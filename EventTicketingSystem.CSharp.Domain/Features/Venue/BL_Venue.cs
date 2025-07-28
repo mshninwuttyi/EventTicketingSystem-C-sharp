@@ -14,9 +14,9 @@ public class BL_Venue
         return await _dataAccess.List();
     }
 
-    public async Task<Result<VenueEditResponseModel>> Edit(string venueId)
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueCode)
     {
-        return await _dataAccess.Edit(venueId);
+        return await _dataAccess.Edit(venueCode);
     }
 
     public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
@@ -29,8 +29,8 @@ public class BL_Venue
         return await _dataAccess.Update(requestModel);
     }
 
-    public async Task<Result<VenueDeleteResponseModel>> Delete(VenueDeleteRequestModel requestModel)
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueCode)
     {
-        return await _dataAccess.Delete(requestModel);
+        return await _dataAccess.Delete(venueCode);
     }
 }
