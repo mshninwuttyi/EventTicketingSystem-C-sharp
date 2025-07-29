@@ -20,8 +20,9 @@ public class BL_BusinessEmail
         return data;
     }
 
-    public async Task<Result<BusinessEmailListResponseModel>> GetList()
+    public async Task<Result<BusinessEmailListResponseModel>> List()
     {
-        return await _da_BusinessEmail.GetList();
+        var data = await _da_BusinessEmail.List();
+        return data;
     }
 }

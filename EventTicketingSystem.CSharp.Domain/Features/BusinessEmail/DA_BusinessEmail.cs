@@ -74,22 +74,24 @@ public class DA_BusinessEmail
         }
     }
 
-    public async Task<Result<BusinessEmailListResponseModel>> GetList()
+    public async Task<Result<BusinessEmailListResponseModel>> List()
     {
+        var responseModel = new Result<BusinessEmailListResponseModel>();
         var model = new BusinessEmailListResponseModel();
+
         try
         {
-            var data = await _db.TblBusinessemails.Where(x => x.Deleteflag == false).ToListAsync();
+            var data = await _db.TblBusinessemails
+                .Where(x => x.Deleteflag == false)
+                .OrderBy(x => x.Businessemailid)
+                .ToListAsync();
 
-            model.BusinessEmails = data.Select(x => new BusinessEmailModel
+            if (data is null)
             {
-                BusinessEmailId = x.Businessemailid,
-                BusinessEmailCode = x.Businessemailcode,
-                FullName = x.Fullname,
-                Phone = x.Phone,
-                Email = x.Email
-            }).ToList();
+                responseModel = Result<BusinessEmailListResponseModel>.Success("No Business Emails found.");
+            }
 
+            model.BusinessEmailList = data.Select(BusinessEmailListModel.FromTblBusinessEmail).ToList();
             return Result<BusinessEmailListResponseModel>.Success(model);
         }
         catch (Exception ex)

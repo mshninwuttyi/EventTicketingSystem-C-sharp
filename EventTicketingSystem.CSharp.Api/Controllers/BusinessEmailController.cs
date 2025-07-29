@@ -12,10 +12,10 @@ public class BusinessEmailController : ControllerBase
         _bl_BusinessEmail = bl_BusinessEmail;
     }
 
-    [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] BusinessEmailCreateRequestModel requestModel)
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        var data = await _bl_BusinessEmail.Create(requestModel);
+        var data = await _bl_BusinessEmail.List();
         return Ok(data);
     }
 
@@ -26,16 +26,10 @@ public class BusinessEmailController : ControllerBase
         return Ok(data);
     }
 
-    [HttpGet("GetList")]
-    public async Task<IActionResult> GetList()
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] BusinessEmailCreateRequestModel requestModel)
     {
-        var result = await _bl_BusinessEmail.GetList();
-
-        if (result.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-        }
-
-        return Ok(result.Data);
+        var data = await _bl_BusinessEmail.Create(requestModel);
+        return Ok(data);
     }
 }
