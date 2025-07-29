@@ -16,7 +16,11 @@ public class DA_BusinessEmail
 
     public async Task<Result<BusinessEmailCreateResponseModel>> Create(BusinessEmailCreateRequestModel requestModel)
     {
-        // TODO: Validate requestModel
+        var responseModel = ValidateRequest(requestModel);
+        if (responseModel != null)
+        {
+            return responseModel;
+        }
 
         try
         {
@@ -99,5 +103,47 @@ public class DA_BusinessEmail
             _logger.LogExceptionError(ex);
             return Result<BusinessEmailListResponseModel>.SystemError(ex.Message);
         }
+    }
+
+    private Result<BusinessEmailCreateResponseModel> ValidateRequest(BusinessEmailCreateRequestModel requestModel)
+    {
+        if (requestModel.FullName.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Full Name cannot be empty.");
+        }
+
+        if (requestModel.Phone.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Phone cannot be empty.");
+        }
+
+        if (requestModel.Phone.IsNullOrEmpty() || requestModel.Phone.Length < 9)
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Phone number cannot be empty or less than 9 numbers!");
+        }
+
+        if (requestModel.Email.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Email cannot be empty.");
+        }
+
+        if (!requestModel.Email.IsValidEmail())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Invalid Email format.");
+        }
+
+        if (IsAlreadyUsed(requestModel.Email))
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Email is already in use.");
+        }
+
+        return null!;
+    }
+
+    private bool IsAlreadyUsed(string email)
+    {
+        var admin = _db.TblBusinessemails.FirstOrDefault(x => x.Email == email);
+        if (admin is null) return false;
+        return true;
     }
 }

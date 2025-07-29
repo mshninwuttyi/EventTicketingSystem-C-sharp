@@ -25,4 +25,6 @@ public class BL_BusinessEmail
         var data = await _da_BusinessEmail.List();
         return data;
     }
+
+
 }
