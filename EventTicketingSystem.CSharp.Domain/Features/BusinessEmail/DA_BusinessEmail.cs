@@ -14,8 +14,10 @@ public class DA_BusinessEmail
         _commonService = commonService;
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> Create(BusinessEmailRequestModel requestModel)
+    public async Task<Result<BusinessEmailCreateResponseModel>> Create(BusinessEmailCreateRequestModel requestModel)
     {
+        // TODO: Validate requestModel
+
         try
         {
             var newBusinessEmail = new TblBusinessemail
@@ -32,50 +34,43 @@ public class DA_BusinessEmail
             var entry = await _db.TblBusinessemails.AddAsync(newBusinessEmail);
             await _db.SaveAndDetachAsync();
 
-            var createdBusinessEmail = entry.Entity;
-            var responseModel = new BusinessEmailResponseModel
-            {
-                BusinessEmailId = createdBusinessEmail.Businessemailid,
-                BusinessEmailCode = createdBusinessEmail.Businessemailcode,
-                FullName = createdBusinessEmail.Fullname,
-                Phone = createdBusinessEmail.Phone,
-                Email = createdBusinessEmail.Email
-            };
-            return Result<BusinessEmailResponseModel>.Success(responseModel, "Business Email created successfully.");
+            return Result<BusinessEmailCreateResponseModel>.Success("Business Email created successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<BusinessEmailResponseModel>.SystemError(ex.Message);
+            return Result<BusinessEmailCreateResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> GetById(string id)
+    public async Task<Result<BusinessEmailEditResponseModel>> Edit(string businessEmailCode)
     {
+        var model = new BusinessEmailEditResponseModel();
+
+        if (businessEmailCode.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailEditResponseModel>.ValidationError("Business Email Code is required.");
+        }
+
         try
         {
-            var data = await _db.TblBusinessemails.FirstOrDefaultAsync(b => b.Businessemailid == id);
+            var data = await _db.TblBusinessemails
+                .FirstOrDefaultAsync(
+                x => x.Businessemailcode == businessEmailCode &&
+                x.Deleteflag == false);
 
             if (data is null)
             {
-                return Result<BusinessEmailResponseModel>.NotFoundError("No Data Found!");
+                return Result<BusinessEmailEditResponseModel>.NotFoundError("Business Email Not Found.");
             }
 
-            var model = new BusinessEmailResponseModel
-            {
-                BusinessEmailId = data.Businessemailid,
-                BusinessEmailCode = data.Businessemailcode,
-                FullName = data.Fullname,
-                Phone = data.Phone,
-                Email = data.Email
-            };
-
-            return Result<BusinessEmailResponseModel>.Success(model);
+            model.BusinessEmail = BusinessEmailEditModel.FromTblBusinessEmail(data);
+            return Result<BusinessEmailEditResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<BusinessEmailResponseModel>.SystemError(ex.Message);
+            return Result<BusinessEmailEditResponseModel>.SystemError(ex.Message);
         }
     }
 

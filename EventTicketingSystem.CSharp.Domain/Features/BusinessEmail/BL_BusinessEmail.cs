@@ -9,14 +9,15 @@ public class BL_BusinessEmail
         _da_BusinessEmail = da_BusinessEmail;
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> Create(BusinessEmailRequestModel requestModel)
+    public async Task<Result<BusinessEmailCreateResponseModel>> Create(BusinessEmailCreateRequestModel requestModel)
     {
         return await _da_BusinessEmail.Create(requestModel);
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> GetById(string id)
+    public async Task<Result<BusinessEmailEditResponseModel>> Edit(string businessEmailCode)
     {
-        return await _da_BusinessEmail.GetById(id);
+        var data = await _da_BusinessEmail.Edit(businessEmailCode);
+        return data;
     }
 
     public async Task<Result<BusinessEmailListResponseModel>> GetList()
