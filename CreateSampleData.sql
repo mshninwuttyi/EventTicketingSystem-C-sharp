@@ -9,8 +9,8 @@ VALUES ('01H9Z7F6X1QV3ZP6BK3G2M18ZJ', 'ADM001', 'alice_admin', 'alice@example.co
         'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, TRUE);
 
 -- Sample data for Tbl_Category
-INSERT INTO Tbl_Category (
-    CategoryId, CategoryCode, CategoryName, 
+INSERT INTO tbl_eventcategory (
+    eventcategoryid, eventcategorycode, CategoryName,
     CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeleteFlag
 ) VALUES
 (

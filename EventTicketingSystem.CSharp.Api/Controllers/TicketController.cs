@@ -13,7 +13,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] TicketRequestModel requestModel)
+    public async Task<IActionResult> Create([FromBody] TicketCreateRequestModel requestModel)
     {
         if (requestModel == null)
         {

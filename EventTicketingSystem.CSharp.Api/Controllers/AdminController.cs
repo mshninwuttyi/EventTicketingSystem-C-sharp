@@ -51,7 +51,7 @@ public class AdminController : ControllerBase
         return Ok(data);
     }
 
-    [HttpGet("Export")]
+    [HttpPost("Export")]
     public async Task<IActionResult> Export(AdminExportRequestModel requestModel)
     {
         try

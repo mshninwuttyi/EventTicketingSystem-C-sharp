@@ -13,9 +13,9 @@ public class AdminEditModel
 
     public string? Email { get; set; }
 
-    public string? PhoneNo { get; set; }
+    public string? PhoneNo { get; set; } 
 
-    public string? Password { get; set; }
+    public string? FullName { get; set; }
 
     public string? ProfileImage { get; set; }
 
@@ -27,7 +27,7 @@ public class AdminEditModel
             Username = admin.Username,
             Email = admin.Email,
             PhoneNo = admin.Phone,
-            Password = admin.Password,
+            FullName = admin.Fullname,
             ProfileImage = admin.Profileimage,
         };
     }

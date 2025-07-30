@@ -14,6 +14,7 @@ public class DA_Venue
         _commonService = commonService;
     }
 
+    #region Get Venue List
     public async Task<Result<VenueListResponseModel>> List()
     {
         var model = new VenueListResponseModel();
@@ -25,7 +26,7 @@ public class DA_Venue
                         .ToListAsync();
             if (data is null)
             {
-                return Result<VenueListResponseModel>.NotFoundError("Venue Not Found.");
+                return Result<VenueListResponseModel>.NotFoundError("No venue found.");
             }
 
             model.VenueList = data.Select(VenueListModel.FromTblVenue).ToList();
@@ -38,19 +39,28 @@ public class DA_Venue
         }
     }
 
-    public async Task<Result<VenueEditResponseModel>> Edit(string venueId)
+    #endregion
+
+    #region Get VenueById
+
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueCode)
     {
         var model = new VenueEditResponseModel();
+        if (venueCode.IsNullOrEmpty())
+        {
+            return Result<VenueEditResponseModel>.ValidationError("Venue Id cannot be null or empty.");
+        }
+
         try
         {
             var venue = await _db.TblVenues
                             .FirstOrDefaultAsync(
-                                x => x.Venueid == venueId &&
+                                x => x.Venuecode == venueCode &&
                                 x.Deleteflag == false
                             );
             if (venue is null)
             {
-                return Result<VenueEditResponseModel>.NotFoundError("Venue not found.");
+                return Result<VenueEditResponseModel>.NotFoundError("No venue found.");
             }
 
             model.Venue = VenueEditModel.FromTblVenue(venue);
@@ -63,9 +73,14 @@ public class DA_Venue
         }
     }
 
+    #endregion
+
+    #region Create Venue
     public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
     {
         string imageLink = string.Empty;
+        string addons = string.Empty;
+
         try
         {
             if (requestModel.VenueImage != null && requestModel.VenueImage.Count > 0)
@@ -75,7 +90,12 @@ public class DA_Venue
                 imageLink = string.Join(",", uploadResults.Select(x => x.FilePath));
             }
 
-            var venueEntity = new TblVenue()
+            if (requestModel.Addons != null && requestModel.Addons.Count > 0)
+            {
+                addons = string.Join(",", requestModel.Addons.Select(a => a.Trim()));
+            }
+
+            var newVenue = new TblVenue()
             {
                 Venueid = GenerateUlid(),
                 Venuecode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Venue),
@@ -85,13 +105,14 @@ public class DA_Venue
                 Address = requestModel.Address!,
                 Capacity = requestModel.Capacity,
                 Facilities = requestModel.Facilities,
-                Addons = requestModel.Addons,
+                Addons = addons,
                 Venueimage = imageLink,
                 Createdby = CreatedByUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
-            await _db.TblVenues.AddAsync(venueEntity);
+
+            await _db.TblVenues.AddAsync(newVenue);
             await _db.SaveAndDetachAsync();
 
             return Result<VenueCreateResponseModel>.Success("Venue created successfully.");
@@ -103,25 +124,37 @@ public class DA_Venue
         }
     }
 
+    #endregion
+
+    #region Update Venue
+
     public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
     {
+        string addons = string.Empty;
+
+        if (requestModel.VenueId.IsNullOrEmpty())
+        {
+            return Result<VenueUpdateResponseModel>.UserInputError("Venue Id cannot be null or empty.");
+        }
+
         try
         {
             var existingVenue = await _db.TblVenues.FindAsync(requestModel.VenueId);
 
             if (existingVenue is null)
             {
-                return Result<VenueUpdateResponseModel>.NotFoundError("Venue not found.");
+                return Result<VenueUpdateResponseModel>.NotFoundError("No venue found.");
             }
 
-            existingVenue.Venuetypecode = requestModel.VenueTypeCode;
-            existingVenue.Venuename = requestModel.VenueName;
+            if (requestModel.Addons != null && requestModel.Addons.Count > 0)
+            {
+                addons = string.Join(",", requestModel.Addons.Select(a => a.Trim()));
+            }
+
             existingVenue.Description = requestModel.Description;
             existingVenue.Address = requestModel.Address!;
-            existingVenue.Capacity = requestModel.Capacity;
             existingVenue.Facilities = requestModel.Facilities;
-            existingVenue.Addons = requestModel.Addons;
-            existingVenue.Venueimage = requestModel.Image!;
+            existingVenue.Addons = addons;
             existingVenue.Modifiedby = CreatedByUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
@@ -137,20 +170,30 @@ public class DA_Venue
         }
     }
 
-    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueId)
+    #endregion
+
+    #region Delete Venue
+
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueCode)
     {
+        if (venueCode.IsNullOrEmpty())
+        {
+            return Result<VenueDeleteResponseModel>.UserInputError("Venue Code cannot be null or empty.");
+        }
+
         try
         {
-            var venue = await _db.TblVenues.FindAsync(venueId);
+            var venue = await _db.TblVenues.FirstOrDefaultAsync(x => x.Venuecode == venueCode && x.Deleteflag == false);
 
             if (venue is null)
             {
-                return Result<VenueDeleteResponseModel>.NotFoundError("Venue not found");
+                return Result<VenueDeleteResponseModel>.NotFoundError("There is no venue with this venue id.");
             }
 
             venue.Deleteflag = true;
             venue.Modifiedby = CreatedByUserId;
             venue.Modifiedat = DateTime.Now;
+
             _db.Entry(venue).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
@@ -162,4 +205,6 @@ public class DA_Venue
             return Result<VenueDeleteResponseModel>.SystemError(ex.Message);
         }
     }
+
+    #endregion
 }
