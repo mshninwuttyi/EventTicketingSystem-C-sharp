@@ -7,8 +7,6 @@ public class VenueEditResponseModel
 
 public class VenueEditModel
 {
-    public string VenueId { get; set; } 
-    
     public string VenueCode { get; set; }
     
     public string VenueTypeCode { get; set; }
@@ -31,7 +29,6 @@ public class VenueEditModel
     {
         var venueModel = new VenueEditModel
         {
-            VenueId = venue.Venueid,
             VenueCode = venue.Venuecode,
             VenueTypeCode = venue.Venuetypecode,
             VenueName = venue.Venuename,
