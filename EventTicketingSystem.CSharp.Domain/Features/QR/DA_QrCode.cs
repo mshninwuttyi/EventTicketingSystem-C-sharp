@@ -6,48 +6,40 @@ public class DA_QrCode
 {
     private readonly ILogger<DA_QrCode> _logger;
     private readonly AppDbContext _db;
+    private readonly DapperService _dapper;
 
-    public DA_QrCode(ILogger<DA_QrCode> logger, AppDbContext db)
+    public DA_QrCode(ILogger<DA_QrCode> logger, AppDbContext db, DapperService dapper)
     {
         _logger = logger;
         _db = db;
+        _dapper = dapper;
     }
 
     public async Task<Result<QrGenerateResponseModel>> GenerateQr(QrGenerateRequestModel requestModel)
     {
         var response = new QrGenerateResponseModel();
 
-        string ticketTypeCode = requestModel.TicketTypeCode;
-        string ticketPriceCode = requestModel.TicketPriceCode;
-        string ticketCode = requestModel.TicketCode;
-        string eventCode = requestModel.EventCode;
+        var param = new { p_ticketcode = requestModel.TicketCode };
+        var ticketInfo = await _dapper.QueryStoredProcedureFirstOrDefault<QrGenerateModel>(Queries.sp_ticket_info, param);
 
-        var tblTicketType = await _db.TblTickettypes.FirstOrDefaultAsync(x => x.Tickettypecode == ticketTypeCode && x.Deleteflag == false);
-        var tblTicketPriceCode = await _db.TblTicketprices.FirstOrDefaultAsync(x => x.Ticketpricecode == ticketPriceCode && x.Deleteflag == false);
-        var tblTicketCode = await _db.TblTickets.FirstOrDefaultAsync(x => x.Ticketcode == ticketCode && x.Deleteflag == false);
-        var tblEvent = await _db.TblEvents.FirstOrDefaultAsync(x => x.Eventcode == eventCode && x.Deleteflag == false);
-
-        if (tblTicketType == null || tblTicketPriceCode == null || tblTicketCode == null || tblEvent == null)
+        if (ticketInfo == null)
         {
-            _logger.LogError("Invalid data provided for QR code generation.");
-            return Result<QrGenerateResponseModel>.SystemError("Invalid data provided for QR code generation.");
+            _logger.LogError("Ticket information not found for the provided ticket code.");
+            return Result<QrGenerateResponseModel>.SystemError("Ticket information not found for the provided ticket code.");
         }
 
-        //string GateOpenTime = "GateOpenTime";
-        //string VenueName = "VenueName";
-
-        string qrString = $"{tblEvent.Eventname}" +
-            $"|{tblEvent.Eventcode}" +
-            $"|{DateOnly.FromDateTime((DateTime)tblEvent.Startdate)}" +
-            $"|{tblEvent.Startdate}" +
-            $"|{tblEvent.Enddate}" +
+        string qrString = $"{ticketInfo.EventCode}" +
+            $"|{ticketInfo.EventName}" +
+            $"|{DateOnly.FromDateTime((DateTime)ticketInfo.StartDate)}" +
+            $"|{ticketInfo.StartDate}" +
+            $"|{ticketInfo.EndDate}" +
             $"|GateOpenTime" +
-            $"|{tblTicketCode.Ticketcode}" +
-            $"|{tblTicketPriceCode.Ticketprice}" +
-            $"|{tblTicketType.Tickettypename}" +
+            $"|{requestModel.TicketCode}" +
+            $"|{ticketInfo.TicketPrice}" +
+            $"|{ticketInfo.TicketTypeName}" +
             $"|{requestModel.FullName}" +
             $"|{requestModel.Email}" +
-            $"|VenueName";
+            $"|{ticketInfo.VenueName}";
 
         response.QrString = qrString;
 
