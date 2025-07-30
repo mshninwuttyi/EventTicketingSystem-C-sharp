@@ -15,4 +15,5 @@ public class JwtSettings
 
     [Range(1, 1440, ErrorMessage = "TokenExpiryMinutes must be between 1 and 1440.")]
     public int TokenExpiryMinutes { get; set; }
+    
 }
