@@ -13,9 +13,10 @@ public class BL_QrCode
     private readonly DA_QrCode _da_QrCode;
 
     private const BarcodeFormat DEFAULT_BARCODE_FORMAT = BarcodeFormat.QR_CODE;
-    private const string QR_DIR_NAME = "QR_Files";
+    private string QR_DIR_NAME = EnumDirectory.QrImage.ToString();
     private const int WIDTH = 300;
     private const int HEIGHT = 300;
+    private const string QR_IMAGE_FILE_EXTENSION = ".jpeg";
 
     public BL_QrCode(DA_QrCode da_QrCode)
     {
@@ -26,19 +27,17 @@ public class BL_QrCode
     {
         var response = await _da_QrCode.GenerateQr(requestModel);
 
-        if (string.IsNullOrEmpty(response.Data.QrString))
+        if (response.IsError)
         {
-            return Result<QrGenerateResponseModel>.SystemError("Failed to generate QR code.");
+            return Result<QrGenerateResponseModel>.SystemError("Ticket information not found for the provided ticket code.");
         }
 
-        response.Message = "QR code generated successfully.";
-
-
-        string fileName = requestModel.TicketCode + "_" + requestModel.Email + ".png";
+        string fileName = requestModel.TicketCode + QR_IMAGE_FILE_EXTENSION;
         string outputFileName = Path.Combine(QR_DIR_NAME, fileName);
 
         SaveQrImage(response.Data.QrString, outputFileName);
 
+        response.Message = "QR code generated successfully.";
         return response;
     }
 
