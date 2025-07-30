@@ -32,6 +32,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddModularServices(builder);
 
+builder.Services.AddHttpContextAccessor();
+
+
 #region Jwt Token
 
 builder.Services.AddOptions<JwtSettings>()

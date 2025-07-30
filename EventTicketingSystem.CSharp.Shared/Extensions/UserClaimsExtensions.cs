@@ -4,17 +4,21 @@ namespace EventTicketingSystem.CSharp.Shared.Extensions;
 
 public static class UserClaimsExtensions
 {
-    public static string GetCurrentUserId(this ClaimsPrincipal user, ILogger logger)
+    public static string? GetCurrentSessionId(this ClaimsPrincipal user)
     {
-        //var userId = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        return user.FindFirst("sessionid")?.Value;
+    }
+    
+    public static string GetCurrentAdminCode(this ClaimsPrincipal user)
+    {
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            logger.LogWarning("Authenticated user does not have a 'sub' claim. User identity might be incomplete.");
-            throw new UnauthorizedAccessException("Missing user ID in JWT claims.");
-        }
-
         return userId;
     }
+    
+    public static string? GetCurrentUsername(this ClaimsPrincipal user)
+    {
+        return user.Identity?.Name ?? user.FindFirst(ClaimTypes.Name)?.Value;
+    }
+    
+    
 }
