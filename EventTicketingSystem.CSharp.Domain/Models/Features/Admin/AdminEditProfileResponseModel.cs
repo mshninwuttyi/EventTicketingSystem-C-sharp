@@ -1,11 +1,11 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.Admin;
 
-public class AdminEditResponseModel
+public class AdminEditProfileResponseModel
 {
-    public AdminEditModel? Admin { get; set; }
+    public AdminEditProfileModel Admin { get; set; } = new();
 }
 
-public class AdminEditModel
+public class AdminEditProfileModel
 {
     public string? AdminCode { get; set; }
 
@@ -15,17 +15,20 @@ public class AdminEditModel
 
     public string? Email { get; set; }
 
-    public string? PhoneNo { get; set; } 
+    public string? PhoneNo { get; set; }
 
-    public static AdminEditModel FromTblAdmin(TblAdmin admin)
+    public string? ProfileImage { get; set; }
+
+    public static AdminEditProfileModel FromTblAdmin(TblAdmin admin)
     {
-        return new AdminEditModel
+        return new AdminEditProfileModel
         {
             AdminCode = admin.Admincode,
             Username = admin.Username,
             Email = admin.Email,
             PhoneNo = admin.Phone,
             FullName = admin.Fullname,
+            ProfileImage = admin.Profileimage,
         };
     }
 }

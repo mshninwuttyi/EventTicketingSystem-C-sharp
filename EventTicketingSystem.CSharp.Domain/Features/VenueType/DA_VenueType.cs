@@ -95,7 +95,7 @@ public class DA_VenueType : AuthorizationService
             {
                 var newVenueType = new TblVenuetype
                 {
-                    Venuetypeid = Ulid.NewUlid().ToString(),
+                    Venuetypeid = GenerateUlid(),
                     Venuetypecode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_VenueType),
                     Venuetypename = requestModel.VenueTypeName,
                     Createdat = DateTime.Now,
@@ -133,20 +133,20 @@ public class DA_VenueType : AuthorizationService
         {
             try
             {
-                var existingVenueType = await _db.TblVenuetypes
+                var item = await _db.TblVenuetypes
                                         .FirstOrDefaultAsync(
                                             x => x.Venuetypecode == requestModel.VenueTypeCode &&
                                             x.Deleteflag == false
                                         );
-                if (existingVenueType is null)
+                if (item is null)
                 {
                     return Result<VenueTypeUpdateResponseModel>.NotFoundError("Venue Type Name Not Found");
                 }
 
-                existingVenueType.Venuetypename = requestModel.VenueTypeName;
-                existingVenueType.Modifiedby = CurrentUserId;
-                existingVenueType.Modifiedat = DateTime.Now;
-                _db.Entry(existingVenueType).State = EntityState.Modified;
+                item.Venuetypename = requestModel.VenueTypeName;
+                item.Modifiedby = CurrentUserId;
+                item.Modifiedat = DateTime.Now;
+                _db.Entry(item).State = EntityState.Modified;
                 await _db.SaveAndDetachAsync();
 
                 return Result<VenueTypeUpdateResponseModel>.Success("Venue Type Updated Successfully.");

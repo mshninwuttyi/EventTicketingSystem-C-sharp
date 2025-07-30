@@ -45,6 +45,24 @@ public static partial class DevCode
         return Encoding.UTF8.GetBytes(str);
     }
 
+    public static bool IsSameDigit(this string input)
+    {
+        return input.Distinct().Count() == 1;
+    }
+
+    public static bool IsSequential(this string input)
+    {
+        for (var i = 1; i < input.Length; i++)
+        {
+            if (input[i] - input[i - 1] != 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     #endregion
 
     #region Validation

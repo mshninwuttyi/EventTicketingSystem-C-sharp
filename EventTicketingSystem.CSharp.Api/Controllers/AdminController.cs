@@ -1,6 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Services;
-
-namespace EventTicketingSystem.CSharp.Api.Controllers;
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Admin User")]
 [Route("api/[controller]")]
@@ -48,6 +46,20 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> Delete(AdminDeleteRequestModel requestModel)
     {
         var data = await _blAdmin.Delete(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("EditProfileImage")]
+    public async Task<IActionResult> EditProfileImage(AdminEditProfileRequestModel requestModel)
+    {
+        var data = await _blAdmin.EditProfileImage(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("ChangePassword")]
+    public async Task<IActionResult> ChangePassword(AdminChangePasswordRequestModel requestModel)
+    {
+        var data = await _blAdmin.ChangePassword(requestModel);
         return Ok(data);
     }
 

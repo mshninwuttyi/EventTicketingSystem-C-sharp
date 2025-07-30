@@ -195,7 +195,7 @@ public class DA_Ticket : AuthorizationService
             model!.Deleteflag = true;
 
             _db.Entry(model).State = EntityState.Modified;
-            var result = _db.SaveChanges();
+            await _db.SaveAndDetachAsync();
             return Result<TicketResponseModel>.Success("Ticket is deleted successfully!");
 
         }
