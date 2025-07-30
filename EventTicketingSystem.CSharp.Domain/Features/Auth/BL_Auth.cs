@@ -89,6 +89,11 @@ public class BL_Auth
         {
             return Result<RefreshTokenResponseModel>.ValidationError("Invalid or expired refresh token.");
         }
+        
+        if (login.Loginstatus == "Logout")
+        {
+            return Result<RefreshTokenResponseModel>.ValidationError("The user has been logged out.");
+        }
 
         var newJwt = _jwtService.GenerateToken(login.Admincode, login.Username);
 
