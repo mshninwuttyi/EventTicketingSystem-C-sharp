@@ -1,5 +1,3 @@
-using EventTicketingSystem.CSharp.Domain.Features.TicketType;
-
 namespace EventTicketingSystem.CSharp.Domain;
 
 public static class FeaturesManager
@@ -54,6 +52,7 @@ public static class FeaturesManager
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddHttpContextAccessor();
         services.AddScoped<DapperService>();
         services.AddScoped<CommonService>();
         services.AddScoped<EmailService>();

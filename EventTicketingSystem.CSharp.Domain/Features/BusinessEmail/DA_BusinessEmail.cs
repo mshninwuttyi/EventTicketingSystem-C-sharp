@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
 
-public class DA_BusinessEmail
+public class DA_BusinessEmail : AuthorizationService
 {
     private readonly ILogger<DA_BusinessEmail> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_BusinessEmail(ILogger<DA_BusinessEmail> logger, AppDbContext db, CommonService commonService)
+    public DA_BusinessEmail(IHttpContextAccessor httpContextAccessor,
+                            ILogger<DA_BusinessEmail> logger,
+                            AppDbContext db,
+                            CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -31,7 +33,7 @@ public class DA_BusinessEmail
                 Fullname = requestModel.FullName,
                 Phone = requestModel.Phone,
                 Email = requestModel.Email,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
@@ -95,7 +97,7 @@ public class DA_BusinessEmail
                 responseModel = Result<BusinessEmailListResponseModel>.Success("No Business Emails found.");
             }
 
-            model.BusinessEmailList = data.Select(BusinessEmailListModel.FromTblBusinessEmail).ToList();
+            model.BusinessEmailList = data!.Select(BusinessEmailListModel.FromTblBusinessEmail).ToList();
             return Result<BusinessEmailListResponseModel>.Success(model);
         }
         catch (Exception ex)

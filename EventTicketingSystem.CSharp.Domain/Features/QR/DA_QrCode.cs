@@ -1,6 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.QR;
-
-namespace EventTicketingSystem.CSharp.Domain.Features.QR;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.QR;
 
 public class DA_QrCode
 {

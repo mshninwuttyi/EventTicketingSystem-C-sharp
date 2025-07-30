@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.Admin;
 
-public class DA_Admin
+public class DA_Admin : AuthorizationService
 {
     private readonly AppDbContext _db;
     private readonly ILogger<DA_Admin> _logger;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_Admin(ILogger<DA_Admin> logger, AppDbContext db, CommonService commonService)
+    public DA_Admin(IHttpContextAccessor httpContextAccessor,
+                    ILogger<DA_Admin> logger,
+                    AppDbContext db,
+                    CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -102,7 +104,7 @@ public class DA_Admin
                 Phone = requestModel.PhoneNo,
                 Profileimage = null,
                 Isfirsttime = true,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false,
             };
@@ -172,7 +174,7 @@ public class DA_Admin
 
         try
         {
-            admin.Modifiedby = CreatedByUserId;
+            admin.Modifiedby = CurrentUserId;
             admin.Modifiedat = DateTime.Now;
             _db.Entry(admin).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
@@ -221,7 +223,7 @@ public class DA_Admin
                 return Result<AdminDeleteResponseModel>.UserInputError("Incorrect Password.");
             }
 
-            data.Modifiedby = CreatedByUserId;
+            data.Modifiedby = CurrentUserId;
             data.Modifiedat = DateTime.Now;
             data.Deleteflag = true;
             _db.Entry(data).State = EntityState.Modified;
@@ -260,7 +262,7 @@ public class DA_Admin
 
             var uploadResults = await EnumDirectory.ProfileImage.UploadFilesAsync(new List<IFormFile>() { requestModel.ProfileImage });
             admin.Profileimage = string.Join(",", uploadResults.Select(x => x.FilePath));
-            admin.Modifiedby = CreatedByUserId;
+            admin.Modifiedby = CurrentUserId;
             admin.Modifiedat = DateTime.Now;
             _db.Entry(admin).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();

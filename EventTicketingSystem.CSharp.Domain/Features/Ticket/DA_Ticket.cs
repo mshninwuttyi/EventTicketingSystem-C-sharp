@@ -1,21 +1,19 @@
 namespace EventTicketingSystem.CSharp.Domain.Features.Ticket;
 
-public class DA_Ticket
+public class DA_Ticket : AuthorizationService
 {
     private readonly ILogger<DA_Ticket> _logger;
     private readonly AppDbContext _db;
-    private const string CreatedByUserId = "Admin";
+    private readonly CommonService _commonService;
 
-    public DA_Ticket(ILogger<DA_Ticket> logger, AppDbContext db)
+    public DA_Ticket(IHttpContextAccessor httpContextAccessor,
+                     ILogger<DA_Ticket> logger,
+                     AppDbContext db,
+                     CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
-    }
-
-    public string GenerateTicketCode()
-    {
-        var ticketCount = _db.TblTickets.Count();
-        return "T" + ticketCount.ToString("D6");
+        _commonService = commonService;
     }
 
     public async Task<Result<TicketEditResponseModel>> CreateTicket(TicketCreateRequestModel requestModel)
@@ -24,14 +22,12 @@ public class DA_Ticket
         {
             var newTicket = new TblTicket
             {
-                Ticketid = Ulid.NewUlid().ToString(),
-                Ticketcode = GenerateTicketCode(),
+                Ticketid = GenerateUlid(),
+                Ticketcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Ticket),
                 Ticketpricecode = requestModel.Ticketpricecode,
                 Isused = false,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
-                Modifiedby = "",
-                Modifiedat = DateTime.Now,
                 Deleteflag = false
             };
 
@@ -222,6 +218,7 @@ public class DA_Ticket
 
             if (isUsed) data!.Isused = isUsed;
 
+            data.Modifiedby = CurrentUserId;
             data!.Modifiedat = DateTime.Now;
             _db.Entry(data).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
