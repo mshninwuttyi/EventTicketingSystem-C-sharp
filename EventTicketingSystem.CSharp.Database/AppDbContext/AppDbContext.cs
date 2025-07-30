@@ -27,8 +27,6 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<TblLogin> TblLogins { get; set; }
 
-    public virtual DbSet<TblRefreshtoken> TblRefreshtokens { get; set; }
-
     public virtual DbSet<TblSequence> TblSequences { get; set; }
 
     public virtual DbSet<TblTicket> TblTickets { get; set; }
@@ -303,31 +301,6 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("username");
         });
 
-        modelBuilder.Entity<TblRefreshtoken>(entity =>
-        {
-            entity.HasKey(e => e.Refreshtokenid).HasName("tbl_refreshtoken_pk");
-
-            entity.ToTable("tbl_refreshtoken");
-
-            entity.Property(e => e.Refreshtokenid)
-                .HasColumnType("character varying")
-                .HasColumnName("refreshtokenid");
-            entity.Property(e => e.Admincode)
-                .HasColumnType("character varying")
-                .HasColumnName("admincode");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Expirydate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("expirydate");
-            entity.Property(e => e.Isrevoked).HasColumnName("isrevoked");
-            entity.Property(e => e.Revokedat)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("revokedat");
-            entity.Property(e => e.Token).HasColumnName("token");
-        });
-
         modelBuilder.Entity<TblSequence>(entity =>
         {
             entity.HasKey(e => e.Sequenceid).HasName("tbl_sequence_pk");
@@ -437,6 +410,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Eventcode)
+                .HasColumnType("character varying")
+                .HasColumnName("eventcode");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");

@@ -31,8 +31,8 @@ public class BL_Auth
         }
         
         string hashedPassword = requestModel.Password.HashPassword(requestModel.Username);
-
-        bool isValid = BCrypt.Net.BCrypt.Verify(user.Password, hashedPassword);
+        
+        bool isValid = hashedPassword == user.Password;
 
         if (!isValid)
         {
@@ -43,15 +43,15 @@ public class BL_Auth
         var token = _jwtService.GenerateToken(user.Admincode, user.Username);
         
         var refreshToken = GenerateUlid();
-        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(1); 
+        var refreshTokenExpiresAt = DateTime.Now.AddDays(1); 
         
-        var adminCode = _userContextService.AdminCode();
-        if (adminCode == null)
-            throw new InvalidOperationException("AdminCode cannot be null during login.");
+        var adminCode = user.Admincode;
+        if (string.IsNullOrWhiteSpace(adminCode))
+            throw new InvalidOperationException("AdminCode cannot be null.");
 
-        var sessionId = _userContextService.SessionId();
-        if (sessionId == null)
-            throw new InvalidOperationException("SessionId cannot be null during login.");
+        var sessionId = GenerateUlid();
+        if (string.IsNullOrWhiteSpace(sessionId))
+            throw new InvalidOperationException("SessionId cannot be null.");
         
         // Create a new login session in tbl_login
         var newLogin = new TblLogin
@@ -64,7 +64,7 @@ public class BL_Auth
             Refreshtokenexpiresat = refreshTokenExpiresAt,
             Loginstatus = "Login",
             Createdby = "SYSTEM",
-            Createdat = DateTime.UtcNow,
+            Createdat = DateTime.Now,
             Deleteflag = false
         };
         
@@ -75,7 +75,7 @@ public class BL_Auth
         return  Result<LoginResponseModel>.Success(new LoginResponseModel
         {
             Token = token,
-            TokenExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpiryMinutes),
+            TokenExpiresAt = DateTime.Now.AddMinutes(_jwtSettings.TokenExpiryMinutes),
             RefreshToken = refreshToken,
             RefreshTokenExpiresAt = refreshTokenExpiresAt
         }, "Login succeeded.");
@@ -85,7 +85,7 @@ public class BL_Auth
     {
         var login = await _daAuth.GetUserByRefreshToken(request.RefreshToken);
 
-        if (login == null || login.Refreshtokenexpiresat < DateTime.UtcNow)
+        if (login == null || login.Refreshtokenexpiresat < DateTime.Now)
         {
             return Result<RefreshTokenResponseModel>.ValidationError("Invalid or expired refresh token.");
         }
@@ -93,18 +93,23 @@ public class BL_Auth
         var newJwt = _jwtService.GenerateToken(login.Admincode, login.Username);
 
         // Check if refresh token is about to expire
-        if ((login.Refreshtokenexpiresat - DateTime.UtcNow).TotalDays < 1)
+        if ((login.Refreshtokenexpiresat - DateTime.Now).TotalDays < 1)
         {
             _logger.LogInformation($"Rotating refresh token for loginid: {login.Loginid}");
             login.Refreshtoken = GenerateUlid();
-            login.Refreshtokenexpiresat = DateTime.UtcNow.AddDays(1);
+            login.Refreshtokenexpiresat = DateTime.Now.AddDays(1);
+            
+            // Update audit fields
+            login.Modifiedby = "SYSTEM";
+            login.Modifiedat = DateTime.Now;
+            
             await _daAuth.UpdateLogin(login);
         }
 
         return Result<RefreshTokenResponseModel>.Success(new RefreshTokenResponseModel
         {
             Token = newJwt,
-            TokenExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpiryMinutes),
+            TokenExpiresAt = DateTime.Now.AddMinutes(_jwtSettings.TokenExpiryMinutes),
             RefreshToken = login.Refreshtoken,
             RefreshTokenExpiresAt = login.Refreshtokenexpiresat
         }, "Token refreshed.");
@@ -119,11 +124,11 @@ public class BL_Auth
             return Result<string>.ValidationError("Invalid refresh token.");
         }
 
-        // Update login status as "logout"
+        // Update login status as "logout", Update audit fields
         login.Loginstatus = "Logout";
-        login.Refreshtokenexpiresat = DateTime.UtcNow; 
+        login.Refreshtokenexpiresat = DateTime.Now; 
         login.Modifiedby = "SYSTEM";
-        login.Modifiedat = DateTime.UtcNow;
+        login.Modifiedat = DateTime.Now;
 
         await _daAuth.UpdateLogin(login);
 
@@ -131,6 +136,4 @@ public class BL_Auth
 
         return Result<string>.Success("Logout succeeded.");
     }
-
-
 }

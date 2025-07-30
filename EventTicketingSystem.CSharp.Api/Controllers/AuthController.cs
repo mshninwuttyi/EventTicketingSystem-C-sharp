@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("Refresh")]
+    [HttpPost("RefreshToken")]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestModel request)
     {
         var result = await _blAuth.RefreshToken(request);

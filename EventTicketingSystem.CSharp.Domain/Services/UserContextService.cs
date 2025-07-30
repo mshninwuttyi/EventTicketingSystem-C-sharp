@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EventTicketingSystem.CSharp.Domain.Services;
 
@@ -10,25 +11,12 @@ public class UserContextService
     {
         _httpContextAccessor = httpContextAccessor;
     }
+    private ClaimsPrincipal? CurrentUser() => _httpContextAccessor.HttpContext?.User;
 
-    private ClaimsPrincipal? CurrentUser()
-    {
-        return _httpContextAccessor.HttpContext?.User;
-    }
+    public string? Username => CurrentUser()?.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value;
 
-    public string? Username()
-    {
-        return CurrentUser()?.Identity?.Name ?? CurrentUser()?.FindFirst(ClaimTypes.Name)?.Value;
-    }
+    public string? SessionId => CurrentUser()?.FindFirst("sessionid")?.Value;
 
-    public string? SessionId()
-    {
-        return CurrentUser()?.FindFirst("sessionid")?.Value;
-    }
+    public string? AdminCode => CurrentUser()?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
-    public string? AdminCode()
-    {
-        return CurrentUser()?.FindFirst("admincode")?.Value;
-        
-    }
 }

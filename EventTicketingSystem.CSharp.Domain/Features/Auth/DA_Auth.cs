@@ -30,6 +30,4 @@ public class DA_Auth
     {
         return await _db.TblLogins.FirstOrDefaultAsync(x => x.Refreshtoken == refreshToken);
     }
-
-
 }
