@@ -53,6 +53,8 @@ public class DA_VerificationCode : AuthorizationService
                 VerificationId = x.Verificationid,
                 VerificationCode = x.Verificationcode,
                 Email = x.Email,
+                ExpiredTime = x.Expiredtime,
+                Isused = x.Isused,
                 Createdat = x.Createdat,
                 Createdby = x.Createdby,
                 Modifiedat = x.Modifiedat,
@@ -71,9 +73,9 @@ public class DA_VerificationCode : AuthorizationService
 
     #endregion
 
-    #region Get Verification Code
+    #region Get Verification Code By Id
 
-    public async Task<Result<VCResponseModel>> Edit(string vcId)
+    public async Task<Result<VCResponseModel>> GetVerificationCodeById(string vcId)
     {
         var responseModel = new Result<VCResponseModel>();
         var model = new VCResponseModel();
@@ -108,6 +110,47 @@ public class DA_VerificationCode : AuthorizationService
 
     #endregion
 
+    #region Get Verifications Code List by Email
+
+    public async Task<Result<VCResponseModel>> GetByEmail(string email)
+    {
+        var responseModel = new Result<VCResponseModel>();
+        var model = new VCResponseModel();
+        try
+        {
+            var data = await _db.TblVerifications
+                        .Where(x => x.Deleteflag == false && x.Email == email)
+                        .ToListAsync();
+            if (data is null)
+            {
+                return Result<VCResponseModel>.NotFoundError("No Verification Found.");
+            }
+
+            model.VerificationCodes = data.Select(x => new VCodeModel
+            {
+                VerificationId = x.Verificationid,
+                VerificationCode = x.Verificationcode,
+                Email = x.Email,
+                ExpiredTime = x.Expiredtime,
+                Isused = x.Isused,
+                Createdat = x.Createdat,
+                Createdby = x.Createdby,
+                Modifiedat = x.Modifiedat,
+                Modifiedby = x.Modifiedby,
+                Deleteflag = false
+            }).ToList();
+
+            return Result<VCResponseModel>.Success(model);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<VCResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    #endregion
+
     #region Verify Code
     public async Task<Result<bool>> VerifyCode(string? email, string? code)
     {
@@ -122,7 +165,13 @@ public class DA_VerificationCode : AuthorizationService
 
             var data = await _db.TblVerifications
                         .AsNoTracking()
-                        .Where(x => x.Deleteflag == false && x.Email == email).OrderByDescending(x => x.Createdat).FirstOrDefaultAsync();
+                        .Where(x =>
+                            x.Deleteflag == false &&
+                            x.Email == email &&
+                            x.Isused == false &&
+                            x.Expiredtime > DateTime.Now)
+                        .OrderByDescending(x => x.Createdat)
+                        .FirstOrDefaultAsync();
 
             if (data != null)
             {
