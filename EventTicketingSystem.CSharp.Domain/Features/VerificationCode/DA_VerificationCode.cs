@@ -50,8 +50,8 @@ public class DA_VerificationCode : AuthorizationService
 
             model.VerificationCodes = data.Select(x => new VCodeModel
             {
-                Verificationid = x.Verificationid,
-                Verificationcode = x.Verificationcode,
+                VerificationId = x.Verificationid,
+                VerificationCode = x.Verificationcode,
                 Email = x.Email,
                 Createdat = x.Createdat,
                 Createdby = x.Createdby,

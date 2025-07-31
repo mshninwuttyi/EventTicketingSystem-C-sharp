@@ -26,6 +26,6 @@ public class BL_VerificationCode
 
     public async Task<Result<bool>> VerifyCode(VCRequestModel request)
     {
-        return await _daService.VerifyCode(request.Email, request.Verificationcode);
+        return await _daService.VerifyCode(request.Email, request.VerificationCode);
     }
 }

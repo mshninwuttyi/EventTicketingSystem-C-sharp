@@ -8,11 +8,15 @@ public class VCResponseModel
 }
 
 public class VCodeModel{
-    public string? Verificationid { get; set; }
+    public string? VerificationId { get; set; }
 
-    public string? Verificationcode { get; set; }
+    public string? VerificationCode { get; set; }
 
     public string? Email { get; set; }
+
+    public DateTime? ExpiredTime { get; set; }
+
+    public bool? Isused { get; set; }
 
     public string? Createdby { get; set; }
 
@@ -28,9 +32,11 @@ public class VCodeModel{
     {
         return new VCodeModel
         {
-            Verificationid = verification.Verificationid,
-            Verificationcode = verification.Verificationcode,
+            VerificationId = verification.Verificationid,
+            VerificationCode = verification.Verificationcode,
             Email = verification.Email,
+            ExpiredTime = verification.Expiredtime,
+            Isused = verification.Isused,
             Createdby = verification.Createdby,
             Createdat = verification.Createdat,
             Modifiedat = verification.Modifiedat,

@@ -9,8 +9,6 @@ public partial class TblTickettype
 
     public string Tickettypecode { get; set; } = null!;
 
-    public string Eventcode { get; set; } = null!;
-
     public string Tickettypename { get; set; } = null!;
 
     public string Createdby { get; set; } = null!;
