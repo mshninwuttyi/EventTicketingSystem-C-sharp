@@ -25,3 +25,4 @@ global using EventTicketingSystem.CSharp.Domain.Features.Admin;
 global using EventTicketingSystem.CSharp.Domain.Features.Event;
 global using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
 global using EventTicketingSystem.CSharp.Domain.Features.TicketType;
+global using EventTicketingSystem.CSharp.Domain.Features.Dashboard;
