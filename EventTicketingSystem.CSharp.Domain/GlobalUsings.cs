@@ -44,3 +44,4 @@ global using EventTicketingSystem.CSharp.Shared.Extensions;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.QR;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.VenueType;
 global using System.Text.RegularExpressions;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.Dashboard;
