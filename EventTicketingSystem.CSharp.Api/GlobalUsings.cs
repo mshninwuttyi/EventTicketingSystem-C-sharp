@@ -1,3 +1,4 @@
+global using EventTicketingSystem.CSharp.Domain;
 global using Serilog;
 global using Microsoft.AspNetCore.Mvc;
 global using EventTicketingSystem.CSharp.Shared;
@@ -20,8 +21,13 @@ global using EventTicketingSystem.CSharp.Domain.Features.BusinessOwner;
 global using EventTicketingSystem.CSharp.Domain.Features.QR;
 global using EventTicketingSystem.CSharp.Domain.Features.Ticket;
 global using EventTicketingSystem.CSharp.Domain.Features.Venue;
+global using EventTicketingSystem.CSharp.Domain.Features.Auth;
 global using EventTicketingSystem.CSharp.Domain.Features.SearchEventsAndVenues;
+global using EventTicketingSystem.CSharp.Domain.Config;
 global using EventTicketingSystem.CSharp.Domain.Features.Admin;
 global using EventTicketingSystem.CSharp.Domain.Features.Event;
 global using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
+global using Microsoft.AspNetCore.Authorization;
 global using EventTicketingSystem.CSharp.Domain.Features.TicketType;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
