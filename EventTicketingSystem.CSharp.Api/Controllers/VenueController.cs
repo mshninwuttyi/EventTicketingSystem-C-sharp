@@ -10,9 +10,6 @@ public class VenueController : ControllerBase
     {
         _blVenue = blService;
     }
-    
-    // Get current AdminCode from JWT claims
-    private string CurrentUserId => User.GetCurrentUserId();
 
     [HttpGet("List")]
     public async Task<IActionResult> List()

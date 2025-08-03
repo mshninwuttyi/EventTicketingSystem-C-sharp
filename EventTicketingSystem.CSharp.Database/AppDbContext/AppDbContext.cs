@@ -25,6 +25,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<TblEventcategory> TblEventcategories { get; set; }
 
+    public virtual DbSet<TblLogin> TblLogins { get; set; }
+
     public virtual DbSet<TblSequence> TblSequences { get; set; }
 
     public virtual DbSet<TblTicket> TblTickets { get; set; }
@@ -255,6 +257,48 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Modifiedby)
                 .HasColumnType("character varying")
                 .HasColumnName("modifiedby");
+        });
+
+        modelBuilder.Entity<TblLogin>(entity =>
+        {
+            entity.HasKey(e => e.Loginid).HasName("tbl_login_pk");
+
+            entity.ToTable("tbl_login");
+
+            entity.Property(e => e.Loginid)
+                .HasColumnType("character varying")
+                .HasColumnName("loginid");
+            entity.Property(e => e.Admincode)
+                .HasColumnType("character varying")
+                .HasColumnName("admincode");
+            entity.Property(e => e.Createdat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Createdby)
+                .HasColumnType("character varying")
+                .HasColumnName("createdby");
+            entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Loginstatus)
+                .HasColumnType("character varying")
+                .HasColumnName("loginstatus");
+            entity.Property(e => e.Modifiedat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("modifiedat");
+            entity.Property(e => e.Modifiedby)
+                .HasColumnType("character varying")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.Refreshtoken)
+                .HasColumnType("character varying")
+                .HasColumnName("refreshtoken");
+            entity.Property(e => e.Refreshtokenexpiresat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("refreshtokenexpiresat");
+            entity.Property(e => e.Sessionid)
+                .HasColumnType("character varying")
+                .HasColumnName("sessionid");
+            entity.Property(e => e.Username)
+                .HasColumnType("character varying")
+                .HasColumnName("username");
         });
 
         modelBuilder.Entity<TblSequence>(entity =>
