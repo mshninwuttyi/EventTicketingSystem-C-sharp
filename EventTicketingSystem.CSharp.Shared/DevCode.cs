@@ -162,16 +162,11 @@ public static partial class DevCode
 
     #region File Upload
 
-    public static async Task<FileUploadData> UploadFileAsync(IFormFile file, EnumDirectory directory)
+    public static async Task<List<FileUploadData>> UploadFilesAsync(this EnumDirectory directory, IEnumerable<IFormFile> files)
     {
-        if (file is null || file.Length is 0)
+        if (files == null || !files.Any())
         {
-            throw new Exception("Error: No file was uploaded.");
-        }
-
-        if (file.Length > MaxFileSize)
-        {
-            throw new Exception($"Error: '{file.FileName}' exceeds 5MB limit.");
+            throw new Exception("Error: No files were uploaded.");
         }
 
         var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), directory.ToString());
@@ -180,31 +175,57 @@ public static partial class DevCode
             Directory.CreateDirectory(uploadPath);
         }
 
-        var fileName = $"{GenerateUlid()}.jpeg";
-        var filePath = Path.Combine(uploadPath, fileName);
+        var uploadedFiles = new List<FileUploadData>();
 
-        try
+        foreach (var file in files)
         {
-            using var fileStream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(fileStream);
-
-            fileStream.Position = 0;
-
-            return new FileUploadData
+            if (file == null || file.Length == 0)
             {
-                FilePath = filePath,
-                FileName = fileName
-            };
+                throw new Exception($"Error: One or more files are empty.");
+            }
+
+            if (file.Length > MaxFileSize)
+            {
+                throw new Exception($"Error: '{file.FileName}' exceeds {MaxFileSize / (1024 * 1024)}MB limit.");
+            }
+
+            var fileName = GenerateUlid()+".jpg";
+            var filePath = Path.Combine(uploadPath, fileName);
+            var savePath = Path.Combine(directory.ToString(), fileName);
+            try
+            {
+                using var fileStream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(fileStream);
+
+                uploadedFiles.Add(new FileUploadData
+                {
+                    FilePath = savePath,
+                    FileName = fileName,
+                });
+            }
+            catch (Exception ex)
+            {
+                foreach (var uploadedFile in uploadedFiles)
+                {
+                    try
+                    {
+                        File.Delete(uploadedFile.FilePath);
+                    }
+                    catch
+                    {
+                        // throw;
+                    }
+                }
+                throw new Exception($"Error uploading files: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error uploading '{file.FileName}': {ex.Message}");
-        }
+
+        return uploadedFiles;
     }
 
     #endregion
 
-    #region Get Base64 File Extension
+    #region Base64 Extenstion
 
     public static async Task<string> GetBase64FromFile(string filePath)
     {
@@ -255,6 +276,50 @@ public static partial class DevCode
         for (int i = 0; i < bytes.Length; i++)
             result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
         return result.ToString();
+    }
+
+    #endregion
+
+    #region String to Hex to String
+
+    public static string StringToHex(this string input)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(input);
+        return BitConverter.ToString(bytes).Replace("-", "");
+    }
+
+    public static string HexToString(this string hex)
+    {
+        if (string.IsNullOrEmpty(hex)) return string.Empty;
+
+        var bytes = new byte[hex.Length / 2];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+        }
+        return Encoding.UTF8.GetString(bytes);
+    }
+
+    public static byte[] ConvertFromStringToHex(this string inputHex)
+    {
+        inputHex = inputHex.Replace(" ", "");
+
+        if (inputHex.Length % 2 != 0)
+            throw new ArgumentException("Hex string must have even length");
+
+        var resultantArray = new byte[inputHex.Length / 2];
+        for (var i = 0; i < resultantArray.Length; i++)
+        {
+            resultantArray[i] = Convert.ToByte(inputHex.Substring(i * 2, 2), 16);
+        }
+        return resultantArray;
+    }
+
+    public static string ConvertByteArrayToHexString(this byte[] byteArray)
+    {
+        if (byteArray == null || byteArray.Length == 0)
+            return string.Empty;
+        return BitConverter.ToString(byteArray).Replace("-", "");
     }
 
     #endregion

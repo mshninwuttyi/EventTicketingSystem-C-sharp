@@ -7,12 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Models\NewFolder\**" />
-	  <EmbeddedResource Remove="Models\NewFolder\**" />
-	  <None Remove="Models\NewFolder\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\EventTicketingSystem.CSharp.Database\EventTicketingSystem.CSharp.Database.csproj" />
 		<ProjectReference Include="..\EventTicketingSystem.CSharp.Shared\EventTicketingSystem.CSharp.Shared.csproj" />
 	</ItemGroup>

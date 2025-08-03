@@ -2,7 +2,6 @@
 
 public class EventCategoryCreateRequestModel
 {
-    public string EventCategoryCode { get; set; }
 
     public string CategoryName { get; set; }
 }

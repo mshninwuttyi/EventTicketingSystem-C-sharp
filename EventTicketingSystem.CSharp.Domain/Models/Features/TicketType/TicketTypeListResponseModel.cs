@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
-
-public class TicketTypeListResponseModel
+namespace EventTicketingSystem.CSharp.Domain.Models.Features.TicketType
 {
-    public List<TicketTypeListModel>? TicketTypeList { get; set; }  
-}
+    public class TicketTypeListResponseModel
+    {
+        public List<TicketTypeListModel>? TicketTypeList { get; set; }
+    }
 
 public class TicketTypeListModel
 {
@@ -25,18 +19,16 @@ public class TicketTypeListModel
     public string? ModifiedBy { get; set; }
     public DateTime? ModifiedAt { get; set; }
 
-    public static TicketTypeEditModel FromTblTicketType(TblTickettype tblTickettype)
-    {
-        return new TicketTypeEditModel
+        public static TicketTypeListModel FromTblTickettype(TblTickettype tblTickettype)
         {
-            TicketTypeId = tblTickettype.Tickettypeid,
-            TicketTypeCode = tblTickettype.Tickettypecode,
-            EventCode = tblTickettype.Eventcode,
-            TicketTypeName = tblTickettype.Tickettypename,
-            CreatedBy = tblTickettype.Createdby,
-            CreatedAt = tblTickettype.Createdat,
-            ModifiedBy = tblTickettype.Modifiedby,
-            ModifiedAt = tblTickettype.Modifiedat,
-        };
+            return new TicketTypeListModel
+            {
+                Tickettypecode = tblTickettype.Tickettypecode,
+                Tickettypename = tblTickettype.Tickettypename,
+
+            };
+
+        }
+
     }
 }

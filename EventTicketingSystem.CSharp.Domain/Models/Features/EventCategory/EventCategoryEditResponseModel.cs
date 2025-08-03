@@ -17,9 +17,6 @@ public class EventCategoryEditModel
 
     public DateTime? Createdat { get; set; }
 
-    public string? Modifiedby { get; set; }
-
-    public DateTime? Modifiedat { get; set; }
 
     public static EventCategoryEditModel FromTblCategory(TblEventcategory category)
     {

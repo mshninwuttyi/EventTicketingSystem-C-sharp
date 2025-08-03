@@ -103,10 +103,6 @@ public class DA_Event
         {
             return Result<EventCreateResponseModel>.ValidationError("End Date Is Required!");
         }
-        if (requestModel.Eventimage.IsNullOrEmpty())
-        {
-            return Result<EventCreateResponseModel>.ValidationError("Event Image Is Required!");
-        }
         if (requestModel.Eventstatus.IsNullOrEmpty())
         {
             return Result<EventCreateResponseModel>.ValidationError("Event Status Is Required");

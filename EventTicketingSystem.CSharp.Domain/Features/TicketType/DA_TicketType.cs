@@ -1,4 +1,4 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
+using EventTicketingSystem.CSharp.Domain.Models.Features.TicketType;
 using EventTicketingSystem.CSharp.Domain.Models.Features.VerificationCode;
 using SixLabors.ImageSharp;
 using System;
@@ -135,6 +135,7 @@ public class DA_TicketType
         {
             responseModel = Result<TicketTypeCreateResponseModel>.ValidationError("The total number of tickets exceeds the allowed quantity for this event.");
             goto ReturnErrorResponse;
+
         }
 
         try
