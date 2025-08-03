@@ -16,6 +16,7 @@ public class TicketTypeListModel
     public string? TicketTypeId { get; set; }
     public string? TicketTypeCode { get; set; }
     public string? EventCode { get; set; }
+    public string? EventName { get; set; }
     public string? TicketTypeName { get; set; }
     public decimal Ticketprice { get; set; }
     public string? TicketQuantity { get; set; }

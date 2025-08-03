@@ -44,7 +44,6 @@ create table public.tbl_ticketprice
         constraint tbl_ticketprice_pk
             primary key,
     ticketpricecode varchar        not null,
-    eventcode       varchar        not null,
     tickettypecode  varchar        not null,
     ticketprice     numeric(20, 2) not null,
     ticketquantity  integer        not null,
@@ -64,6 +63,7 @@ create table public.tbl_tickettype
         constraint tbl_tickettype_pk
             primary key,
     tickettypecode varchar   not null,
+    eventcode      varchar   not null,
     tickettypename varchar   not null,
     createdby      varchar   not null,
     createdat      timestamp not null,
@@ -245,7 +245,7 @@ create table public.tbl_event
     eventname           varchar   not null,
     eventcategorycode   varchar   not null,
     description         varchar   not null,
-    Address             varchar   not null,
+    address             varchar   not null,
     startdate           timestamp not null,
     enddate             timestamp not null,
     isactive            boolean   not null,
@@ -322,3 +322,4 @@ INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencet
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('VC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Verification
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('TP', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Ticket Price
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BE', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Business Email
+

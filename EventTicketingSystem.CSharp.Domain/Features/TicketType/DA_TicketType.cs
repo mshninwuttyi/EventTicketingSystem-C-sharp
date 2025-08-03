@@ -34,6 +34,7 @@ public class DA_TicketType
         string query = @"SELECT 
             tt.tickettypecode,
             tt.eventcode,
+            te.eventname,
             tt.tickettypename,
             tt.createdby,
             tt.createdat,
@@ -45,6 +46,7 @@ public class DA_TicketType
             tp.ticketquantity
         FROM tbl_tickettype tt
         LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+        LEFT JOIN tbl_event te ON te.eventcode = tt.eventcode
         WHERE tt.deleteflag = false";
 
         using IDbConnection dbConnection = new NpgsqlConnection(_connection);
@@ -66,6 +68,7 @@ public class DA_TicketType
     SELECT 
         tt.tickettypecode,
         tt.eventcode,
+        te.eventname,
         tt.tickettypename,
         tt.createdby,
         tt.createdat,
@@ -77,6 +80,7 @@ public class DA_TicketType
         tp.ticketquantity
     FROM tbl_tickettype tt
     LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+    LEFT JOIN tbl_event te ON te.eventcode = tt.eventcode
     WHERE tt.deleteflag = false
       AND tt.tickettypecode = @TicketTypeCode";
 
