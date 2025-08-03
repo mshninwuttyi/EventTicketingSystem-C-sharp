@@ -1,13 +1,18 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.Admin;
 
-public class DA_Admin
+public class DA_Admin : AuthorizationService
 {
     private readonly AppDbContext _db;
     private readonly ILogger<DA_Admin> _logger;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
+    private string specialCharacters = @"!@#$%^&*(),.?""{}|<>";
+    private int minLength = 8;
+    private int maxLength = 20;
 
-    public DA_Admin(ILogger<DA_Admin> logger, AppDbContext db, CommonService commonService)
+    public DA_Admin(IHttpContextAccessor httpContextAccessor,
+                    ILogger<DA_Admin> logger,
+                    AppDbContext db,
+                    CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -25,7 +30,7 @@ public class DA_Admin
         {
             var data = await _db.TblAdmins
                         .Where(x => x.Deleteflag == false)
-                        .OrderBy(x => x.Adminid)
+                        .OrderByDescending(x => x.Adminid)
                         .ToListAsync();
             if (data is null)
             {
@@ -102,7 +107,7 @@ public class DA_Admin
                 Phone = requestModel.PhoneNo,
                 Profileimage = null,
                 Isfirsttime = true,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false,
             };
@@ -172,7 +177,7 @@ public class DA_Admin
 
         try
         {
-            admin.Modifiedby = CreatedByUserId;
+            admin.Modifiedby = CurrentUserId;
             admin.Modifiedat = DateTime.Now;
             _db.Entry(admin).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
@@ -221,7 +226,7 @@ public class DA_Admin
                 return Result<AdminDeleteResponseModel>.UserInputError("Incorrect Password.");
             }
 
-            data.Modifiedby = CreatedByUserId;
+            data.Modifiedby = CurrentUserId;
             data.Modifiedat = DateTime.Now;
             data.Deleteflag = true;
             _db.Entry(data).State = EntityState.Modified;
@@ -240,11 +245,11 @@ public class DA_Admin
 
     #region Edit Profile Image
 
-    public async Task<Result<AdminEditProfileImageResponseModel>> EditProfileImage(AdminEditProfileImageRequestModel requestModel)
+    public async Task<Result<AdminEditProfileResponseModel>> EditProfile(AdminEditProfileRequestModel requestModel)
     {
         if (requestModel.AdminCode.IsNullOrEmpty())
         {
-            return Result<AdminEditProfileImageResponseModel>.UserInputError("Admin Code cannot be null or empty.");
+            return Result<AdminEditProfileResponseModel>.UserInputError("Admin Code cannot be null or empty.");
         }
         try
         {
@@ -255,22 +260,90 @@ public class DA_Admin
                             );
             if (admin is null)
             {
-                return Result<AdminEditProfileImageResponseModel>.NotFoundError("Admin Not Found.");
+                return Result<AdminEditProfileResponseModel>.NotFoundError("Admin Not Found.");
             }
 
             var uploadResults = await EnumDirectory.ProfileImage.UploadFilesAsync(new List<IFormFile>() { requestModel.ProfileImage });
             admin.Profileimage = string.Join(",", uploadResults.Select(x => x.FilePath));
-            admin.Modifiedby = CreatedByUserId;
+            admin.Fullname = requestModel.FullName;
+            admin.Phone = requestModel.Phone;
+            admin.Modifiedby = CurrentUserId;
             admin.Modifiedat = DateTime.Now;
             _db.Entry(admin).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
-            return Result<AdminEditProfileImageResponseModel>.Success("Profile image updated successfully.");
+            return Result<AdminEditProfileResponseModel>.Success("Profile updated successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<AdminEditProfileImageResponseModel>.SystemError(ex.Message);
+            return Result<AdminEditProfileResponseModel>.SystemError(ex.Message);
+        }
+    }
+
+    #endregion
+
+    #region Admin Change Password
+
+    public async Task<Result<AdminChangePasswordResponseModel>> ChangePassword(AdminChangePasswordRequestModel requestModel)
+    {
+        if (requestModel.AdminCode.IsNullOrEmpty())
+        {
+            return Result<AdminChangePasswordResponseModel>.UserInputError("Admin Code cannot be null or empty.");
+        }
+        if (requestModel.UserName.IsNullOrEmpty())
+        {
+            return Result<AdminChangePasswordResponseModel>.UserInputError("Username Required.");
+        }
+        if (requestModel.OldPassword.IsNullOrEmpty() ||
+            requestModel.NewPassword.IsNullOrEmpty() ||
+            requestModel.ConfirmNewPassword.IsNullOrEmpty())
+        {
+            return Result<AdminChangePasswordResponseModel>.UserInputError("Old Password and New Password fields cannot be empty.");
+        }
+        if (requestModel.NewPassword != requestModel.ConfirmNewPassword)
+        {
+            return Result<AdminChangePasswordResponseModel>.ValidationError("New Password and Confirm Password do not match.");
+        }
+        if (requestModel.NewPassword == requestModel.ConfirmNewPassword)
+        {
+            var validationError = ValidatePassword(requestModel.UserName!, requestModel.NewPassword!);
+            if (validationError is not null)
+            {
+                return Result<AdminChangePasswordResponseModel>.ValidationError(validationError);
+            }
+        }
+
+        try
+        {
+            var admin = await _db.TblAdmins
+                            .FirstOrDefaultAsync(
+                                x => x.Admincode == requestModel.AdminCode &&
+                                x.Deleteflag == false
+                            );
+            if (admin is null)
+            {
+                return Result<AdminChangePasswordResponseModel>.NotFoundError("Admin not found.");
+            }
+
+            var oldPasswordHash = requestModel.OldPassword!.HashPassword(admin.Username);
+            if (admin.Password != oldPasswordHash)
+            {
+                return Result<AdminChangePasswordResponseModel>.UserInputError("Incorrect old password.");
+            }
+
+            admin.Password = requestModel.NewPassword!.HashPassword(admin.Username);
+            admin.Modifiedby = CurrentUserId;
+            admin.Modifiedat = DateTime.Now;
+            _db.Entry(admin).State = EntityState.Modified;
+            await _db.SaveAndDetachAsync();
+
+            return Result<AdminChangePasswordResponseModel>.Success("Password changed successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogExceptionError(ex);
+            return Result<AdminChangePasswordResponseModel>.SystemError(ex.Message);
         }
     }
 
@@ -328,33 +401,41 @@ public class DA_Admin
         return null!;
     }
 
-    //private static string ValidateFields(AdminUpdateRequestModel requestModel)
-    //{
-    //    if (!requestModel.PhoneNo.IsNullOrEmpty() && requestModel.PhoneNo.Length < 9)
-    //    {
-    //        return "Phone number must contain at least 9 numbers!";
-    //    }
+    private string? ValidatePassword(string userName, string password)
+    {
+        if (password.IsNullOrEmpty())
+            return "Password cannot be empty";
 
-    //    if (!requestModel.Password.IsNullOrEmpty())
-    //    {
-    //        if (requestModel.Password.Length < 8)
-    //            return "Password must contain at least 8 characters!";
+        if (password.Length < minLength)
+            return $"Password must be at least {minLength} characters";
 
-    //        if (!requestModel.Password.Any(char.IsUpper))
-    //            return "Password must contain at least one upper letter!";
+        if (password.Length > maxLength)
+            return $"Password cannot exceed {maxLength} characters";
 
-    //        if (!requestModel.Password.Any(char.IsLower))
-    //            return "Password must contain at least one lower letter!";
+        if (password.IsSameDigit())
+            return "Password cannot contain all repeating characters";
 
-    //        if (!requestModel.Password.Any(char.IsDigit))
-    //            return "Password must contain at least one digit!";
+        if (password.IsSequential())
+            return "Password contains predictable sequences (e.g., 12345 or qwerty)";
 
-    //        if (!requestModel.Password.Any(c => !char.IsLetterOrDigit(c)))
-    //            return "Password must contain at least one special character!";
-    //    }
+        if (!Regex.IsMatch(password, $"[{Regex.Escape(specialCharacters)}]"))
+            return $"Password must contain at least one special character: {specialCharacters}";
 
-    //    return null!;
-    //}
+        if (!Regex.IsMatch(password, "[A-Z]"))
+            return "Password must contain at least one uppercase letter (A-Z)";
+
+        if (!Regex.IsMatch(password, "[a-z]"))
+            return "Password must contain at least one lowercase letter (a-z)";
+
+        if (!Regex.IsMatch(password, "[0-9]"))
+            return "Password must contain at least one digit (0-9)";
+
+        if (password.Contains(userName, StringComparison.OrdinalIgnoreCase))
+            return "Password cannot contain your username";
+
+        return null;
+    }
+
 
     private bool ValidateEmail(string email)
     {

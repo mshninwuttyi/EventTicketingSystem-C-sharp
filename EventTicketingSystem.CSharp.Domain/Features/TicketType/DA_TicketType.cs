@@ -1,14 +1,17 @@
 namespace EventTicketingSystem.CSharp.Domain.Features.TicketType;
 
-public class DA_TicketType
+public class DA_TicketType : AuthorizationService
 {
     private readonly AppDbContext _db;
     private readonly ILogger _logger;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
     private readonly string _connection;
 
-    public DA_TicketType(AppDbContext db, ILogger<DA_TicketType> logger, IConfiguration configuration, CommonService commonService)
+    public DA_TicketType(IHttpContextAccessor httpContextAccessor,
+                         AppDbContext db,
+                         ILogger<DA_TicketType> logger,
+                         IConfiguration configuration,
+                         CommonService commonService) : base(httpContextAccessor)
     {
         _db = db;
         _logger = logger;
@@ -140,7 +143,7 @@ public class DA_TicketType
                 Tickettypename = requestModel.TicketTypeName,
                 Eventcode = requestModel.EventCode,
                 Createdat = DateTime.Now,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Deleteflag = false,
             };
 
@@ -155,7 +158,7 @@ public class DA_TicketType
                 Ticketquantity = requestModel.TicketQuantity,
                 Tickettypecode = TblTickettype.Tickettypecode,
                 Createdat = DateTime.Now,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Deleteflag = false,
             };
 
@@ -173,7 +176,7 @@ public class DA_TicketType
                     Isused = false,
                     Ticketpricecode = ticketprice.Ticketpricecode,
                     Createdat = DateTime.Now,
-                    Createdby = CreatedByUserId,
+                    Createdby = CurrentUserId,
                     Deleteflag = false
                 };
                 ticketList.Add(ticket);
@@ -216,7 +219,7 @@ public class DA_TicketType
         {
             tickettype.Tickettypename = requestModel.TicketTypeName;
             tickettype.Modifiedat = DateTime.Now;
-            tickettype.Modifiedby = CreatedByUserId;
+            tickettype.Modifiedby = CurrentUserId;
             _db.Entry(tickettype).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
 
@@ -257,14 +260,14 @@ public class DA_TicketType
         {
             tickettype.Deleteflag = true;
             tickettype.Modifiedat = DateTime.Now;
-            tickettype.Modifiedby = CreatedByUserId;
+            tickettype.Modifiedby = CurrentUserId;
             _db.Entry(tickettype).State = EntityState.Modified;
 
             if (ticketprice != null)
             {
                 ticketprice.Deleteflag = true;
                 ticketprice.Modifiedat = DateTime.Now;
-                ticketprice.Modifiedby = CreatedByUserId;
+                ticketprice.Modifiedby = CurrentUserId;
                 _db.Entry(ticketprice).State = EntityState.Modified;
 
                 if (tickets.Count > 0)
@@ -273,7 +276,7 @@ public class DA_TicketType
                     {
                         ticket.Deleteflag = true;
                         ticket.Modifiedat = DateTime.Now;
-                        ticket.Modifiedby = CreatedByUserId;
+                        ticket.Modifiedby = CurrentUserId;
                         _db.Entry(ticket).State = EntityState.Modified;
                     }
                 }

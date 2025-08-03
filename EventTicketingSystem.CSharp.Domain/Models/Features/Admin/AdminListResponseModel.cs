@@ -7,37 +7,22 @@ public class AdminListResponseModel
 
 public class AdminListModel
 {
-    public string? AdminId { get; set; }
-
     public string? AdminCode { get; set; }
 
-    public string? Username { get; set; }
+    public string? FullName { get; set; }
 
     public string? Email { get; set; }
 
     public string? PhoneNo { get; set; }
 
-    public string? Password { get; set; }
-
-    public string? ProfileImage { get; set; }
-
-    public string? Createdby { get; set; }
-
-    public DateTime? Createdat { get; set; }
-
     public static AdminListModel FromTblAdmin(TblAdmin admin)
     {
         return new AdminListModel
         {
-            AdminId = admin.Adminid,
             AdminCode = admin.Admincode,
-            Username = admin.Username,
+            FullName = admin.Fullname,
             Email = admin.Email,
-            PhoneNo = admin.Phone,
-            ProfileImage = admin.Profileimage,
-            Password = admin.Password,
-            Createdby = admin.Createdby,
-            Createdat = admin.Createdat
+            PhoneNo = admin.Phone
         };
     }
 }

@@ -1,13 +1,15 @@
 namespace EventTicketingSystem.CSharp.Domain.Features.Venue;
 
-public class DA_Venue
+public class DA_Venue : AuthorizationService
 {
     private readonly ILogger<DA_Venue> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_Venue(ILogger<DA_Venue> logger, AppDbContext db, CommonService commonService)
+    public DA_Venue(IHttpContextAccessor httpContextAccessor,
+                    ILogger<DA_Venue> logger,
+                    AppDbContext db,
+                    CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -107,7 +109,7 @@ public class DA_Venue
                 Facilities = requestModel.Facilities,
                 Addons = addons,
                 Venueimage = imageLink,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
@@ -155,7 +157,7 @@ public class DA_Venue
             existingVenue.Address = requestModel.Address!;
             existingVenue.Facilities = requestModel.Facilities;
             existingVenue.Addons = addons;
-            existingVenue.Modifiedby = CreatedByUserId;
+            existingVenue.Modifiedby = CurrentUserId;
             existingVenue.Modifiedat = DateTime.Now;
 
             _db.Entry(existingVenue).State = EntityState.Modified;
@@ -191,7 +193,7 @@ public class DA_Venue
             }
 
             venue.Deleteflag = true;
-            venue.Modifiedby = CreatedByUserId;
+            venue.Modifiedby = CurrentUserId;
             venue.Modifiedat = DateTime.Now;
 
             _db.Entry(venue).State = EntityState.Modified;

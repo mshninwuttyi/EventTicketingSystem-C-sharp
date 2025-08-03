@@ -15,7 +15,7 @@ public class AdminDeleteResponseModel
 
 }
 
-public class AdminEditProfileImageResponseModel
+public class AdminChangePasswordResponseModel
 {
 
 }

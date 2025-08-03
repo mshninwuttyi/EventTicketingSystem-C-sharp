@@ -2,7 +2,9 @@
 
 public static partial class DevCode
 {
-    private const long MaxFileSize = 5 * 1024 * 1024;
+    private static long MaxFileSize = 5 * 1024 * 1024;
+    private static byte[] key = "C4162ECDB4594969BB1040E846869706".ToByte();
+    private static byte[] iv = "AC507B7DAC7B458C".ToByte();
 
     #region Extensions
 
@@ -36,6 +38,29 @@ public static partial class DevCode
     public static string GenerateUlid()
     {
         return Ulid.NewUlid().ToString();
+    }
+
+    public static byte[] ToByte(this string str)
+    {
+        return Encoding.UTF8.GetBytes(str);
+    }
+
+    public static bool IsSameDigit(this string input)
+    {
+        return input.Distinct().Count() == 1;
+    }
+
+    public static bool IsSequential(this string input)
+    {
+        for (var i = 1; i < input.Length; i++)
+        {
+            if (input[i] - input[i - 1] != 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     #endregion
@@ -129,7 +154,7 @@ public static partial class DevCode
     {
         var fileName = Path.GetFileName(filePath);
         var message =
-            $"File Name - {fileName} | Method Name - {methodName} | Result - {(str is string ? str : str.ToJson())}";
+            $"File Name - {fileName} | Method Name - {methodName} | Result - {(str is string ? str : str!.ToJson())}";
         logger.LogError(message);
     }
 
@@ -189,7 +214,7 @@ public static partial class DevCode
                 throw new Exception($"Error: '{file.FileName}' exceeds {MaxFileSize / (1024 * 1024)}MB limit.");
             }
 
-            var fileName = GenerateUlid()+".jpg";
+            var fileName = GenerateUlid() + ".jpg";
             var filePath = Path.Combine(uploadPath, fileName);
             var savePath = Path.Combine(directory.ToString(), fileName);
             try
@@ -320,6 +345,35 @@ public static partial class DevCode
         if (byteArray == null || byteArray.Length == 0)
             return string.Empty;
         return BitConverter.ToString(byteArray).Replace("-", "");
+    }
+
+    #endregion
+
+    #region Encryption and Decryption
+
+    public static string? ToEncrypt(this string? str)
+    {
+        if (str is null) return null;
+        var encrypted = Strings.Encrypt(str, key, iv);
+        return encrypted;
+    }
+
+    public static string ToDecrypt(this string str)
+    {
+        string decrypted = "";
+        try
+        {
+            if (!str.IsNullOrEmpty())
+            {
+                decrypted = Strings.Decrypt(str, key, iv);
+            }
+        }
+        catch
+        {
+            decrypted = str;
+        }
+
+        return decrypted;
     }
 
     #endregion

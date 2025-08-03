@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
 
-public class DA_VerificationCode
+public class DA_VerificationCode : AuthorizationService
 {
     private readonly ILogger<DA_VerificationCode> _logger;
     private readonly AppDbContext _db;
     private readonly EmailService _emailService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_VerificationCode(ILogger<DA_VerificationCode> logger, AppDbContext db, EmailService emailService)
+    public DA_VerificationCode(IHttpContextAccessor httpContextAccessor,
+                               ILogger<DA_VerificationCode> logger,
+                               AppDbContext db,
+                               EmailService emailService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -172,7 +174,7 @@ public class DA_VerificationCode
                 Verificationcode = otp,
                 Email = reqData.Email!,
                 Expiredtime = expiry,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };

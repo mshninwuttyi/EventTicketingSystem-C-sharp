@@ -42,3 +42,8 @@ global using Microsoft.Extensions.FileProviders;
 global using System.Net;
 global using System.Net.Mail;
 global using EventTicketingSystem.CSharp.Domain.Config;
+global using EventTicketingSystem.CSharp.Domain.Features.TicketType;
+global using EventTicketingSystem.CSharp.Shared.Extensions;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.QR;
+global using EventTicketingSystem.CSharp.Domain.Models.Features.VenueType;
+global using System.Text.RegularExpressions;

@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.EventCategory;
 
-public class DA_EventCategory
+public class DA_EventCategory : AuthorizationService
 {
     private readonly ILogger<DA_EventCategory> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_EventCategory(ILogger<DA_EventCategory> logger, AppDbContext db, CommonService commonService)
+    public DA_EventCategory(IHttpContextAccessor httpContextAccessor,
+                            ILogger<DA_EventCategory> logger,
+                            AppDbContext db,
+                            CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -97,7 +99,7 @@ public class DA_EventCategory
                     Eventcategorycode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_EventCategory),
                     Categoryname = requestModel.CategoryName,
                     Createdat = DateTime.Now,
-                    Createdby = CreatedByUserId,
+                    Createdby = CurrentUserId,
                     Deleteflag = false
                 };
                 await _db.TblEventcategories.AddAsync(newCategory);
@@ -142,7 +144,7 @@ public class DA_EventCategory
                 }
 
                 existingCategory.Categoryname = requestModel.CategoryName;
-                existingCategory.Modifiedby = CreatedByUserId;
+                existingCategory.Modifiedby = CurrentUserId;
                 existingCategory.Modifiedat = DateTime.Now;
                 _db.Entry(existingCategory).State = EntityState.Modified;
                 await _db.SaveAndDetachAsync();
@@ -181,7 +183,7 @@ public class DA_EventCategory
             }
 
             item.Deleteflag = true;
-            item.Modifiedby = CreatedByUserId;
+            item.Modifiedby = CurrentUserId;
             item.Modifiedat = DateTime.Now;
             _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
