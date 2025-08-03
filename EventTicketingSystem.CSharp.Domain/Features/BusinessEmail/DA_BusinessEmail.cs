@@ -1,107 +1,103 @@
-﻿using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
+﻿namespace EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
 
-namespace EventTicketingSystem.CSharp.Domain.Features.BusinessEmail;
-
-public class DA_BusinessEmail
+public class DA_BusinessEmail : AuthorizationService
 {
     private readonly ILogger<DA_BusinessEmail> _logger;
     private readonly AppDbContext _db;
+    private readonly CommonService _commonService;
 
-    private const string BusinessEmailCodePrefix = "BE";
-
-    private string NextBusinessEmailCode()
-    {
-        var count = _db.TblBusinessemails.Count() + 1; // Count existing emails and add 1
-        return $"{BusinessEmailCodePrefix}{count:D6}"; // Format with leading zeros
-    }
-
-    public DA_BusinessEmail(ILogger<DA_BusinessEmail> logger, AppDbContext db)
+    public DA_BusinessEmail(IHttpContextAccessor httpContextAccessor,
+                            ILogger<DA_BusinessEmail> logger,
+                            AppDbContext db,
+                            CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
+        _commonService = commonService;
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> Create(BusinessEmailRequestModel requestModel)
+    public async Task<Result<BusinessEmailCreateResponseModel>> Create(BusinessEmailCreateRequestModel requestModel)
     {
+        var responseModel = ValidateRequest(requestModel);
+        if (responseModel != null)
+        {
+            return responseModel;
+        }
+
         try
         {
-
-            // Create a new business email and save to database
             var newBusinessEmail = new TblBusinessemail
             {
-                Businessemailid = Ulid.NewUlid().ToString(),
-                Businessemailcode = NextBusinessEmailCode(),
+                Businessemailid = GenerateUlid(),
+                Businessemailcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_BusinessEmail),
                 Fullname = requestModel.FullName,
                 Phone = requestModel.Phone,
-                Email = requestModel.Email
+                Email = requestModel.Email,
+                Createdby = CurrentUserId,
+                Createdat = DateTime.Now,
+                Deleteflag = false
             };
             var entry = await _db.TblBusinessemails.AddAsync(newBusinessEmail);
-            await _db.SaveChangesAsync();
+            await _db.SaveAndDetachAsync();
 
-            // return the created business email response model
-            var createdBusinessEmail = entry.Entity;
-            var responseModel = new BusinessEmailResponseModel
-            {
-                BusinessEmailId = createdBusinessEmail.Businessemailid,
-                BusinessEmailCode = createdBusinessEmail.Businessemailcode,
-                FullName = createdBusinessEmail.Fullname,
-                Phone = createdBusinessEmail.Phone,
-                Email = createdBusinessEmail.Email
-            };
-            return Result<BusinessEmailResponseModel>.Success(responseModel, "Business Email created successfully.");
+            return Result<BusinessEmailCreateResponseModel>.Success("Business Email created successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<BusinessEmailResponseModel>.SystemError(ex.Message);
+            return Result<BusinessEmailCreateResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<BusinessEmailResponseModel>> GetById(string id)
+    public async Task<Result<BusinessEmailEditResponseModel>> Edit(string businessEmailCode)
     {
+        var model = new BusinessEmailEditResponseModel();
+
+        if (businessEmailCode.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailEditResponseModel>.ValidationError("Business Email Code is required.");
+        }
+
         try
         {
-            var data = await _db.TblBusinessemails.FirstOrDefaultAsync(b => b.Businessemailid == id);
+            var data = await _db.TblBusinessemails
+                .FirstOrDefaultAsync(
+                x => x.Businessemailcode == businessEmailCode &&
+                x.Deleteflag == false);
 
-            if (data == null)
+            if (data is null)
             {
-                return Result<BusinessEmailResponseModel>.NotFoundError("No Data Found!");
+                return Result<BusinessEmailEditResponseModel>.NotFoundError("Business Email Not Found.");
             }
 
-            var model = new BusinessEmailResponseModel
-            {
-                BusinessEmailId = data.Businessemailid,
-                BusinessEmailCode = data.Businessemailcode,
-                FullName = data.Fullname,
-                Phone = data.Phone,
-                Email = data.Email
-            };
-
-            return Result<BusinessEmailResponseModel>.Success(model);
+            model.BusinessEmail = BusinessEmailEditModel.FromTblBusinessEmail(data);
+            return Result<BusinessEmailEditResponseModel>.Success(model);
         }
         catch (Exception ex)
         {
             _logger.LogExceptionError(ex);
-            return Result<BusinessEmailResponseModel>.SystemError(ex.Message);
+            return Result<BusinessEmailEditResponseModel>.SystemError(ex.Message);
         }
     }
 
-    public async Task<Result<BusinessEmailListResponseModel>> GetList()
+    public async Task<Result<BusinessEmailListResponseModel>> List()
     {
+        var responseModel = new Result<BusinessEmailListResponseModel>();
         var model = new BusinessEmailListResponseModel();
+
         try
         {
-            var data = await _db.TblBusinessemails.ToListAsync();
+            var data = await _db.TblBusinessemails
+                .Where(x => x.Deleteflag == false)
+                .OrderBy(x => x.Businessemailid)
+                .ToListAsync();
 
-            model.BusinessEmails = data.Select(x => new BusinessEmailModel
+            if (data is null)
             {
-                BusinessEmailId = x.Businessemailid,
-                BusinessEmailCode = x.Businessemailcode,
-                FullName = x.Fullname,
-                Phone = x.Phone,
-                Email = x.Email
-            }).ToList();
+                responseModel = Result<BusinessEmailListResponseModel>.Success("No Business Emails found.");
+            }
 
+            model.BusinessEmailList = data!.Select(BusinessEmailListModel.FromTblBusinessEmail).ToList();
             return Result<BusinessEmailListResponseModel>.Success(model);
         }
         catch (Exception ex)
@@ -111,4 +107,45 @@ public class DA_BusinessEmail
         }
     }
 
+    private Result<BusinessEmailCreateResponseModel> ValidateRequest(BusinessEmailCreateRequestModel requestModel)
+    {
+        if (requestModel.FullName.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Full Name cannot be empty.");
+        }
+
+        if (requestModel.Phone.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Phone cannot be empty.");
+        }
+
+        if (requestModel.Phone.IsNullOrEmpty() || requestModel.Phone.Length < 9)
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Phone number cannot be empty or less than 9 numbers!");
+        }
+
+        if (requestModel.Email.IsNullOrEmpty())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Email cannot be empty.");
+        }
+
+        if (!requestModel.Email.IsValidEmail())
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Invalid Email format.");
+        }
+
+        if (IsAlreadyUsed(requestModel.Email))
+        {
+            return Result<BusinessEmailCreateResponseModel>.ValidationError("Email is already in use.");
+        }
+
+        return null!;
+    }
+
+    private bool IsAlreadyUsed(string email)
+    {
+        var admin = _db.TblBusinessemails.FirstOrDefault(x => x.Email == email);
+        if (admin is null) return false;
+        return true;
+    }
 }

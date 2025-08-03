@@ -7,21 +7,21 @@ public partial class TblBusinessemail
 {
     public string Businessemailid { get; set; } = null!;
 
-    public string? Businessemailcode { get; set; }
+    public string Businessemailcode { get; set; } = null!;
 
-    public string? Fullname { get; set; }
+    public string Fullname { get; set; } = null!;
 
-    public string? Phone { get; set; }
+    public string Phone { get; set; } = null!;
 
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
 
-    public string? Createdby { get; set; }
+    public string Createdby { get; set; } = null!;
 
-    public DateTime? Createdat { get; set; }
+    public DateTime Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifiedat { get; set; }
 
-    public bool? Deleteflag { get; set; }
+    public bool Deleteflag { get; set; }
 }

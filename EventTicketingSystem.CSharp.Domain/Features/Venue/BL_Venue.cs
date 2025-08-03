@@ -1,23 +1,36 @@
-using EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Domain.Features.Venue;
 
 public class BL_Venue
 {
-    private readonly DA_Venue _daService;
+    private readonly DA_Venue _dataAccess;
 
     public BL_Venue(DA_Venue dataAccess)
     {
-        _daService = dataAccess;
+        _dataAccess = dataAccess;
     }
 
-    public async Task<Result<List<VenueResponseModel>>> GetList()
+    public async Task<Result<VenueListResponseModel>> List()
     {
-        return await _daService.GetList();
+        return await _dataAccess.List();
     }
-    
-    public async Task<Result<VenueResponseModel>> DeleteVenue(string venueId)
+
+    public async Task<Result<VenueEditResponseModel>> Edit(string venueCode)
     {
-        return await _daService.DeleteVenue(venueId);
+        return await _dataAccess.Edit(venueCode);
+    }
+
+    public async Task<Result<VenueCreateResponseModel>> Create(VenueCreateRequestModel requestModel)
+    {
+        return await _dataAccess.Create(requestModel);
+    }
+
+    public async Task<Result<VenueUpdateResponseModel>> Update(VenueUpdateRequestModel requestModel)
+    {
+        return await _dataAccess.Update(requestModel);
+    }
+
+    public async Task<Result<VenueDeleteResponseModel>> Delete(string venueCode)
+    {
+        return await _dataAccess.Delete(venueCode);
     }
 }

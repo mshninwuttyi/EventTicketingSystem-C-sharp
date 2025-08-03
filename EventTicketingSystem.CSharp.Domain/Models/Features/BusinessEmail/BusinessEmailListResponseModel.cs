@@ -2,10 +2,10 @@
 
 public class BusinessEmailListResponseModel
 {
-    public List<BusinessEmailModel> BusinessEmails { get; set; } = new List<BusinessEmailModel>();
-
+    public List<BusinessEmailListModel>? BusinessEmailList { get; set; } = new List<BusinessEmailListModel>();
 }
-public class BusinessEmailModel
+
+public class BusinessEmailListModel
 {
     public string BusinessEmailId { get; set; }
 
@@ -17,4 +17,22 @@ public class BusinessEmailModel
 
     public string Email { get; set; }
 
+    public string? Createdby { get; set; }
+
+    public DateTime? Createdat { get; set; }
+
+
+    public static BusinessEmailListModel FromTblBusinessEmail(TblBusinessemail businessEmail)
+    {
+        return new BusinessEmailListModel()
+        {
+            BusinessEmailId = businessEmail.Businessemailid,
+            BusinessEmailCode = businessEmail.Businessemailcode,
+            FullName = businessEmail.Fullname,
+            Phone = businessEmail.Phone,
+            Email = businessEmail.Email,
+            Createdby = businessEmail.Createdby,
+            Createdat = businessEmail.Createdat
+        };
+    }
 }

@@ -5,23 +5,25 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblTransactionticket
 {
-    public string? Transactionticketid { get; set; }
+    public string Transactionticketid { get; set; } = null!;
 
-    public string? Transactioncode { get; set; }
+    public string Transactionticketcode { get; set; } = null!;
 
-    public string? Ticketcode { get; set; }
+    public string Transactioncode { get; set; } = null!;
 
-    public string? Qrstring { get; set; }
+    public string Ticketcode { get; set; } = null!;
 
-    public decimal? Price { get; set; }
+    public string Qrimage { get; set; } = null!;
 
-    public string? Createdby { get; set; }
+    public decimal Price { get; set; }
 
-    public DateTime? Createdat { get; set; }
+    public string Createdby { get; set; } = null!;
+
+    public DateTime Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifiedat { get; set; }
 
-    public bool? Deleteflag { get; set; }
+    public bool Deleteflag { get; set; }
 }

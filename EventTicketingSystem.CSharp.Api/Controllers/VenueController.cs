@@ -1,42 +1,49 @@
-using EventTicketingSystem.CSharp.Domain.Features.Venue;
-
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
 [Tags("Venue")]
 [Route("api/[controller]")]
 [ApiController]
-
 public class VenueController : ControllerBase
 {   
-    private readonly BL_Venue _blService;
-
+    private readonly BL_Venue _blVenue;
     public VenueController(BL_Venue blService)
     {
-        _blService = blService;
+        _blVenue = blService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get()
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
     {
-        var result = await _blService.GetList();
-        return Ok(result);
+        var data = await _blVenue.List();
+        return Ok(data);
     }
-    
-    [HttpDelete("{venueId}")]
-    public async Task<IActionResult> Delete(string venueId)
+
+    [HttpGet("Edit/{venueCode}")]
+    public async Task<IActionResult> Edit(string venueCode)
     {
-        var result = await _blService.DeleteVenue(venueId);
-        
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-        
-        if (result.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
-        {
-            return NotFound(new { message = result.Message });
-        }
-        
-        return StatusCode(500, new { message = result.Message });
+        var data = await _blVenue.Edit(venueCode);
+        return Ok(data);
+    }
+
+    [HttpPost("Create")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create(VenueCreateRequestModel requestModel)
+    {
+        var data = await _blVenue.Create(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update(VenueUpdateRequestModel requestModel)
+    {
+        var data = await _blVenue.Update(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("Delete/{venueCode}")]
+    public async Task<IActionResult> Delete(string venueCode)
+    {
+        var data = await _blVenue.Delete(venueCode);
+        return Ok(data);
     }
 }

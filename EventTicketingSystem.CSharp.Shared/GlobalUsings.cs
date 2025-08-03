@@ -1,3 +1,13 @@
 ﻿global using Newtonsoft.Json;
 global using Microsoft.Extensions.Logging;
 global using System.Runtime.CompilerServices;
+global using Microsoft.EntityFrameworkCore;
+global using System.ComponentModel;
+global using System.Reflection;
+global using Microsoft.AspNetCore.Http;
+global using EventTicketingSystem.CSharp.Shared.Enums;
+global using EventTicketingSystem.CSharp.Shared.Models;
+global using System.Security.Cryptography;
+global using System.Text;
+global using FluentEmail.Core;
+global using Effortless.Net.Encryption;

@@ -1,66 +1,44 @@
-﻿namespace EventTicketingSystem.CSharp.Api.Controllers
+﻿namespace EventTicketingSystem.CSharp.Api.Controllers;
+
+[Tags("Event Category")]
+[Route("api/[controller]")]
+[ApiController]
+public class EventCategoryController : ControllerBase
 {
-    [Tags("Event Category")]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EventCategoryController : ControllerBase
+    private readonly BL_EventCategory _blEventCategory;
+
+    public EventCategoryController(BL_EventCategory blEventCategory)
     {
-        private readonly BL_EventCategory _blCategory;
-        public EventCategoryController(BL_EventCategory blCategory) 
-        { 
-            _blCategory = blCategory;
-        }
-        #region Event Category
+        _blEventCategory = blEventCategory;
+    }
 
-        [HttpGet("Get Category")]
-        public async Task<IActionResult> GetCategoryList()
-        {
-            return Ok(await _blCategory.GetList());
-        }
+    [HttpGet("List")]
+    public async Task<IActionResult> List()
+    {
+        return Ok(await _blEventCategory.List());
+    }
 
+    [HttpGet("Edit/{eventCategoryCode}")]
+    public async Task<IActionResult> Edit(string eventCategoryCode)
+    {
+        return Ok(await _blEventCategory.Edit(eventCategoryCode));
+    }
 
-        [HttpPost("CreateCategory")]
-        public async Task<IActionResult> CreateCategory([FromBody] EventCategoryRequestModel request)
-        {
-            var response = _blCategory.CreateCategory(request);
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] EventCategoryCreateRequestModel requestModel)
+    {
+        return Ok(await _blEventCategory.Create(requestModel));
+    }
 
-            return Ok(await response);
-        }
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update([FromBody] EventCategoryUpdateRequestModel requestModel)
+    {
+        return Ok(await _blEventCategory.Update(requestModel));
+    }
 
-        [HttpPost("UpdateCategory")]
-        public async Task<IActionResult> UpdateCategory([FromBody] EventCategoryRequestModel request)
-        {
-            return Ok(await _blCategory.UpdateCategory(request));
-        }
-
-        [HttpPost("CreateCategory1")]
-        public async Task<IActionResult> CreateCategory(string categoryName, string adminName)
-        {
-            var request = new EventCategoryRequestModel
-            {
-                CategoryName = categoryName,
-                AdminName = adminName
-            };
-
-            var response = _blCategory.CreateCategory(request);
-            return Ok(await response);
-        }
-
-        [HttpPost("UpdateCategory1")]
-        public async Task<IActionResult> UpdateCategory(string categoryName, string adminName, string categoryCode)
-        {
-            var request = new EventCategoryRequestModel
-            {
-                CategoryCode = categoryCode,
-                CategoryName = categoryName,
-                AdminName = adminName
-            };
-
-            var response = _blCategory.UpdateCategory(request);
-            
-            return Ok(await response);
-        }
-
-        #endregion
+    [HttpPost("Delete/{eventCategoryCode}")]
+    public async Task<IActionResult> Delete(string eventCategoryCode)
+    {
+        return Ok(await _blEventCategory.Delete(eventCategoryCode));
     }
 }

@@ -5,19 +5,19 @@ namespace EventTicketingSystem.CSharp.Database.AppDbContext;
 
 public partial class TblTickettype
 {
-    public string? Tickettypeid { get; set; }
+    public string Tickettypeid { get; set; } = null!;
 
-    public string? Tickettypecode { get; set; }
+    public string Tickettypecode { get; set; } = null!;
 
-    public string? Tickettypename { get; set; }
+    public string Tickettypename { get; set; } = null!;
 
-    public string? Createdby { get; set; }
+    public string Createdby { get; set; } = null!;
 
-    public DateTime? Createdat { get; set; }
+    public DateTime Createdat { get; set; }
 
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifiedat { get; set; }
 
-    public bool? Deleteflag { get; set; }
+    public bool Deleteflag { get; set; }
 }

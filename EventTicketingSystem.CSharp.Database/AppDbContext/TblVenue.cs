@@ -13,17 +13,17 @@ public partial class TblVenue
 
     public string Venuename { get; set; } = null!;
 
-    public string? Venuedescription { get; set; }
+    public string? Description { get; set; }
 
-    public string? Venueaddress { get; set; }
+    public string Address { get; set; } = null!;
 
-    public int? Venuecapacity { get; set; }
+    public int Capacity { get; set; }
 
-    public string? Venuefacilities { get; set; }
+    public string? Facilities { get; set; }
 
-    public string? Venueaddons { get; set; }
+    public string? Addons { get; set; }
 
-    public string? Venueimage { get; set; }
+    public string Venueimage { get; set; } = null!;
 
     public string Createdby { get; set; } = null!;
 
