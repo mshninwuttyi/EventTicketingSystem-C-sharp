@@ -2,11 +2,15 @@
 
 public class VCRequestModel
 {
-    public string? Verificationid { get; set; }
+    public string? VerificationId { get; set; }
 
-    public string? Verificationcode { get; set; }
+    public string? VerificationCode { get; set; }
 
     public string? Email { get; set; }
+
+    public DateTime? ExpiredTime { get; set; }
+
+    public bool? Isused { get; set; }
 
     public string? Admin { get; set; }
 

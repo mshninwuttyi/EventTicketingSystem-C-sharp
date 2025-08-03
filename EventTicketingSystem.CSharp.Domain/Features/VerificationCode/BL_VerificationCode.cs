@@ -14,9 +14,14 @@ public class BL_VerificationCode
         return await _daService.List();
     }
 
-    public async Task<Result<VCResponseModel>> Edit(string vcId)
+    public async Task<Result<VCResponseModel>> GetById(string vcId)
     {
-        return await _daService.Edit(vcId);
+        return await _daService.GetVerificationCodeById(vcId);
+    }
+
+    public async Task<Result<VCResponseModel>> GetByEmail(string email)
+    {
+        return await _daService.GetByEmail(email);
     }
 
     public async Task<Result<VCResponseModel>> Create(VCRequestModel request)
@@ -26,6 +31,6 @@ public class BL_VerificationCode
 
     public async Task<Result<bool>> VerifyCode(VCRequestModel request)
     {
-        return await _daService.VerifyCode(request.Email, request.Verificationcode);
+        return await _daService.VerifyCode(request.Email, request.VerificationCode);
     }
 }

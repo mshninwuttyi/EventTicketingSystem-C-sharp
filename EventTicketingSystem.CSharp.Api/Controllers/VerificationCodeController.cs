@@ -18,10 +18,16 @@ public class VerificationCodeController : ControllerBase
         return Ok(await _vcService.List());
     }
 
-    [HttpGet("Edit/{vcId}")]
-    public async Task<IActionResult> Edit(string vcId)
+    [HttpGet("Get/{vcId}")]
+    public async Task<IActionResult> GetById(string vcId)
     {
-        return Ok(await _vcService.Edit(vcId));
+        return Ok(await _vcService.GetById(vcId));
+    }
+
+    [HttpGet("GetByEmail/{email}")]
+    public async Task<IActionResult> GetByEmail(string email)
+    {
+        return Ok(await _vcService.GetByEmail(email));
     }
 
     [HttpPost("Create")]

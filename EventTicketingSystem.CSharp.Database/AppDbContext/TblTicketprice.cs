@@ -9,6 +9,8 @@ public partial class TblTicketprice
 
     public string Ticketpricecode { get; set; } = null!;
 
+    public string Eventcode { get; set; } = null!;
+
     public string Tickettypecode { get; set; } = null!;
 
     public decimal Ticketprice { get; set; }
