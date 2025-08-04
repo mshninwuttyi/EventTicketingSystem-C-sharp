@@ -6,10 +6,12 @@
 public class AdminController : ControllerBase
 {
     private readonly BL_Admin _blAdmin;
+    private readonly ExportService _exportService;
 
-    public AdminController(BL_Admin blAdmin)
+    public AdminController(BL_Admin blAdmin, ExportService exportService)
     {
         _blAdmin = blAdmin;
+        _exportService = exportService;
     }
 
     [HttpGet("List")]
@@ -45,5 +47,50 @@ public class AdminController : ControllerBase
     {
         var data = await _blAdmin.Delete(requestModel);
         return Ok(data);
+    }
+
+    [HttpPost("EditProfileImage")]
+    public async Task<IActionResult> EditProfileImage(AdminEditProfileRequestModel requestModel)
+    {
+        var data = await _blAdmin.EditProfileImage(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("ChangePassword")]
+    public async Task<IActionResult> ChangePassword(AdminChangePasswordRequestModel requestModel)
+    {
+        var data = await _blAdmin.ChangePassword(requestModel);
+        return Ok(data);
+    }
+
+    [HttpPost("Export")]
+    public async Task<IActionResult> Export(AdminExportRequestModel requestModel)
+    {
+        try
+        {
+            return requestModel.Format.ToLower() switch
+            {
+                "csv" => File(
+                    await _exportService.ExportToCsv(requestModel.AdminList),
+                    "text/csv",
+                    "Admin_User.csv"),
+
+                "xlsx" or "excel" => File(
+                    await _exportService.ExportToExcel(requestModel.AdminList, "Admin User"),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "Admin_User.xlsx"),
+
+                "pdf" => File(
+                    await _exportService.ExportToPdf(requestModel.AdminList, "Admin User"),
+                    "application/pdf",
+                    "Admin_User.pdf"),
+
+                _ => BadRequest("Unsupported format. Use csv, xlsx, or pdf")
+            };
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Export failed: {ex.Message}");
+        }
     }
 }

@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.BusinessOwner;
 
-public class DA_BusinessOwner
+public class DA_BusinessOwner : AuthorizationService
 {
     private readonly ILogger<DA_BusinessOwner> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_BusinessOwner(ILogger<DA_BusinessOwner> logger, AppDbContext db, CommonService commonService)
+    public DA_BusinessOwner(IHttpContextAccessor httpContextAccessor,
+                            ILogger<DA_BusinessOwner> logger,
+                            AppDbContext db,
+                            CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -103,7 +105,7 @@ public class DA_BusinessOwner
                     Fullname = owner.FullName,
                     Email = owner.Email,
                     Phone = owner.Phone,
-                    Createdby = CreatedByUserId,
+                    Createdby = CurrentUserId,
                     Createdat = DateTime.Now,
                     Deleteflag = false
                 };
@@ -188,7 +190,7 @@ public class DA_BusinessOwner
                 }
             }
 
-            data.Modifiedby = CreatedByUserId;
+            data.Modifiedby = CurrentUserId;
             data.Modifiedat = DateTime.Now;
             _db.Entry(data).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
@@ -234,7 +236,7 @@ public class DA_BusinessOwner
                 return Result<BusinessOwnerDeleteResponseMOdel>.NotFoundError("Owner Not Found.");
             }
 
-            data!.Modifiedby = CreatedByUserId;
+            data!.Modifiedby = CurrentUserId;
             data.Modifiedat = DateTime.Now;
             data.Deleteflag = true;
             _db.Entry(data).State = EntityState.Modified;

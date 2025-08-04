@@ -308,6 +308,50 @@ $$;
 
 alter function public.sp_sequencecode(integer) owner to postgres;
 
+CREATE OR REPLACE FUNCTION public.sp_ticket_info(p_ticketcode varchar)
+RETURNS TABLE (
+    ticketpricecode varchar,
+    ticketprice numeric(20,2),
+    tickettypecode varchar,
+    eventcode varchar,
+    startdate timestamp,
+    enddate timestamp,
+    eventname varchar,
+    tickettypename varchar,
+    venuename varchar
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        tp.ticketpricecode,
+        tp.ticketprice,
+        tp.tickettypecode,
+        tp.eventcode,
+        e.startdate,
+        e.enddate,
+        e.eventname,
+        tt.tickettypename,
+        v.venuename
+    FROM
+        tbl_ticket t
+        INNER JOIN tbl_ticketprice tp ON t.ticketpricecode = tp.ticketpricecode
+        INNER JOIN tbl_event e ON tp.eventcode = e.eventcode
+        INNER JOIN tbl_tickettype tt ON tp.tickettypecode = tt.tickettypecode
+        INNER JOIN tbl_venue v ON e.venuecode = v.venuecode
+    WHERE
+        t.ticketcode = p_ticketcode
+        AND t.deleteflag = false
+        AND tp.deleteflag = false
+        AND e.deleteflag = false
+        AND tt.deleteflag = false
+        AND v.deleteflag = false;
+END;
+$$;
+
+alter function public.sp_ticket_info(varchar) owner to postgres;
 
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('EC', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Event Category
 INSERT INTO public.tbl_sequence (uniquename, sequenceno, sequencedate, sequencetype, eventcode, deleteflag) VALUES ('BO', '000000', '2025-07-17 03:34:58.000000', 'Table', null, false); -- Business Owner

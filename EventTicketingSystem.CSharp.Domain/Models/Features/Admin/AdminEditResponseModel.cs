@@ -7,28 +7,25 @@ public class AdminEditResponseModel
 
 public class AdminEditModel
 {
-    public string? AdminId { get; set; }
+    public string? AdminCode { get; set; }
 
     public string? Username { get; set; }
 
+    public string? FullName { get; set; }
+
     public string? Email { get; set; }
 
-    public string? PhoneNo { get; set; }
-
-    public string? Password { get; set; }
-
-    public string? ProfileImage { get; set; }
+    public string? PhoneNo { get; set; } 
 
     public static AdminEditModel FromTblAdmin(TblAdmin admin)
     {
         return new AdminEditModel
         {
-            AdminId = admin.Adminid,
+            AdminCode = admin.Admincode,
             Username = admin.Username,
             Email = admin.Email,
             PhoneNo = admin.Phone,
-            Password = admin.Password,
-            ProfileImage = admin.Profileimage,
+            FullName = admin.Fullname,
         };
     }
 }

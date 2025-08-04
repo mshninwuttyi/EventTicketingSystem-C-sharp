@@ -12,34 +12,6 @@ public class TicketController : ControllerBase
         _blTicket = blTicket;
     }
 
-    [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] TicketRequestModel requestModel)
-    {
-        if (requestModel == null)
-        {
-            return BadRequest("Request model cannot be null.");
-        }
-        var result = await _blTicket.CreateTicket(requestModel);
-
-        if (result.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-        }
-
-        return Ok(result.Data);
-    }
-
-    [HttpGet("Edit/{ticketCode}")]
-    public async Task<IActionResult> GetTicketByCode(string ticketCode)
-    {
-        var result = await _blTicket.GetTicketByCode(ticketCode);
-        if(result.IsError)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
-        }
-        return Ok(result.Data);
-    }
-    
     [HttpGet("List")]
     public async Task<IActionResult> GetList()
     {
@@ -56,7 +28,7 @@ public class TicketController : ControllerBase
     [HttpGet("Lists")]
     public async Task<IActionResult> GetTicketList()
     {
-       
+
         var result = await _blTicket.GetTicketList();
         if (result.IsError)
         {
@@ -65,20 +37,35 @@ public class TicketController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpDelete("Delete/{ticketCode}")]
-    public async Task<IActionResult> DeleteByCode(string ticketCode)
+    [HttpGet("Edit/{ticketCode}")]
+    public async Task<IActionResult> GetTicketByCode(string ticketCode)
     {
-        var result = await _blTicket.DeleteByCode(ticketCode);
+        var result = await _blTicket.GetTicketByCode(ticketCode);
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+        return Ok(result.Data);
+    }
+
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] TicketCreateRequestModel requestModel)
+    {
+        if (requestModel == null)
+        {
+            return BadRequest("Request model cannot be null.");
+        }
+        var result = await _blTicket.CreateTicket(requestModel);
 
         if (result.IsError)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
-        return Ok(result);
+        return Ok(result.Data);
     }
 
-    [HttpPatch("Update/{ticketCode},{isUsed}")]
+    [HttpPost("Update/{ticketCode},{isUsed}")]
     public async Task<IActionResult> UpdateTicket(string ticketCode, bool isUsed)
     {
         var result = await _blTicket.UpdateTicket(ticketCode, isUsed);
@@ -91,5 +78,16 @@ public class TicketController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("Delete/{ticketCode}")]
+    public async Task<IActionResult> DeleteByCode(string ticketCode)
+    {
+        var result = await _blTicket.DeleteByCode(ticketCode);
 
+        if (result.IsError)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
+        }
+
+        return Ok(result);
+    }
 }

@@ -1,14 +1,16 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
 
-public class BusinessEmailResponseModel
+public class BusinessEmailCreateResponseModel
 {
-    public string BusinessEmailId { get; set; }
 
-    public string BusinessEmailCode { get; set; }
+}
 
-    public string FullName { get; set; }
+public class BusinessEmailUpdateResponseModel
+{
 
-    public string Phone { get; set; }
+}
 
-    public string Email { get; set; }
+public class BusinessEmailDeleteResponseModel
+{
+
 }

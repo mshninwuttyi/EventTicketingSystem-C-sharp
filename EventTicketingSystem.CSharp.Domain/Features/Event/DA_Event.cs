@@ -1,13 +1,15 @@
 ﻿namespace EventTicketingSystem.CSharp.Domain.Features.Event;
 
-public class DA_Event
+public class DA_Event : AuthorizationService
 {
     private readonly ILogger<DA_Event> _logger;
     private readonly AppDbContext _db;
     private readonly CommonService _commonService;
-    private const string CreatedByUserId = "Admin";
 
-    public DA_Event(ILogger<DA_Event> logger, AppDbContext db, CommonService commonService)
+    public DA_Event(IHttpContextAccessor httpContextAccessor,
+                    ILogger<DA_Event> logger,
+                    AppDbContext db,
+                    CommonService commonService) : base(httpContextAccessor)
     {
         _logger = logger;
         _db = db;
@@ -125,7 +127,7 @@ public class DA_Event
                 Eventstatus = EnumEventStatus.Upcoming.ToString(),
                 Totalticketquantity = requestModel.Totalticketquantity,
                 Soldoutcount = 0,
-                Createdby = CreatedByUserId,
+                Createdby = CurrentUserId,
                 Createdat = DateTime.Now,
                 Deleteflag = false
             };
@@ -165,7 +167,7 @@ public class DA_Event
             item.Isactive = requestModel.Isactive;
             item.Eventstatus = requestModel.Eventstatus;
             item.Totalticketquantity = requestModel.Totalticketquantity;
-            item.Modifiedby = CreatedByUserId;
+            item.Modifiedby = CurrentUserId;
             item.Modifiedat = DateTime.Now;
             _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();
@@ -203,7 +205,7 @@ public class DA_Event
             }
 
             item.Deleteflag = true;
-            item.Modifiedby = CreatedByUserId;
+            item.Modifiedby = CurrentUserId;
             item.Modifiedat = DateTime.Now;
             _db.Entry(item).State = EntityState.Modified;
             await _db.SaveAndDetachAsync();

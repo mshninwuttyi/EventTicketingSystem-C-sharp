@@ -35,4 +35,16 @@ public class BL_Admin
         var data = await _dataAccess.Delete(requestModel);
         return data;
     }
+
+    public async Task<Result<AdminEditProfileResponseModel>> EditProfileImage(AdminEditProfileRequestModel requestModel)
+    {
+        var data = await _dataAccess.EditProfile(requestModel);
+        return data;
+    }
+
+    public async Task<Result<AdminChangePasswordResponseModel>> ChangePassword(AdminChangePasswordRequestModel requestModel)
+    {
+        var data = await _dataAccess.ChangePassword(requestModel);
+        return data;
+    }
 }
