@@ -1,4 +1,4 @@
-﻿namespace EventTicketingSystem.CSharp.Domain.Models.Features.Venue;
+namespace EventTicketingSystem.CSharp.Domain.Models.Features.Event;
 
 public class EventEditResponseModel
 {

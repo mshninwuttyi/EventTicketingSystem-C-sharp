@@ -134,14 +134,24 @@ public class DA_Venue : AuthorizationService
     {
         string addons = string.Empty;
 
-        if (requestModel.VenueId.IsNullOrEmpty())
+        if (requestModel.VenueCode.IsNullOrEmpty())
         {
-            return Result<VenueUpdateResponseModel>.UserInputError("Venue Id cannot be null or empty.");
+            return Result<VenueUpdateResponseModel>.UserInputError("Venue code cannot be null or empty.");
+        }
+        
+        if (requestModel.Address.IsNullOrEmpty() || requestModel.Description.IsNullOrEmpty() || 
+            requestModel.Facilities.IsNullOrEmpty() || requestModel.Addons.IsNullOrEmpty())
+        {
+            return Result<VenueUpdateResponseModel>.UserInputError("All fields are empty. Please provide at least one field to update.");
         }
 
         try
         {
-            var existingVenue = await _db.TblVenues.FindAsync(requestModel.VenueId);
+            var existingVenue = await _db.TblVenues
+                                        .FirstOrDefaultAsync(
+                                            x => x.Venuecode == requestModel.VenueCode &&
+                                            x.Deleteflag == false
+                                        );
 
             if (existingVenue is null)
             {

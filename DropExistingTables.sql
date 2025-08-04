@@ -14,3 +14,4 @@ drop table tbl_venue;
 drop table tbl_venuetype;
 drop table tbl_verification;
 drop table tbl_sequence;
+drop table tbl_login;
