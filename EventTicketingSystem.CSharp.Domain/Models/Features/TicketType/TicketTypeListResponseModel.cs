@@ -17,18 +17,7 @@ public class TicketTypeListModel
     public string? CreatedBy { get; set; }
     public DateTime? CreatedAt { get; set; }
     public string? ModifiedBy { get; set; }
-    public DateTime? ModifiedAt { get; set; }
-
-        public static TicketTypeListModel FromTblTickettype(TblTickettype tblTickettype)
-        {
-            return new TicketTypeListModel
-            {
-                Tickettypecode = tblTickettype.Tickettypecode,
-                Tickettypename = tblTickettype.Tickettypename,
-
-            };
-
-        }
+    public DateTime? ModifiedAt { get; set; }    
 
     }
 }
