@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace EventTicketingSystem.CSharp.Api.Controllers;
 
+[AllowAnonymous]
 [Tags("Auth")]
 [Route("api/[controller]")]
 [ApiController]
