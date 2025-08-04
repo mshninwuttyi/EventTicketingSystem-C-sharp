@@ -216,6 +216,27 @@ create table public.tbl_admin
 alter table public.tbl_admin
     owner to postgres;
 
+create table public.tbl_login
+(
+    loginid               varchar   not null
+        constraint tbl_login_pk
+            primary key,
+    admincode             varchar   not null,
+    username              varchar   not null,
+    sessionid             varchar   not null,
+    refreshtoken          varchar   not null,
+    refreshtokenexpiresat timestamp not null,
+    loginstatus           varchar   not null,
+    createdby             varchar   not null,
+    createdat             timestamp not null,
+    modifiedby            varchar,
+    modifiedat            timestamp,
+    deleteflag            boolean   not null
+);
+
+alter table public.tbl_login
+    owner to postgres;
+
 create table public.tbl_businessowner
 (
     businessownerid   varchar   not null
