@@ -231,7 +231,7 @@ public class DA_BusinessOwner : AuthorizationService
                             x.Deleteflag == false
                         );
 
-            if (data != null)
+            if (data == null)
             {
                 return Result<BusinessOwnerDeleteResponseMOdel>.NotFoundError("Owner Not Found.");
             }
