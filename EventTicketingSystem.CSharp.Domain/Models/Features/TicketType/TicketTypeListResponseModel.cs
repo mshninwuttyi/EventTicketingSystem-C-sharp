@@ -13,7 +13,7 @@ public class TicketTypeListModel
     public string? EventName { get; set; }
     public string? TicketTypeName { get; set; }
     public decimal Ticketprice { get; set; }
-    public string? TicketQuantity { get; set; }
+    public int? TicketQuantity { get; set; }
     public string? CreatedBy { get; set; }
     public DateTime? CreatedAt { get; set; }
     public string? ModifiedBy { get; set; }
