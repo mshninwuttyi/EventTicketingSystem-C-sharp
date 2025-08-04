@@ -97,8 +97,7 @@ public class DA_TicketType : AuthorizationService
     }
 
     public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
-    {
-        var responseModel = new Result<TicketTypeCreateResponseModel>();
+    {        
         if (requestModel.TicketTypeName.IsNullOrEmpty())
         {
             return Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type name cannot be Empty!");
