@@ -79,6 +79,7 @@ public static class FeaturesManager
         services.AddScoped<BL_TicketType>();
         services.AddScoped<BL_VenueType>();
         services.AddScoped<BL_Dashboard>();
+        services.AddScoped<BL_Event>();
 
         return services;
     }
@@ -98,6 +99,7 @@ public static class FeaturesManager
         services.AddScoped<DA_TicketType>();
         services.AddScoped<DA_VenueType>();
         services.AddScoped<DA_Dashboard>();
+        services.AddScoped<DA_Event>();
 
         return services;
     }
