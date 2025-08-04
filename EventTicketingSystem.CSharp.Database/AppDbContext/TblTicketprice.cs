@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace EventTicketingSystem.CSharp.Database.AppDbContext;
@@ -8,8 +8,6 @@ public partial class TblTicketprice
     public string Ticketpriceid { get; set; } = null!;
 
     public string Ticketpricecode { get; set; } = null!;
-
-    public string Eventcode { get; set; } = null!;
 
     public string Tickettypecode { get; set; } = null!;
 
