@@ -22,6 +22,7 @@ public class DA_TicketType : AuthorizationService
     public async Task<Result<TicketTypeListResponseModel>> List()
     {
         var model = new TicketTypeListResponseModel();
+        var responseModel = new Result<TicketTypeListResponseModel>();
 
         string query = @"SELECT 
             tt.tickettypecode,
