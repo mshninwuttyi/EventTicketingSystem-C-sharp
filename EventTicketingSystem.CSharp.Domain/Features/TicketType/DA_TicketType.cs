@@ -126,7 +126,7 @@ public class DA_TicketType : AuthorizationService
             .SumAsync();
 
         int remainingQty = totalQty - existingQty;
-        if (remainingQty - requestModel.TicketQuantity < 0)
+        if ((remainingQty - requestModel.TicketQuantity) < 0)
         {
             return Result<TicketTypeCreateResponseModel>.ValidationError("The total number of tickets exceeds the allowed quantity for this event.");
         }
