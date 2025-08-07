@@ -97,7 +97,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Ticketing System v1");
 });
 
 app.UseHttpsRedirection();
