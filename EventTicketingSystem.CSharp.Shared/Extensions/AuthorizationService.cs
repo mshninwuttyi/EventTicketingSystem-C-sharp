@@ -1,4 +1,6 @@
-﻿namespace EventTicketingSystem.CSharp.Shared.Extensions;
+﻿using System.IdentityModel.Tokens.Jwt;
+
+namespace EventTicketingSystem.CSharp.Shared.Extensions;
 
 public abstract class AuthorizationService
 {
@@ -11,22 +13,38 @@ public abstract class AuthorizationService
 
     private ApiTokenModel? GetUser()
     {
-        var encryptedToken = _contextAccessor.HttpContext!.Request.Headers["Authorization"].ToString();
-        if (encryptedToken.IsNullOrEmpty()) return null;
-        var str = encryptedToken.Substring("Bearer ".Length);
-        var token = str.ToDecrypt();
-        string[] value = token.Split(".");
-        var model = new ApiTokenModel
-        {
-            UserId = value[0],
-            SessionId = value[1],
-        };
+        var bearerToken = _contextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+        if (string.IsNullOrEmpty(bearerToken) || !bearerToken.StartsWith("Bearer ")) return null;
 
-        return model;
+        var token = bearerToken["Bearer ".Length..];
+
+        var handler = new JwtSecurityTokenHandler();
+
+        try
+        {
+            var jwtToken = handler.ReadJwtToken(token); 
+
+            var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            var sessionId = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+
+            if (userId == null || sessionId == null)
+                return null;
+
+            return new ApiTokenModel
+            {
+                UserId = userId,
+                SessionId = sessionId
+            };
+        }
+        catch
+        {
+            return null; 
+        }
     }
 
-    protected string CurrentUserId => GetUser()?.UserId!;
-    protected string SessionId => GetUser()?.SessionId!;
+    protected string CurrentUserId => GetUser()?.UserId ?? string.Empty;
+    protected string SessionId => GetUser()?.SessionId ?? string.Empty;
+
 }
 
 public class ApiTokenModel

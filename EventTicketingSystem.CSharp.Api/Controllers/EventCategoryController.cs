@@ -13,30 +13,35 @@ public class EventCategoryController : ControllerBase
     }
 
     [HttpGet("List")]
+    [AllowAnonymous]
     public async Task<IActionResult> List()
     {
         return Ok(await _blEventCategory.List());
     }
 
     [HttpGet("Edit/{eventCategoryCode}")]
+    [AllowAnonymous]
     public async Task<IActionResult> Edit(string eventCategoryCode)
     {
         return Ok(await _blEventCategory.Edit(eventCategoryCode));
     }
 
     [HttpPost("Create")]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] EventCategoryCreateRequestModel requestModel)
     {
         return Ok(await _blEventCategory.Create(requestModel));
     }
 
     [HttpPost("Update")]
+    [Authorize]
     public async Task<IActionResult> Update([FromBody] EventCategoryUpdateRequestModel requestModel)
     {
         return Ok(await _blEventCategory.Update(requestModel));
     }
 
     [HttpPost("Delete/{eventCategoryCode}")]
+    [Authorize]
     public async Task<IActionResult> Delete(string eventCategoryCode)
     {
         return Ok(await _blEventCategory.Delete(eventCategoryCode));

@@ -13,20 +13,23 @@ public class EventController : ControllerBase
     }
 
     [HttpGet("List")]
+    [AllowAnonymous]
     public async Task<IActionResult> List()
     {
         var data = await _blEvent.List();
         return Ok(data);
     }
 
-    [HttpGet("Edit/{adminCode}")]
-    public async Task<IActionResult> Edit(string adminCode)
+    [HttpGet("Edit/{eventCode}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Edit(string eventCode)
     {
-        var data = await _blEvent.Edit(adminCode);
+        var data = await _blEvent.Edit(eventCode);
         return Ok(data);
     }
 
     [HttpPost("Create")]
+    [Authorize]
     public async Task<IActionResult> Create(EventCreateRequestModel requestModel)
     {
         var data = await _blEvent.Create(requestModel);
@@ -34,16 +37,18 @@ public class EventController : ControllerBase
     }
 
     [HttpPost("Update")]
+    [Authorize]
     public async Task<IActionResult> Update(EventUpdateRequestModel requestModel)
     {
         var data = await _blEvent.Update(requestModel);
         return Ok(data);
     }
 
-    [HttpPost("Delete/{adminCode}")]
-    public async Task<IActionResult> Delete(string adminCode)
+    [HttpPost("Delete/{eventCode}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string eventCode)
     {
-        var data = await _blEvent.Delete(adminCode);
+        var data = await _blEvent.Delete(eventCode);
         return Ok(data);
     }
 }

@@ -3,6 +3,7 @@
 [Tags("QR Code")]
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 public class QrCodeController : ControllerBase
 {
     private readonly BL_QrCode _bl_QrCode;
