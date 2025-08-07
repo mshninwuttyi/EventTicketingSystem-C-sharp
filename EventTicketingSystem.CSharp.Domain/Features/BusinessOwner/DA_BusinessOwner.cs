@@ -147,25 +147,6 @@ public class DA_BusinessOwner : AuthorizationService
                 return Result<BusinessOwnerUpdateResponseMOdel>.NotFoundError("Owner Not Found.");
             }
 
-            if (!requestModel.Email.IsNullOrEmpty() && requestModel.Email != data.Email)
-            {
-                if (requestModel.Email.IsValidEmail())
-                {
-                    if (!isEmailUsed(requestModel.Email))
-                    {
-                        data.Email = requestModel.Email;
-                    }
-                    else
-                    {
-                        errorMessage += "Email is already in use.\n";
-                    }
-                }
-                else
-                {
-                    errorMessage += "Email is invalid!\n";
-                }
-            }
-
             if (!requestModel.FullName.IsNullOrEmpty() && data.Fullname != requestModel.FullName)
             {
                 if (requestModel.FullName.Length >= 3)
@@ -197,7 +178,7 @@ public class DA_BusinessOwner : AuthorizationService
 
             if (errorMessage.IsNullOrEmpty())
             {
-                return Result<BusinessOwnerUpdateResponseMOdel>.Success();
+                return Result<BusinessOwnerUpdateResponseMOdel>.Success("Owner Updated Successfully.");
             }
             else
             {
@@ -231,7 +212,7 @@ public class DA_BusinessOwner : AuthorizationService
                             x.Deleteflag == false
                         );
 
-            if (data != null)
+            if (data == null)
             {
                 return Result<BusinessOwnerDeleteResponseMOdel>.NotFoundError("Owner Not Found.");
             }
@@ -258,7 +239,7 @@ public class DA_BusinessOwner : AuthorizationService
     private bool isEmailUsed(String email)
     {
         var owner = _db.TblBusinessowners.AsNoTracking().FirstOrDefault(x => x.Email == email);
-        return owner == null;
+        return owner != null;
     }
 
     #endregion

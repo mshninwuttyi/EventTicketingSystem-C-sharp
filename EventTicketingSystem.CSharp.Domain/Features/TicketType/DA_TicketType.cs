@@ -22,75 +22,73 @@ public class DA_TicketType : AuthorizationService
     public async Task<Result<TicketTypeListResponseModel>> List()
     {
         var model = new TicketTypeListResponseModel();
+        var responseModel = new Result<TicketTypeListResponseModel>();
 
-        try
-        {
-            string query = @"SELECT 
-                                tt.tickettypecode,
-                                tt.eventcode,
-                                tt.tickettypename,
-                                tt.createdby,
-                                tt.createdat,
-                                tt.modifiedby,
-                                tt.modifiedat,
-                                tt.deleteflag,
-                                tt.tickettypeid,
-                                tp.ticketprice,
-                                tp.ticketquantity
-                            FROM tbl_tickettype tt
-                            LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
-                            WHERE tt.deleteflag = false";
+        string query = @"SELECT 
+            tt.tickettypecode,
+            tt.eventcode,
+            te.eventname,
+            tt.tickettypename,
+            tt.createdby,
+            tt.createdat,
+            tt.modifiedby,
+            tt.modifiedat,
+            tt.deleteflag,
+            tt.tickettypeid,
+            tp.ticketprice,
+            tp.ticketquantity
+        FROM tbl_tickettype tt
+        LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+        LEFT JOIN tbl_event te ON te.eventcode = tt.eventcode
+        WHERE tt.deleteflag = false";
 
-            using IDbConnection dbConnection = new NpgsqlConnection(_connection);
-            dbConnection.Open();
+        using IDbConnection dbConnection = new NpgsqlConnection(_connection);
+        dbConnection.Open();
 
-            var ticketTypeList = (await dbConnection.QueryAsync<TicketTypeListModel>(query)).ToList();
-            model.TicketTypeList = ticketTypeList;
+        var ticketTypeList = (await dbConnection.QueryAsync<TicketTypeListModel>(query)).ToList();
+        model.TicketTypeList = ticketTypeList;
 
-            return Result<TicketTypeListResponseModel>.Success(model, "Ticket types are retrieved successfullly!");
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogExceptionError(ex);
-            return Result<TicketTypeListResponseModel>.SystemError(ex.ToString());
-        }
+        responseModel = Result<TicketTypeListResponseModel>.Success(model, "Ticket types are retrieved successfullly!");
+        return responseModel;
     }
 
     public async Task<Result<TicketTypeEditResponseModel>> Edit(string code)
     {
-        var model = new TicketTypeEditResponseModel();
+        var model = new TicketTypeEditResponseModel();        
 
         try
         {
-            string query = @"SELECT 
-                                tt.tickettypecode,
-                                tt.eventcode,
-                                tt.tickettypename,
-                                tt.createdby,
-                                tt.createdat,
-                                tt.modifiedby,
-                                tt.modifiedat,
-                                tt.deleteflag,
-                                tt.tickettypeid,
-                                tp.ticketprice,
-                                tp.ticketquantity
-                            FROM tbl_tickettype tt
-                            LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
-                            WHERE tt.deleteflag = false
-                              AND tt.tickettypecode = @TicketTypeCode";
+            string query = @"
+                SELECT 
+                    tt.tickettypecode,
+                    tt.eventcode,
+                    te.eventname,
+                    tt.tickettypename,
+                    tt.createdby,
+                    tt.createdat,
+                    tt.modifiedby,
+                    tt.modifiedat,
+                    tt.deleteflag,
+                    tt.tickettypeid,
+                    tp.ticketprice,
+                    tp.ticketquantity
+               FROM tbl_tickettype tt
+               LEFT JOIN tbl_ticketprice tp ON tt.tickettypecode = tp.tickettypecode
+               LEFT JOIN tbl_event te ON te.eventcode = tt.eventcode
+               WHERE tt.deleteflag = false
+                  AND tt.tickettypecode = @TicketTypeCode";
 
             using IDbConnection dbConnection = new NpgsqlConnection(_connection);
             dbConnection.Open();
 
-            var ticekttype = (await dbConnection.QueryAsync<TicketTypeEditModel>(query, new
+            var tickettype = (await dbConnection.QueryAsync<TicketTypeEditModel>(query, new
             {
                 TicketTypeCode = code
             })).FirstOrDefault();
 
-            model.TicketType = ticekttype;
+            model.TicketType = tickettype;
 
-            return Result<TicketTypeEditResponseModel>.Success(model, "Ticket is retrieved successfullly!");
+            return Result<TicketTypeEditResponseModel>.Success(model, "Ticket is retrieved successfully!");
         }
         catch (Exception ex)
         {
@@ -100,8 +98,7 @@ public class DA_TicketType : AuthorizationService
     }
 
     public async Task<Result<TicketTypeCreateResponseModel>> Create(TicketTypeCreateRequestModel requestModel)
-    {
-        var responseModel = new Result<TicketTypeCreateResponseModel>();
+    {        
         if (requestModel.TicketTypeName.IsNullOrEmpty())
         {
             return Result<TicketTypeCreateResponseModel>.ValidationError("Ticket Type name cannot be Empty!");
@@ -129,7 +126,7 @@ public class DA_TicketType : AuthorizationService
             .SumAsync();
 
         int remainingQty = totalQty - existingQty;
-        if (remainingQty - requestModel.TicketQuantity < 0)
+        if ((remainingQty - requestModel.TicketQuantity) < 0)
         {
             return Result<TicketTypeCreateResponseModel>.ValidationError("The total number of tickets exceeds the allowed quantity for this event.");
         }

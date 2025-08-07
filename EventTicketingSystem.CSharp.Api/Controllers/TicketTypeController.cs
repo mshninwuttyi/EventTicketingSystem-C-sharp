@@ -13,20 +13,23 @@ public class TicketTypeController : ControllerBase
     }
 
     [HttpGet("List")]
+    [AllowAnonymous]
     public async Task<IActionResult> List()
     {
         var lst = await _bL_TicketType.List();
         return Ok(lst);
     }
 
-    [HttpGet("Edit/{code}")]
-    public async Task<IActionResult> Edit(string code)
+    [HttpGet("Edit/{ticketTypeCode}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Edit(string ticketTypeCode)
     {
-        var ticketType = await _bL_TicketType.Edit(code);
+        var ticketType = await _bL_TicketType.Edit(ticketTypeCode);
         return Ok(ticketType);
     }
 
     [HttpPost("Create")]
+    [Authorize]
     public async Task<IActionResult> Create(TicketTypeCreateRequestModel requestModel)
     {
         var result = await _bL_TicketType.Create(requestModel);
@@ -35,16 +38,18 @@ public class TicketTypeController : ControllerBase
     }
 
     [HttpPost("Update")]
+    [Authorize]
     public async Task<IActionResult> Update(TicketTypeUpdateRequestModel requestModel)
     {
         var result = await _bL_TicketType.Update(requestModel);
         return Ok(result);
     }
 
-    [HttpPost("Delete/{code}")]
-    public async Task<IActionResult> Delete(string code)
+    [HttpPost("Delete/{ticketTypeCode}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string ticketTypeCode)
     {
-        var ticketType = await _bL_TicketType.Delete(code);
+        var ticketType = await _bL_TicketType.Delete(ticketTypeCode);
         return Ok(ticketType);
     }
 }

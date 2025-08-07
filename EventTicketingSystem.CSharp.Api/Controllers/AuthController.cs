@@ -14,6 +14,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequestModel request)
     {
         var result = await _blAuth.Login(request);
@@ -27,6 +28,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RefreshToken")]
+    [AllowAnonymous]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestModel request)
     {
         var result = await _blAuth.RefreshToken(request);
@@ -40,6 +42,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("Logout")]
+    [Authorize]
     public async Task<IActionResult> Logout([FromBody] LogoutRequestModel request)
     {
         var result = await _blAuth.Logout(request);
@@ -48,7 +51,7 @@ public class AuthController : ControllerBase
         {
             return BadRequest(result);
         }
-
+        
         return Ok(result);
     }
 }

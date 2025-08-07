@@ -22,27 +22,27 @@ INSERT INTO public.tbl_businessemail (businessemailid, businessemailcode, fullna
 ('busem020', 'BE000020', 'Tina Magenta', '001-122-3344', 'tina.magenta@example.com', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
 
 -- Sample data for tbl_tickettype
-INSERT INTO public.tbl_tickettype (tickettypeid, tickettypecode, tickettypename, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
-('tt001', 'TT000001', 'VIP', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt002', 'TT000002', 'General Admission', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt003', 'TT000003', 'Early Bird', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt004', 'TT000004', 'Student', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt005', 'TT000005', 'Child', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt006', 'TT000006', 'Senior', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt007', 'TT000007', 'Family Pack', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt008', 'TT000008', 'Group Discount', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt009', 'TT000009', 'Premium', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt010', 'TT000010', 'Standard', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt011', 'TT000011', 'Backstage Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt012', 'TT000012', 'Weekend Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt013', 'TT000013', 'Day Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt014', 'TT000014', 'Volunteer', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt015', 'TT000015', 'Exhibitor', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt016', 'TT000016', 'Press', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt017', 'TT000017', 'Complimentary', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt018', 'TT000018', 'Early Access', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt019', 'TT000019', 'Late Entry', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tt020', 'TT000020', 'All-Inclusive', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
+INSERT INTO public.tbl_tickettype (tickettypeid, tickettypecode, eventcode, tickettypename, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
+('tt001', 'TT000001', 'EV000001', 'VIP', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt002', 'TT000002', 'EV000002', 'General Admission', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt003', 'TT000003', 'EV000003', 'Early Bird', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt004', 'TT000004', 'EV000004', 'Student', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt005', 'TT000005', 'EV000005', 'Child', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt006', 'TT000006', 'EV000006', 'Senior', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt007', 'TT000007', 'EV000007', 'Family Pack', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt008', 'TT000008', 'EV000008', 'Group Discount', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt009', 'TT000009', 'EV000009', 'Premium', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt010', 'TT000010', 'EV000010', 'Standard', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt011', 'TT000011', 'EV000011', 'Backstage Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt012', 'TT000012', 'EV000012', 'Weekend Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt013', 'TT000013', 'EV000013', 'Day Pass', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt014', 'TT000014', 'EV000014', 'Volunteer', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt015', 'TT000015', 'EV000015', 'Exhibitor', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt016', 'TT000016', 'EV000016', 'Press', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt017', 'TT000017', 'EV000017', 'Complimentary', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt018', 'TT000018', 'EV000018', 'Early Access', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt019', 'TT000019', 'EV000019', 'Late Entry', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tt020', 'TT000020', 'EV000020', 'All-Inclusive', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
 
 -- Sample data for tbl_venuetype
 INSERT INTO public.tbl_venuetype (venuetypeid, venuetypecode, venuetypename, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
@@ -160,7 +160,7 @@ INSERT INTO public.tbl_eventcategory (eventcategoryid, eventcategorycode, catego
 ('ec020', 'EC000020', 'Virtual Event', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
 
 -- Sample data for tbl_event
-INSERT INTO public.tbl_event (eventid, eventcode, venuecode, eventname, eventcategorycode, description, Address, startdate, enddate, isactive, eventstatus, businessownercode, totalticketquantity, soldoutcount, uniquename, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
+INSERT INTO public.tbl_event (eventid, eventcode, venuecode, eventname, eventcategorycode, description, address, startdate, enddate, isactive, eventstatus, businessownercode, totalticketquantity, soldoutcount, uniquename, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
 ('evt001', 'EV000001', 'VE000001', 'Rock Legends Live', 'EC000001', 'An electrifying night with rock legends.', '123 Music Lane, Cityville', '2025-09-10 19:00:00', '2025-09-10 23:00:00', TRUE, 'Active', 'BO000001', 5000, 1500, 'rock-legends-live', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
 ('evt002', 'EV000002', 'VE000002', 'Annual Soccer Championship', 'EC000002', 'The biggest soccer event of the year.', '456 Sports Blvd, Townsville', '2025-10-05 14:00:00', '2025-10-05 17:00:00', TRUE, 'Active', 'BO000006', 50000, 20000, 'annual-soccer-championship', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
 ('evt003', 'EV000003', 'VE000003', 'The Phantom of the Opera', 'EC000003', 'Classic musical on a grand stage.', '789 Playwright Rd, Villageton', '2025-11-01 20:00:00', '2025-11-01 23:00:00', TRUE, 'Active', 'BO000004', 1500, 500, 'phantom-opera-show', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
@@ -183,27 +183,27 @@ INSERT INTO public.tbl_event (eventid, eventcode, venuecode, eventname, eventcat
 ('evt020', 'EV000020', 'VE000020', 'Global Virtual Summit', 'EC000020', 'A fully online conference for international participants.', 'N/A', '2026-02-10 09:00:00', '2026-02-12 17:00:00', FALSE, 'Upcoming', 'BO000009', 100000, 0, 'global-virtual-summit', 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
 
 -- Sample data for tbl_ticketprice
-INSERT INTO public.tbl_ticketprice (ticketpriceid, ticketpricecode, eventcode, tickettypecode, ticketprice, ticketquantity, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
-('tp001', 'TP000001', 'EV000001', 'TT000001', 150.00, 500, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp002', 'TP000002', 'EV000001', 'TT000002', 75.00, 4500, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp003', 'TP000003', 'EV000002', 'TT000002', 25.00, 40000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp004', 'TP000004', 'EV000002', 'TT000009', 50.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp005', 'TP000005', 'EV000003', 'TT000001', 200.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp006', 'TP000006', 'EV000003', 'TT000002', 100.00, 1300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp007', 'TP000007', 'EV000004', 'TT000002', 50.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp008', 'TP000008', 'EV000005', 'TT000003', 60.00, 3000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp009', 'TP000009', 'EV000005', 'TT000002', 80.00, 5000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp010', 'TP000010', 'EV000006', 'TT000002', 120.00, 1000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp011', 'TP000011', 'EV000007', 'TT000002', 25.00, 300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp012', 'TP000012', 'EV000008', 'TT000009', 250.00, 5000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp013', 'TP000013', 'EV000008', 'TT000002', 180.00, 15000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp014', 'TP000014', 'EV000009', 'TT000002', 30.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp015', 'TP000015', 'EV000010', 'TT000005', 10.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp016', 'TP000016', 'EV000010', 'TT000002', 0.00, 300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE), -- Free entry
-('tp017', 'TP000017', 'EV000011', 'TT000002', 35.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp018', 'TP000018', 'EV000012', 'TT000002', 15.00, 15000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp019', 'TP000019', 'EV000013', 'TT000002', 40.00, 150, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
-('tp020', 'TP000020', 'EV000014', 'TT000001', 500.00, 800, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
+INSERT INTO public.tbl_ticketprice (ticketpriceid, ticketpricecode, tickettypecode, ticketprice, ticketquantity, createdby, createdat, modifiedby, modifiedat, deleteflag) VALUES
+('tp001', 'TP000001', 'TT000001', 150.00, 500, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp002', 'TP000002', 'TT000002', 75.00, 4500, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp003', 'TP000003', 'TT000002', 25.00, 40000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp004', 'TP000004', 'TT000009', 50.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp005', 'TP000005', 'TT000001', 200.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp006', 'TP000006', 'TT000002', 100.00, 1300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp007', 'TP000007', 'TT000002', 50.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp008', 'TP000008', 'TT000003', 60.00, 3000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp009', 'TP000009', 'TT000002', 80.00, 5000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp010', 'TP000010', 'TT000002', 120.00, 1000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp011', 'TP000011', 'TT000002', 25.00, 300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp012', 'TP000012', 'TT000009', 250.00, 5000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp013', 'TP000013', 'TT000002', 180.00, 15000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp014', 'TP000014', 'TT000002', 30.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp015', 'TP000015', 'TT000005', 10.00, 200, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp016', 'TP000016', 'TT000002', 0.00, 300, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE), -- Free entry
+('tp017', 'TP000017', 'TT000002', 35.00, 10000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp018', 'TP000018', 'TT000002', 15.00, 15000, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp019', 'TP000019', 'TT000002', 40.00, 150, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE),
+('tp020', 'TP000020', 'TT000001', 500.00, 800, 'admin', '2025-07-30 14:35:24', NULL, NULL, FALSE);
 
 
 -- Sample data for tbl_ticket

@@ -24,6 +24,7 @@ global using EventTicketingSystem.CSharp.Domain.Features.Venue;
 global using EventTicketingSystem.CSharp.Domain.Features.Auth;
 global using EventTicketingSystem.CSharp.Domain.Features.Admin;
 global using EventTicketingSystem.CSharp.Domain.Features.VerificationCode;
+global using EventTicketingSystem.CSharp.Domain.Features.Event;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessEmail;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.BusinessOwner;
 global using EventTicketingSystem.CSharp.Domain.Models.Features.Ticket;

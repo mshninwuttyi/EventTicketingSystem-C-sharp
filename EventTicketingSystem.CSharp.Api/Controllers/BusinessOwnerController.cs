@@ -3,6 +3,7 @@
 [Tags("Business Owner")]
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class BusinessOwnerController : ControllerBase
 {
     private readonly BL_BusinessOwner _blBusinessOwner;

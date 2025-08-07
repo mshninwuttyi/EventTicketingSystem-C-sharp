@@ -44,7 +44,6 @@ create table public.tbl_ticketprice
         constraint tbl_ticketprice_pk
             primary key,
     ticketpricecode varchar        not null,
-    eventcode       varchar        not null,
     tickettypecode  varchar        not null,
     ticketprice     numeric(20, 2) not null,
     ticketquantity  integer        not null,
@@ -64,6 +63,7 @@ create table public.tbl_tickettype
         constraint tbl_tickettype_pk
             primary key,
     tickettypecode varchar   not null,
+    eventcode      varchar   not null,
     tickettypename varchar   not null,
     createdby      varchar   not null,
     createdat      timestamp not null,
@@ -216,6 +216,27 @@ create table public.tbl_admin
 alter table public.tbl_admin
     owner to postgres;
 
+create table public.tbl_login
+(
+    loginid               varchar   not null
+        constraint tbl_login_pk
+            primary key,
+    admincode             varchar   not null,
+    username              varchar   not null,
+    sessionid             varchar   not null,
+    refreshtoken          varchar   not null,
+    refreshtokenexpiresat timestamp not null,
+    loginstatus           varchar   not null,
+    createdby             varchar   not null,
+    createdat             timestamp not null,
+    modifiedby            varchar,
+    modifiedat            timestamp,
+    deleteflag            boolean   not null
+);
+
+alter table public.tbl_login
+    owner to postgres;
+
 create table public.tbl_businessowner
 (
     businessownerid   varchar   not null
@@ -245,7 +266,7 @@ create table public.tbl_event
     eventname           varchar   not null,
     eventcategorycode   varchar   not null,
     description         varchar   not null,
-    Address             varchar   not null,
+    address             varchar   not null,
     startdate           timestamp not null,
     enddate             timestamp not null,
     isactive            boolean   not null,

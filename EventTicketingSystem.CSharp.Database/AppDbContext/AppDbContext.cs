@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -373,9 +373,6 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
-            entity.Property(e => e.Eventcode)
-                .HasColumnType("character varying")
-                .HasColumnName("eventcode");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
@@ -410,6 +407,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("createdby");
             entity.Property(e => e.Deleteflag).HasColumnName("deleteflag");
+            entity.Property(e => e.Eventcode)
+                .HasColumnType("character varying")
+                .HasColumnName("eventcode");
             entity.Property(e => e.Modifiedat)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifiedat");
