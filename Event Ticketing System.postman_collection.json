@@ -1,0 +1,545 @@
+{
+	"info": {
+		"_postman_id": "ab5de235-6ea4-47ba-a530-f873738e5151",
+		"name": "Event Ticketing System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10177357"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/auth/login",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/auth/login",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:36:52 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Login succeeded.\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMDAxIiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImp0aSI6IjAxSzIxS1lBVlA0MlY3N1ZORFpFMlM2MDNLIiwiZXhwIjoxNzU0NTQ4OTExLCJpc3MiOiJFdmVudFRpY2tldGluZ1N5c3RlbSIsImF1ZCI6IkV2ZW50VGlja2V0aW5nU3lzdGVtQWRtaW5Vc2VycyJ9.Jo1_KSkqmk-X55wvJMoXPFhhUTnj5NCxqm4TXJlFsQc\",\n        \"tokenExpiresAt\": \"2025-08-07T13:11:52.4540675+06:30\",\n        \"refreshToken\": \"01K21KYB5AK1X073KAZEBBGZVB\",\n        \"refreshTokenExpiresAt\": \"2025-08-08T13:06:52.2662922+06:30\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"01K21KYB5AK1X073KAZEBBGZVB\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/auth/refreshtoken",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refreshtoken"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Refresh Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"refreshToken\": \"01K21KYB5AK1X073KAZEBBGZVB\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/auth/refreshtoken",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"refreshtoken"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:38:53 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Token refreshed.\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMDAxIiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImp0aSI6IjAxSzIxTTIyQkhaODZHNFdKMEpGN0paRjFaIiwiZXhwIjoxNzU0NTQ5MDM0LCJpc3MiOiJFdmVudFRpY2tldGluZ1N5c3RlbSIsImF1ZCI6IkV2ZW50VGlja2V0aW5nU3lzdGVtQWRtaW5Vc2VycyJ9.ojeLoo3VA57x9gEBYlPz8PX3Lq9xreRcBfr5nOU0iA8\",\n        \"tokenExpiresAt\": \"2025-08-07T13:13:54.3488789+06:30\",\n        \"refreshToken\": \"01K21M22BMQF7V4487FM6CCMRC\",\n        \"refreshTokenExpiresAt\": \"2025-08-08T13:08:54.3245754+06:30\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"01K21M22BMQF7V4487FM6CCMRC\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/auth/logout",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Logout",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"refreshToken\": \"01K21M22BMQF7V4487FM6CCMRC\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/auth/logout",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:41:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Logout succeeded.\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Admin List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"01K21M22BMQF7V4487FM6CCMRC\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/admin/list",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"list"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Admin List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"refreshToken\": \"01K21M22BMQF7V4487FM6CCMRC\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"list"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:48:11 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Success!\",\n    \"data\": {\n        \"adminList\": [\n            {\n                \"adminCode\": \"ADM-010\",\n                \"fullName\": \"Laura Hall\",\n                \"email\": \"laura.hall@example.com\",\n                \"phoneNo\": \"222-333-4444\"\n            },\n            {\n                \"adminCode\": \"ADM-009\",\n                \"fullName\": \"Kevin White\",\n                \"email\": \"kevin.white@example.com\",\n                \"phoneNo\": \"666-777-8888\"\n            },\n            {\n                \"adminCode\": \"ADM-008\",\n                \"fullName\": \"Jessica Lee\",\n                \"email\": \"jessica.lee@example.com\",\n                \"phoneNo\": \"333-444-5555\"\n            },\n            {\n                \"adminCode\": \"ADM-007\",\n                \"fullName\": \"David Wilson\",\n                \"email\": \"david.wilson@example.com\",\n                \"phoneNo\": \"999-000-1111\"\n            },\n            {\n                \"adminCode\": \"ADM-006\",\n                \"fullName\": \"Emily Davis\",\n                \"email\": \"emily.davis@example.com\",\n                \"phoneNo\": \"777-888-9999\"\n            },\n            {\n                \"adminCode\": \"ADM-005\",\n                \"fullName\": \"Michael Brown\",\n                \"email\": \"michael.brown@example.com\",\n                \"phoneNo\": \"444-555-6666\"\n            },\n            {\n                \"adminCode\": \"ADM-004\",\n                \"fullName\": \"Sarah Miller\",\n                \"email\": \"sarah.miller@example.com\",\n                \"phoneNo\": \"111-222-3333\"\n            },\n            {\n                \"adminCode\": \"ADM-003\",\n                \"fullName\": \"Peter Jones\",\n                \"email\": \"p.jones@example.com\",\n                \"phoneNo\": \"555-123-4567\"\n            },\n            {\n                \"adminCode\": \"ADM-002\",\n                \"fullName\": \"Jane Smith\",\n                \"email\": \"jane.smith@example.com\",\n                \"phoneNo\": \"987-654-3210\"\n            },\n            {\n                \"adminCode\": \"ADM-001\",\n                \"fullName\": \"John Doe\",\n                \"email\": \"johndoe@example.com\",\n                \"phoneNo\": \"123-456-7890\"\n            },\n            {\n                \"adminCode\": \"a001\",\n                \"fullName\": \"Admin\",\n                \"email\": \"admin@gmail.com\",\n                \"phoneNo\": \"00000000000000\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Admin Edit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/admin/edit/ADM-010",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"edit",
+								"ADM-010"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Admin Edit",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/edit/ADM-010",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"edit",
+										"ADM-010"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:49:33 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Success!\",\n    \"data\": {\n        \"admin\": {\n            \"adminCode\": \"ADM-010\",\n            \"username\": \"laurah\",\n            \"fullName\": \"Laura Hall\",\n            \"email\": \"laura.hall@example.com\",\n            \"phoneNo\": \"222-333-4444\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Admin Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"string\",\r\n  \"email\": \"string@gmail.com\",\r\n  \"phoneNo\": \"09000000000\",\r\n  \"password\": \"Sasa@123\",\r\n  \"fullName\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/admin/create",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"create"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Admin Create",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"string\",\r\n  \"email\": \"string@gmail.com\",\r\n  \"phoneNo\": \"09000000000\",\r\n  \"password\": \"Sasa@123\",\r\n  \"fullName\": \"string\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/create",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 07 Aug 2025 06:51:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"isError\": false,\n    \"message\": \"Admin Created Successfully.\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "https://localhost:7248",
+			"type": "string"
+		},
+		{
+			"key": "Token",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

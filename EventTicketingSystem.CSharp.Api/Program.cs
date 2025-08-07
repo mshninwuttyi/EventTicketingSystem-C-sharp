@@ -1,5 +1,3 @@
-#region Logging
-
 string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
 string logFileName = Path.Combine(logFolderPath, "logs_");
 
@@ -15,8 +13,6 @@ Log.Logger = new LoggerConfiguration()
         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
         rollingInterval: RollingInterval.Hour)
     .CreateLogger();
-
-#endregion
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,8 +70,8 @@ builder.Services.AddOptions<JwtSettings>()
     .Validate(settings => !string.IsNullOrWhiteSpace(settings.SecretKey), "SecretKey must be provided.")
     .ValidateOnStart();
 
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
-                  ?? throw new InvalidOperationException("JwtSettings configuration is missing or invalid.");
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
+                     ?? throw new InvalidOperationException("JwtSettings configuration is missing or invalid.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -93,8 +89,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-#endregion
 
 var app = builder.Build();
 
