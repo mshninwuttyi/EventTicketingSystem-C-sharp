@@ -26,8 +26,6 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddModularServices(builder);
 
-#region Swagger Token UI
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Event Ticketing System", Version = "v1" });
@@ -60,10 +58,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-#endregion
-
-#region Jwt Token
-
 builder.Services.AddOptions<JwtSettings>()
     .Bind(builder.Configuration.GetSection("JwtSettings"))
     .ValidateDataAnnotations()
@@ -89,8 +83,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-#endregion
 
 var app = builder.Build();
 
