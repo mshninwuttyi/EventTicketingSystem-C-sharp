@@ -90,6 +90,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+#endregion
+
 var app = builder.Build();
 
 app.UseSwagger();
