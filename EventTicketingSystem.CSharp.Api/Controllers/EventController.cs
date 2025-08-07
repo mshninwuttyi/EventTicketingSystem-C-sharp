@@ -29,7 +29,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPost("Create")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> Create(EventCreateRequestModel requestModel)
     {
         var data = await _blEvent.Create(requestModel);
@@ -37,7 +37,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPost("Update")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> Update(EventUpdateRequestModel requestModel)
     {
         var data = await _blEvent.Update(requestModel);
@@ -45,7 +45,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPost("Delete/{eventCode}")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> Delete(string eventCode)
     {
         var data = await _blEvent.Delete(eventCode);

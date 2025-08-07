@@ -1,9 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-
 #region Logging
 
 string logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
@@ -25,17 +19,52 @@ Log.Logger = new LoggerConfiguration()
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddSerilog();
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddModularServices(builder);
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddModularServices(builder);
+
+#region Swagger Token UI
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Event Ticketing System", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Event Ticketing System",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
+
+#endregion
 
 #region Jwt Token
 
@@ -70,7 +99,10 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+});
 
 app.UseHttpsRedirection();
 

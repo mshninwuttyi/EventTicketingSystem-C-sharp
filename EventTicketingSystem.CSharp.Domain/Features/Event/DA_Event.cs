@@ -26,27 +26,27 @@ public class DA_Event : AuthorizationService
         try
         {
             var data = await (from e in _db.TblEvents
-                join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
-                where e.Deleteflag == false
-                orderby e.Eventid descending
-                select new
-                {
-                    e,
-                    b.Fullname
-                }).ToListAsync();
-            
+                              join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
+                              where e.Deleteflag == false
+                              orderby e.Eventid descending
+                              select new
+                              {
+                                  e,
+                                  b.Fullname
+                              }).ToListAsync();
+
             if (data is null || !data.Any())
             {
                 return Result<EventListResponseModel>.NotFoundError("No event found.");
             }
-            
+
             model.EventList = data.Select(x =>
             {
-                var eventModel = EventListModel.FromTblEvent(x.e); 
+                var eventModel = EventListModel.FromTblEvent(x.e);
                 eventModel.Businessownername = x.Fullname;
                 return eventModel;
             }).ToList();
-            
+
             return Result<EventListResponseModel>.Success(model);
         }
         catch (Exception ex)
@@ -71,26 +71,34 @@ public class DA_Event : AuthorizationService
 
         try
         {
-            
+
             var item = await (from e in _db.TblEvents
-                join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
-                join v in _db.TblVenues on e.Venuecode equals v.Venuecode
-                join vt in _db.TblVenuetypes on v.Venuetypecode equals vt.Venuetypecode
-                where e.Deleteflag == false
-                orderby e.Eventid descending
-                select new
-                {
-                    e,
-                    b.Fullname,
-                    v.Venuename, v.Capacity, v.Description, v.Facilities, v.Addons, v.Venueimage,v.Address,
-                    vt.Venuetypename
-                }).ToListAsync();
-            
+                              join c in _db.TblEventcategories on e.Eventcategorycode equals c.Eventcategorycode
+                              join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
+                              join v in _db.TblVenues on e.Venuecode equals v.Venuecode
+                              join vt in _db.TblVenuetypes on v.Venuetypecode equals vt.Venuetypecode
+                              where e.Deleteflag == false
+                              orderby e.Eventid descending
+                              select new
+                              {
+                                  e,
+                                  c.Categoryname,
+                                  b.Fullname,
+                                  v.Venuename,
+                                  v.Capacity,
+                                  v.Description,
+                                  v.Facilities,
+                                  v.Addons,
+                                  v.Venueimage,
+                                  v.Address,
+                                  vt.Venuetypename
+                              }).ToListAsync();
+
             if (item is null)
             {
                 return Result<EventEditResponseModel>.NotFoundError("No event found.");
             }
-            
+
             var firstItem = item.First();
 
             var eventModel = EventEditModel.FromTblEvent(firstItem.e);
@@ -99,7 +107,7 @@ public class DA_Event : AuthorizationService
             eventModel.Capacity = firstItem.Capacity;
             eventModel.Description = firstItem.Description;
             eventModel.Facilities = firstItem.Facilities;
-            
+
             if (!string.IsNullOrWhiteSpace(firstItem.Addons))
             {
                 eventModel.Addons = firstItem.Addons
@@ -108,7 +116,7 @@ public class DA_Event : AuthorizationService
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToList();
             }
-            
+
             if (!string.IsNullOrWhiteSpace(firstItem.Venueimage))
             {
                 eventModel.VenueImage = firstItem.Venueimage
@@ -117,12 +125,13 @@ public class DA_Event : AuthorizationService
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToList();
             }
-            
+
             eventModel.Address = firstItem.Address;
             eventModel.Venuetypename = firstItem.Venuetypename;
+            eventModel.Eventcategory = firstItem.Categoryname;
 
-            model.Event = eventModel;            
-            
+            model.Event = eventModel;
+
             return Result<EventEditResponseModel>.Success(model);
         }
         catch (Exception ex)
@@ -199,7 +208,28 @@ public class DA_Event : AuthorizationService
             await _db.AddAsync(newEvent);
             await _db.SaveAndDetachAsync();
 
-            return Result<EventCreateResponseModel>.Success("Event is successfully Created");
+            var newEventSeq = new TblSequence()
+            {
+                Uniquename = requestModel.Uniquename,
+                Sequenceno = "000000",
+                Sequencedate = DateTime.Now,
+                Sequencetype = EnumSequenceType.Event.ToString(),
+                Eventcode = newEvent.Eventcode,
+                Deleteflag = false
+            };
+            var newTransactionSeq = new TblSequence()
+            {
+                Uniquename = requestModel.Uniquename,
+                Sequenceno = "000000",
+                Sequencedate = DateTime.Now,
+                Sequencetype = EnumSequenceType.Transaction.ToString(),
+                Eventcode = newEvent.Eventcode,
+                Deleteflag = false
+            };
+            await _db.AddRangeAsync(newEventSeq, newTransactionSeq);
+            await _db.SaveAndDetachAsync();
+
+            return Result<EventCreateResponseModel>.Success("Event is successfully Created.");
         }
         catch (Exception ex)
         {
@@ -226,12 +256,30 @@ public class DA_Event : AuthorizationService
                 return Result<EventUpdateResponseModel>.NotFoundError("Event Not Found.");
             }
 
-            item.Eventname = requestModel.EventName;
-            item.Startdate = requestModel.Startdate;
-            item.Enddate = requestModel.Enddate;
+            if (requestModel.Isactive == true)
+            {
+                if (item.Eventstatus == EnumEventStatus.Completed.ToString())
+                {
+                    item.Eventstatus = EnumEventStatus.Ongoing.ToString();
+                }
+                if (item.Eventstatus == EnumEventStatus.Cancelled.ToString())
+                {
+                    item.Eventstatus = EnumEventStatus.Upcoming.ToString();
+                }
+            }
+            else
+            {
+                if (item.Eventstatus == EnumEventStatus.Upcoming.ToString())
+                {
+                    item.Eventstatus = EnumEventStatus.Cancelled.ToString();
+                }
+                if (item.Eventstatus == EnumEventStatus.Ongoing.ToString())
+                {
+                    item.Eventstatus = EnumEventStatus.Completed.ToString();
+                }
+            }
+
             item.Isactive = requestModel.Isactive;
-            item.Eventstatus = requestModel.Eventstatus;
-            item.Totalticketquantity = requestModel.Totalticketquantity;
             item.Modifiedby = CurrentUserId;
             item.Modifiedat = DateTime.Now;
             _db.Entry(item).State = EntityState.Modified;
@@ -259,6 +307,20 @@ public class DA_Event : AuthorizationService
 
         try
         {
+            var sequenceList = await _db.TblSequences
+                        .Where(
+                            x => x.Eventcode == eventCode && 
+                            x.Deleteflag == false)
+                        .ToListAsync();
+
+            foreach (var sequence in sequenceList)
+            {
+                sequence.Deleteflag = true;
+                _db.Entry(sequence).State = EntityState.Modified;
+            }
+
+            await _db.SaveAndDetachAsync();
+
             var item = await _db.TblEvents
                         .FirstOrDefaultAsync(
                             x => x.Eventcode == eventCode &&
@@ -269,6 +331,17 @@ public class DA_Event : AuthorizationService
                 return Result<EventDeleteResponseModel>.NotFoundError("Event Not Found.");
             }
 
+            if (Enum.TryParse<EnumEventStatus>(item.Eventstatus, out var status))
+            {
+                item.Eventstatus = status switch
+                {
+                    EnumEventStatus.Ongoing => EnumEventStatus.Completed.ToString(),
+                    EnumEventStatus.Upcoming => EnumEventStatus.Cancelled.ToString(),
+                    _ => item.Eventstatus
+                };
+            }
+
+            item.Isactive = false;
             item.Deleteflag = true;
             item.Modifiedby = CurrentUserId;
             item.Modifiedat = DateTime.Now;

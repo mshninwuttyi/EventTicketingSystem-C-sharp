@@ -9,7 +9,7 @@ public class EventEditModel
 {
     public string Eventcode { get; set; }
     
-    public string Eventcategorycode { get; set; }
+    public string Eventcategory { get; set; }
 
     public string Eventname { get; set; }
 
@@ -51,7 +51,6 @@ public class EventEditModel
         {
             Eventcode = tblEvent.Eventcode,
             Eventname = tblEvent.Eventname,
-            Eventcategorycode = tblEvent.Eventcategorycode,
             Startdate = tblEvent.Startdate,
             Enddate = tblEvent.Enddate,
             Isactive = tblEvent.Isactive,

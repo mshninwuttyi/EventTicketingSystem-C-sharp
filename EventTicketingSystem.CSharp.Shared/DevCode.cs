@@ -63,6 +63,11 @@ public static partial class DevCode
         return true;
     }
 
+    public static DateTime ToDateTime(this DateTime? dt)
+    {
+        return dt == null ? default(DateTime) : Convert.ToDateTime(dt);
+    }
+
     #endregion
 
     #region Validation
