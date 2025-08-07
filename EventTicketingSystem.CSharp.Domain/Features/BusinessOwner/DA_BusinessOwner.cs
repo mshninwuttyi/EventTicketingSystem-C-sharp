@@ -158,17 +158,14 @@ public class DA_BusinessOwner : AuthorizationService
                     errorMessage += "Name is invalid.\n";
                 }
             }
-
-            if (!requestModel.Phone.IsNullOrEmpty() && data.Phone != requestModel.Phone)
+            
+            if (requestModel.Phone.IsNullOrEmpty() || requestModel.Phone.Length < 9)
             {
-                if (requestModel.Phone.Length >= 9 && requestModel.Phone.Length < 11)
-                {
-                    data.Phone = requestModel.Phone;
-                }
-                else
-                {
-                    errorMessage += "Phone No is invalid!\n";
-                }
+                errorMessage += "Phone No can't be empty or less than 9 digits!\n";
+            }
+            else if (data.Phone != requestModel.Phone)
+            {
+                data.Phone = requestModel.Phone;
             }
 
             data.Modifiedby = CurrentUserId;
