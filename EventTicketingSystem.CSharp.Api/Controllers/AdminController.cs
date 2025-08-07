@@ -3,6 +3,7 @@
 [Tags("Admin User")]
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class AdminController : ControllerBase
 {
     private readonly BL_Admin _blAdmin;

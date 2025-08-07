@@ -25,16 +25,28 @@ public class DA_Event : AuthorizationService
 
         try
         {
-            var data = await _db.TblEvents
-                        .Where(x => x.Deleteflag == false)
-                        .OrderByDescending(x => x.Eventid)
-                        .ToListAsync();
-            if (data is null)
+            var data = await (from e in _db.TblEvents
+                join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
+                where e.Deleteflag == false
+                orderby e.Eventid descending
+                select new
+                {
+                    e,
+                    b.Fullname
+                }).ToListAsync();
+            
+            if (data is null || !data.Any())
             {
-                return Result<EventListResponseModel>.NotFoundError("No Data Found.");
+                return Result<EventListResponseModel>.NotFoundError("No event found.");
             }
-
-            model.EventList = data.Select(EventListModel.FromTblEvent).ToList();
+            
+            model.EventList = data.Select(x =>
+            {
+                var eventModel = EventListModel.FromTblEvent(x.e); 
+                eventModel.Businessownername = x.Fullname;
+                return eventModel;
+            }).ToList();
+            
             return Result<EventListResponseModel>.Success(model);
         }
         catch (Exception ex)
@@ -54,22 +66,63 @@ public class DA_Event : AuthorizationService
 
         if (eventCode.IsNullOrEmpty())
         {
-            return Result<EventEditResponseModel>.UserInputError("Event Code Required.");
+            return Result<EventEditResponseModel>.UserInputError("Event code required.");
         }
 
         try
         {
-            var item = await _db.TblEvents
-                        .FirstOrDefaultAsync(
-                            x => x.Eventcode == eventCode &&
-                            x.Deleteflag == false
-                        );
+            
+            var item = await (from e in _db.TblEvents
+                join b in _db.TblBusinessowners on e.Businessownercode equals b.Businessownercode
+                join v in _db.TblVenues on e.Venuecode equals v.Venuecode
+                join vt in _db.TblVenuetypes on v.Venuetypecode equals vt.Venuetypecode
+                where e.Deleteflag == false
+                orderby e.Eventid descending
+                select new
+                {
+                    e,
+                    b.Fullname,
+                    v.Venuename, v.Capacity, v.Description, v.Facilities, v.Addons, v.Venueimage,v.Address,
+                    vt.Venuetypename
+                }).ToListAsync();
+            
             if (item is null)
             {
-                return Result<EventEditResponseModel>.NotFoundError("Event Not Found.");
+                return Result<EventEditResponseModel>.NotFoundError("No event found.");
             }
+            
+            var firstItem = item.First();
 
-            model.Event = EventEditModel.FromTblEvent(item);
+            var eventModel = EventEditModel.FromTblEvent(firstItem.e);
+            eventModel.Businessownername = firstItem.Fullname;
+            eventModel.Venuename = firstItem.Venuename;
+            eventModel.Capacity = firstItem.Capacity;
+            eventModel.Description = firstItem.Description;
+            eventModel.Facilities = firstItem.Facilities;
+            
+            if (!string.IsNullOrWhiteSpace(firstItem.Addons))
+            {
+                eventModel.Addons = firstItem.Addons
+                    .Split([','], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
+            }
+            
+            if (!string.IsNullOrWhiteSpace(firstItem.Venueimage))
+            {
+                eventModel.VenueImage = firstItem.Venueimage
+                    .Split([','], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
+            }
+            
+            eventModel.Address = firstItem.Address;
+            eventModel.Venuetypename = firstItem.Venuetypename;
+
+            model.Event = eventModel;            
+            
             return Result<EventEditResponseModel>.Success(model);
         }
         catch (Exception ex)
@@ -87,31 +140,39 @@ public class DA_Event : AuthorizationService
     {
         if (requestModel.Eventname.IsNullOrEmpty())
         {
-            return Result<EventCreateResponseModel>.ValidationError("Event Name Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Event name is required!");
         }
-        if (requestModel.Description.IsNullOrEmpty())
+        if (requestModel.Uniquename.IsNullOrEmpty())
         {
-            return Result<EventCreateResponseModel>.ValidationError("Descripiton Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Unique name is required!");
         }
-        if (requestModel.Address.IsNullOrEmpty())
+        if (requestModel.Eventcategorycode.IsNullOrEmpty())
         {
-            return Result<EventCreateResponseModel>.ValidationError("Address Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Event category is required");
         }
-        if (requestModel.Startdate.IsNullOrEmpty())
+        if (requestModel.Businessownercode.IsNullOrEmpty())
         {
-            return Result<EventCreateResponseModel>.ValidationError("Start Date Is Required!");
+            return Result<EventCreateResponseModel>.ValidationError("Business owner is required");
         }
-        if (requestModel.Enddate.IsNullOrEmpty())
+        if (requestModel.Venuecode.IsNullOrEmpty())
         {
-            return Result<EventCreateResponseModel>.ValidationError("End Date Is Required!");
-        }
-        if (requestModel.Eventstatus.IsNullOrEmpty())
-        {
-            return Result<EventCreateResponseModel>.ValidationError("Event Status Is Required");
+            return Result<EventCreateResponseModel>.ValidationError("Venue is required!");
         }
         if (requestModel.Totalticketquantity.IsNullOrEmpty() || requestModel.Totalticketquantity <= 0)
         {
             return Result<EventCreateResponseModel>.ValidationError("Invalid Ticket Quantity!");
+        }
+        if (requestModel.Startdate.IsNullOrEmpty())
+        {
+            return Result<EventCreateResponseModel>.ValidationError("Start date is required!");
+        }
+        if (requestModel.Enddate.IsNullOrEmpty())
+        {
+            return Result<EventCreateResponseModel>.ValidationError("End date is required!");
+        }
+        if (requestModel.Isactive.IsNullOrEmpty())
+        {
+            return Result<EventCreateResponseModel>.ValidationError("Is active is required");
         }
 
         try
@@ -121,11 +182,15 @@ public class DA_Event : AuthorizationService
                 Eventid = GenerateUlid(),
                 Eventcode = await _commonService.GenerateSequenceCode(EnumTableUniqueName.Tbl_Event),
                 Eventname = requestModel.Eventname,
+                Uniquename = requestModel.Uniquename,
+                Eventcategorycode = requestModel.Eventcategorycode,
+                Businessownercode = requestModel.Businessownercode,
+                Venuecode = requestModel.Venuecode,
+                Totalticketquantity = requestModel.Totalticketquantity,
                 Startdate = requestModel.Startdate,
                 Enddate = requestModel.Enddate,
                 Isactive = true,
                 Eventstatus = EnumEventStatus.Upcoming.ToString(),
-                Totalticketquantity = requestModel.Totalticketquantity,
                 Soldoutcount = 0,
                 Createdby = CurrentUserId,
                 Createdat = DateTime.Now,

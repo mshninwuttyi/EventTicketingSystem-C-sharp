@@ -12,6 +12,7 @@ public class VenueController : ControllerBase
     }
 
     [HttpGet("List")]
+    [AllowAnonymous]
     public async Task<IActionResult> List()
     {
         var data = await _blVenue.List();
@@ -19,6 +20,7 @@ public class VenueController : ControllerBase
     }
 
     [HttpGet("Edit/{venueCode}")]
+    [AllowAnonymous]
     public async Task<IActionResult> Edit(string venueCode)
     {
         var data = await _blVenue.Edit(venueCode);
@@ -27,6 +29,7 @@ public class VenueController : ControllerBase
 
     [HttpPost("Create")]
     [Consumes("multipart/form-data")]
+    [Authorize]
     public async Task<IActionResult> Create(VenueCreateRequestModel requestModel)
     {
         var data = await _blVenue.Create(requestModel);
@@ -34,6 +37,7 @@ public class VenueController : ControllerBase
     }
 
     [HttpPost("Update")]
+    [Authorize]
     public async Task<IActionResult> Update(VenueUpdateRequestModel requestModel)
     {
         var data = await _blVenue.Update(requestModel);
@@ -41,6 +45,7 @@ public class VenueController : ControllerBase
     }
 
     [HttpPost("Delete/{venueCode}")]
+    [Authorize]
     public async Task<IActionResult> Delete(string venueCode)
     {
         var data = await _blVenue.Delete(venueCode);

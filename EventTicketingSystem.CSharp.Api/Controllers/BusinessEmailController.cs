@@ -13,6 +13,7 @@ public class BusinessEmailController : ControllerBase
     }
 
     [HttpGet("List")]
+    [Authorize]
     public async Task<IActionResult> List()
     {
         var data = await _bl_BusinessEmail.List();
@@ -20,6 +21,7 @@ public class BusinessEmailController : ControllerBase
     }
 
     [HttpGet("Edit/{businessEmailCode}")]
+    [Authorize]
     public async Task<IActionResult> Edit(string businessEmailCode)
     {
         var data = await _bl_BusinessEmail.Edit(businessEmailCode);
@@ -27,6 +29,7 @@ public class BusinessEmailController : ControllerBase
     }
 
     [HttpPost("Create")]
+    [AllowAnonymous]
     public async Task<IActionResult> Create([FromBody] BusinessEmailCreateRequestModel requestModel)
     {
         var data = await _bl_BusinessEmail.Create(requestModel);

@@ -5,6 +5,7 @@ namespace EventTicketingSystem.CSharp.Api.Controllers;
 [Tags("Search Menu")]
 [ApiController]
 [Route("api/[controller]")]
+[AllowAnonymous]
 public class SearchEventsAndVenuesController : ControllerBase
 {
     private readonly BL_SearchEventsAndVenues _bl_SearchEventsAndVenues;

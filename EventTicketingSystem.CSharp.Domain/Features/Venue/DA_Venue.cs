@@ -84,7 +84,7 @@ public class DA_Venue : AuthorizationService
         string addons = string.Empty;
 
         try
-        {
+        {   
             if (requestModel.VenueImage != null && requestModel.VenueImage.Count > 0)
             {
                 var uploadResults = await EnumDirectory.VenueImage.UploadFilesAsync(requestModel.VenueImage);

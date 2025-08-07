@@ -3,6 +3,7 @@
 [Tags("Dashboard")]
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class DashboardController : ControllerBase
 {
     private readonly BL_Dashboard _blDashboard;

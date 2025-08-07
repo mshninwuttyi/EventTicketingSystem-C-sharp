@@ -15,30 +15,35 @@ namespace EventTicketingSystem.CSharp.Api.Controllers
         }
 
         [HttpGet("List")]
+        [AllowAnonymous]
         public async Task<IActionResult> List()
         {
             return Ok(await _blVenueType.List());
         }
 
         [HttpGet("Edit/{venueTypeCode}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Edit(string venueTypeCode)
         {
             return Ok(await _blVenueType.Edit(venueTypeCode));
         }
 
         [HttpPost("Create")]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] VenueTypeCreateRequestModel requestModel)
         {
             return Ok(await _blVenueType.Create(requestModel));
         }
 
         [HttpPost("Update")]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] VenueTypeUpdateRequestModel requestModel)
         {
             return Ok(await _blVenueType.Update(requestModel));
         }
 
         [HttpPost("Delete/{venueTypeCode}")]
+        [Authorize]
         public async Task<IActionResult> Delete(string venueTypeCode)
         {
             return Ok(await _blVenueType.Delete(venueTypeCode));
