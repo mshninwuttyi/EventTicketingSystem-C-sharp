@@ -258,28 +258,26 @@ alter table public.tbl_businessowner
 
 create table public.tbl_event
 (
-    eventid             varchar   not null
+    eventid             varchar                  not null
         constraint tbl_event_pk
             primary key,
-    eventcode           varchar   not null,
-    venuecode           varchar   not null,
-    eventname           varchar   not null,
-    eventcategorycode   varchar   not null,
-    description         varchar   not null,
-    address             varchar   not null,
-    startdate           timestamp not null,
-    enddate             timestamp not null,
-    isactive            boolean   not null,
-    eventstatus         varchar   not null,
-    businessownercode   varchar   not null,
-    totalticketquantity integer   not null,
-    soldoutcount        integer   not null,
-    uniquename          varchar   not null,
-    createdby           varchar   not null,
-    createdat           timestamp not null,
+    eventcode           varchar                  not null,
+    venuecode           varchar                  not null,
+    eventname           varchar                  not null,
+    eventcategorycode   varchar                  not null,
+    startdate           timestamp with time zone not null,
+    enddate             timestamp with time zone not null,
+    isactive            boolean                  not null,
+    eventstatus         varchar                  not null,
+    businessownercode   varchar                  not null,
+    totalticketquantity integer                  not null,
+    soldoutcount        integer                  not null,
+    uniquename          varchar                  not null,
+    createdby           varchar                  not null,
+    createdat           timestamp                not null,
     modifiedby          varchar,
     modifiedat          timestamp,
-    deleteflag          boolean   not null
+    deleteflag          boolean                  not null
 );
 
 alter table public.tbl_event
@@ -329,20 +327,10 @@ $$;
 
 alter function public.sp_sequencecode(integer) owner to postgres;
 
-CREATE OR REPLACE FUNCTION public.sp_ticket_info(p_ticketcode varchar)
-RETURNS TABLE (
-    ticketpricecode varchar,
-    ticketprice numeric(20,2),
-    tickettypecode varchar,
-    eventcode varchar,
-    startdate timestamp,
-    enddate timestamp,
-    eventname varchar,
-    tickettypename varchar,
-    venuename varchar
-)
-LANGUAGE plpgsql
-AS
+create function public.sp_ticket_info(p_ticketcode character varying)
+    returns TABLE(ticketpricecode character varying, ticketprice numeric, tickettypecode character varying, eventcode character varying, startdate timestamp without time zone, enddate timestamp without time zone, eventname character varying, tickettypename character varying, venuename character varying)
+    language plpgsql
+as
 $$
 BEGIN
     RETURN QUERY
