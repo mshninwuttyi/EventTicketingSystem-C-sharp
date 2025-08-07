@@ -5,7 +5,7 @@ public class DA_Auth
     private readonly ILogger<DA_Auth>  _logger;
     private readonly AppDbContext _db;
 
-    public DA_Auth(ILogger<DA_Auth> logger, AppDbContext db, UserContextService userContextService)
+    public DA_Auth(ILogger<DA_Auth> logger, AppDbContext db)
     {
         _logger = logger;
         _db = db;
