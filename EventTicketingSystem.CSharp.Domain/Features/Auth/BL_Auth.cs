@@ -5,13 +5,13 @@ namespace EventTicketingSystem.CSharp.Domain.Features.Auth;
 public class BL_Auth
 {
     private readonly JwtSettings _jwtSettings;
-    private readonly JwtService  _jwtService;
+    private readonly JwtService _jwtService;
     private readonly DA_Auth _daAuth;
     private readonly ILogger<BL_Auth> _logger;
-    private readonly UserContextService  _userContextService;
+    private readonly UserContextService _userContextService;
 
-    public BL_Auth(IOptions<JwtSettings> jwtSettingsOptions, JwtService jwtService , 
-                        DA_Auth daAuth, UserContextService  userContextService, ILogger<BL_Auth> logger)
+    public BL_Auth(IOptions<JwtSettings> jwtSettingsOptions, JwtService jwtService,
+                        DA_Auth daAuth, UserContextService userContextService, ILogger<BL_Auth> logger)
     {
         _jwtSettings = jwtSettingsOptions.Value;
         _jwtService = jwtService;
@@ -29,9 +29,9 @@ public class BL_Auth
             _logger.LogInformation($"User not found: {requestModel.Username}");
             return Result<LoginResponseModel>.ValidationError("Invalid username or password.");
         }
-        
+
         string hashedPassword = requestModel.Password.HashPassword(requestModel.Username);
-        
+
         bool isValid = hashedPassword == user.Password;
 
         if (!isValid)
@@ -39,12 +39,12 @@ public class BL_Auth
             _logger.LogInformation($"Invalid password for user: {requestModel.Username}");
             return Result<LoginResponseModel>.ValidationError("Invalid username or password.");
         }
-        
+
         var token = _jwtService.GenerateToken(user.Admincode, user.Username);
-        
+
         var refreshToken = GenerateUlid();
-        var refreshTokenExpiresAt = DateTime.Now.AddDays(1); 
-        
+        var refreshTokenExpiresAt = DateTime.Now.AddDays(1);
+
         var adminCode = user.Admincode;
         if (string.IsNullOrWhiteSpace(adminCode))
             throw new InvalidOperationException("AdminCode cannot be null.");
@@ -52,7 +52,7 @@ public class BL_Auth
         var sessionId = GenerateUlid();
         if (string.IsNullOrWhiteSpace(sessionId))
             throw new InvalidOperationException("SessionId cannot be null.");
-        
+
         // Create a new login session in tbl_login
         var newLogin = new TblLogin
         {
@@ -67,12 +67,12 @@ public class BL_Auth
             Createdat = DateTime.Now,
             Deleteflag = false
         };
-        
+
         await _daAuth.CreateLogin(newLogin);
 
         _logger.LogInformation($"Generated Token: {token}");
-        
-        return  Result<LoginResponseModel>.Success(new LoginResponseModel
+
+        return Result<LoginResponseModel>.Success(new LoginResponseModel
         {
             Token = token,
             TokenExpiresAt = DateTime.Now.AddMinutes(_jwtSettings.TokenExpiryMinutes),
@@ -80,7 +80,7 @@ public class BL_Auth
             RefreshTokenExpiresAt = refreshTokenExpiresAt
         }, "Login succeeded.");
     }
-    
+
     public async Task<Result<RefreshTokenResponseModel>> RefreshToken(RefreshTokenRequestModel request)
     {
         var login = await _daAuth.GetUserByRefreshToken(request.RefreshToken);
@@ -89,7 +89,7 @@ public class BL_Auth
         {
             return Result<RefreshTokenResponseModel>.ValidationError("Invalid or expired refresh token.");
         }
-        
+
         if (login.Loginstatus == "Logout")
         {
             return Result<RefreshTokenResponseModel>.ValidationError("The user has been logged out.");
@@ -103,11 +103,11 @@ public class BL_Auth
             _logger.LogInformation($"Rotating refresh token for loginid: {login.Loginid}");
             login.Refreshtoken = GenerateUlid();
             login.Refreshtokenexpiresat = DateTime.Now.AddDays(1);
-            
+
             // Update audit fields
             login.Modifiedby = "SYSTEM";
             login.Modifiedat = DateTime.Now;
-            
+
             await _daAuth.UpdateLogin(login);
         }
 
@@ -119,7 +119,7 @@ public class BL_Auth
             RefreshTokenExpiresAt = login.Refreshtokenexpiresat
         }, "Token refreshed.");
     }
-    
+
     public async Task<Result<string>> Logout(LogoutRequestModel request)
     {
         var login = await _daAuth.GetUserByRefreshToken(request.RefreshToken);
@@ -131,7 +131,7 @@ public class BL_Auth
 
         // Update login status as "logout", Update audit fields
         login.Loginstatus = "Logout";
-        login.Refreshtokenexpiresat = DateTime.Now; 
+        login.Refreshtokenexpiresat = DateTime.Now;
         login.Modifiedby = "SYSTEM";
         login.Modifiedat = DateTime.Now;
 
